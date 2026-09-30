@@ -1,0 +1,90 @@
+{
+  "column_semantics": {
+    "architecture": "Compatibility label for a joint attacker configuration: deconv_mse is a deconvolutional decoder trained with MSE; residual_lpips is a residual upsampling decoder trained with L1 + 0.1 LPIPS. Architecture and objective effects are not separately identified.",
+    "attacker_training_seed": "Raw attacker-training-seed field retained for compatibility; in budget tables it equals model_seed and identifies the same coupled pipeline run.",
+    "dataset": "public aggregate value",
+    "interface": "public aggregate value",
+    "lpips": "public aggregate value",
+    "method": "public aggregate value",
+    "model_seed": "Raw model-seed field retained for compatibility.",
+    "mse": "public aggregate value",
+    "origin": "public aggregate value",
+    "psnr": "public aggregate value",
+    "run_id": "public aggregate value",
+    "ssim": "public aggregate value"
+  },
+  "columns": [
+    {
+      "name": "run_id",
+      "type": "string"
+    },
+    {
+      "name": "dataset",
+      "type": "string"
+    },
+    {
+      "name": "interface",
+      "type": "string"
+    },
+    {
+      "name": "method",
+      "type": "string"
+    },
+    {
+      "name": "architecture",
+      "type": "string"
+    },
+    {
+      "name": "model_seed",
+      "type": "integer"
+    },
+    {
+      "name": "attacker_training_seed",
+      "type": "integer"
+    },
+    {
+      "name": "mse",
+      "type": "number"
+    },
+    {
+      "name": "psnr",
+      "type": "number"
+    },
+    {
+      "name": "ssim",
+      "type": "number"
+    },
+    {
+      "name": "lpips",
+      "type": "number"
+    },
+    {
+      "name": "origin",
+      "type": "string"
+    }
+  ],
+  "file": "results/attacker_restart_rows.csv",
+  "release": "v1.1.0",
+  "rows": 96,
+  "schema_version": 2,
+  "statistical_boundary": {
+    "architecture_only_attribution_identified": false,
+    "attacker_configurations": {
+      "deconv_mse": {
+        "architecture": "deconvolutional_decoder",
+        "interpretation": "joint_architecture_objective_configuration",
+        "training_objective": "mse"
+      },
+      "residual_lpips": {
+        "architecture": "residual_upsampling_decoder",
+        "interpretation": "joint_architecture_objective_configuration",
+        "training_objective": "l1_plus_0.1_lpips"
+      }
+    },
+    "attacker_restarts": "optimizer_sensitivity_not_independent_scientific_replicates",
+    "attacker_training_seed_equals_model_seed": true,
+    "budget_interval": "unadjusted_descriptive_two_sided_student_t_interval_df4",
+    "budget_unit": "paired_model_attacker_run_seed",
+    "confirmatory_significance_claims": false
+  }
+}

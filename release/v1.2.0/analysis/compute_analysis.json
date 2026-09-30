@@ -1,0 +1,41 @@
+{
+  "claim_ids": [
+    "E01",
+    "E02",
+    "E03"
+  ],
+  "compute_macros": {
+    "ComputeAfdStandardCpuDifferenceMedianUs": "-1.141",
+    "ComputeAfdStandardGpuDifferenceMedianUs": "0.090",
+    "ComputeConditionCount": "160",
+    "ComputeCpuInterfaceDominanceStrataCount": "2",
+    "ComputeCpuInterfaceStrataCount": "4",
+    "ComputeInterfaceCpuDifferenceMedianUs": "63.101",
+    "ComputeInterfaceGpuDifferenceMedianUs": "-5.695",
+    "ComputeLaplaceDefenseMedianUs": "43.168",
+    "ComputeLearnedDefenseMedianUs": "5.770",
+    "ComputeQuarantineCount": "0",
+    "ComputeTransformationDominanceStrataCount": "4",
+    "ComputeTransformationStrataCount": "8"
+  },
+  "condition_count": 160,
+  "equivalence_claims": false,
+  "inferential_unit": "model_seed",
+  "measurement_exclusions": [
+    "dataset_loading",
+    "serialization",
+    "host_to_device_transfer",
+    "networking",
+    "queueing",
+    "energy"
+  ],
+  "multiplicity_tests": false,
+  "p_values": false,
+  "protocol_id": "eng_compute_v1",
+  "quarantine_count": 0,
+  "raw_manifest_sha256": "3a17fcd126a909f087e808175041f87b95bd719f2be29c75b8d0e7b169f69f67",
+  "schema_version": 1,
+  "seed_count": 5,
+  "technical_blocks_are_inferential_units": false,
+  "uncertainty": "descriptive_two_sided_student_t_95_percent_interval"
+}

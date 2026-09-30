@@ -1,0 +1,222 @@
+{
+  "frozen_artifact": {
+    "exclusion_reason": "Contains validation examples and is larger than GitHub's 100 MB object limit.",
+    "published": false,
+    "required_mode": "0444",
+    "sha256": "a8895ab726de8aee432d9e85850684b7538956637d19a7e71ed9396205e400ad",
+    "size_bytes": 240061073
+  },
+  "schema_version": 1,
+  "seal_type": "validation_only_selection",
+  "selection_contract": {
+    "partition": "validation_only",
+    "selected_defense_settings": [
+      {
+        "candidate_grid": [
+          0.25,
+          0.5,
+          1.0,
+          2.0
+        ],
+        "dataset": "celeba",
+        "method": "afd",
+        "selected_value": 0.5,
+        "split_point": "early",
+        "utility_compatibility_status": "utility_compatible",
+        "utility_compatible_wording_allowed": true
+      },
+      {
+        "candidate_grid": [
+          0.025,
+          0.05,
+          0.1,
+          0.2
+        ],
+        "dataset": "celeba",
+        "method": "laplace",
+        "selected_value": 0.2,
+        "split_point": "early",
+        "utility_compatibility_status": "utility_compatible",
+        "utility_compatible_wording_allowed": true
+      },
+      {
+        "candidate_grid": [
+          0.5,
+          1.0,
+          2.0,
+          4.0
+        ],
+        "dataset": "celeba",
+        "method": "learned",
+        "selected_value": 1.0,
+        "split_point": "early",
+        "utility_compatibility_status": "utility_compatible",
+        "utility_compatible_wording_allowed": true
+      },
+      {
+        "candidate_grid": [
+          0.25,
+          0.5,
+          1.0,
+          2.0
+        ],
+        "dataset": "celeba",
+        "method": "afd",
+        "selected_value": 0.5,
+        "split_point": "current",
+        "utility_compatibility_status": "utility_compatible",
+        "utility_compatible_wording_allowed": true
+      },
+      {
+        "candidate_grid": [
+          0.025,
+          0.05,
+          0.1,
+          0.2
+        ],
+        "dataset": "celeba",
+        "method": "laplace",
+        "selected_value": 0.2,
+        "split_point": "current",
+        "utility_compatibility_status": "utility_compatible",
+        "utility_compatible_wording_allowed": true
+      },
+      {
+        "candidate_grid": [
+          0.5,
+          1.0,
+          2.0,
+          4.0
+        ],
+        "dataset": "celeba",
+        "method": "learned",
+        "selected_value": 2.0,
+        "split_point": "current",
+        "utility_compatibility_status": "utility_compatible",
+        "utility_compatible_wording_allowed": true
+      },
+      {
+        "candidate_grid": [
+          0.25,
+          0.5,
+          1.0,
+          2.0
+        ],
+        "dataset": "cifar10",
+        "method": "afd",
+        "selected_value": 0.5,
+        "split_point": "early",
+        "utility_compatibility_status": "utility_compatible",
+        "utility_compatible_wording_allowed": true
+      },
+      {
+        "candidate_grid": [
+          0.025,
+          0.05,
+          0.1,
+          0.2
+        ],
+        "dataset": "cifar10",
+        "method": "laplace",
+        "selected_value": 0.05,
+        "split_point": "early",
+        "utility_compatibility_status": "utility_compatible",
+        "utility_compatible_wording_allowed": true
+      },
+      {
+        "candidate_grid": [
+          0.5,
+          1.0,
+          2.0,
+          4.0
+        ],
+        "dataset": "cifar10",
+        "method": "learned",
+        "selected_value": 4.0,
+        "split_point": "early",
+        "utility_compatibility_status": "utility_compatible",
+        "utility_compatible_wording_allowed": true
+      },
+      {
+        "candidate_grid": [
+          0.25,
+          0.5,
+          1.0,
+          2.0
+        ],
+        "dataset": "cifar10",
+        "method": "afd",
+        "selected_value": 1.0,
+        "split_point": "current",
+        "utility_compatibility_status": "utility_compatible",
+        "utility_compatible_wording_allowed": true
+      },
+      {
+        "candidate_grid": [
+          0.025,
+          0.05,
+          0.1,
+          0.2
+        ],
+        "dataset": "cifar10",
+        "method": "laplace",
+        "selected_value": 0.1,
+        "split_point": "current",
+        "utility_compatibility_status": "utility_compatible",
+        "utility_compatible_wording_allowed": true
+      },
+      {
+        "candidate_grid": [
+          0.5,
+          1.0,
+          2.0,
+          4.0
+        ],
+        "dataset": "cifar10",
+        "method": "learned",
+        "selected_value": 4.0,
+        "split_point": "current",
+        "utility_compatibility_status": "utility_compatible",
+        "utility_compatible_wording_allowed": true
+      }
+    ],
+    "selection_seed": 42,
+    "test_access": false,
+    "utility_loss_limit_percentage_points": 1.0,
+    "validation_selected_attackers": {
+      "celeba": {
+        "current": {
+          "afd": "residual_lpips",
+          "laplace": "residual_lpips",
+          "learned": "residual_lpips",
+          "standard": "residual_lpips"
+        },
+        "early": {
+          "afd": "residual_lpips",
+          "laplace": "residual_lpips",
+          "learned": "residual_lpips",
+          "standard": "residual_lpips"
+        }
+      },
+      "cifar10": {
+        "current": {
+          "afd": "residual_lpips",
+          "laplace": "residual_lpips",
+          "learned": "residual_lpips",
+          "standard": "residual_lpips"
+        },
+        "early": {
+          "afd": "residual_lpips",
+          "laplace": "residual_lpips",
+          "learned": "residual_lpips",
+          "standard": "residual_lpips"
+        }
+      }
+    }
+  },
+  "study_contract": {
+    "path": "config/study_contract.json",
+    "sha256": "e43780aa31661ba797d1832151cc5363a3933f90edc8f7e3375ac39e11bb9ef0",
+    "size_bytes": 1913
+  }
+}

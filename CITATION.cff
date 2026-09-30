@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+type: software
+title: "Adaptive Reconstruction Split Computing"
+authors:
+  - family-names: "Jang"
+    given-names: "Sooyoung"
+version: 1.2.0
+license: MIT

@@ -1,0 +1,46 @@
+{
+  "claim_count": 3,
+  "claims": [
+    {
+      "allowed_wording": "All 160 declared component-cost conditions completed without quarantine on the bounded one-thread CPU and RTX 2080 Ti testbed; summed component time is not end-to-end latency.",
+      "claim_id": "E01",
+      "forbidden_stronger_wording": "Do not claim deployed end-to-end latency, network cost, energy cost, or hardware generality.",
+      "raw_evidence_manifest_sha256": "3a17fcd126a909f087e808175041f87b95bd719f2be29c75b8d0e7b169f69f67",
+      "source_evidence": [
+        "audit/eng_compute_migration_20260827/eng_compute_audit.json",
+        "revisions/2026-08-27_eng_compute_extension/eng_compute_v1/analysis/compute_paired_effects.csv",
+        "revisions/2026-08-27_eng_compute_extension/eng_compute_v1/analysis/compute_interface_effects.csv"
+      ],
+      "status": "supported",
+      "uncertainty": "Five model seeds; descriptive Student-t 95% intervals; no p-values or multiplicity tests."
+    },
+    {
+      "allowed_wording": "The absolute interface effect exceeded the matched AFD-minus-standard CPU effect in 2 of 4 prespecified dataset-by-batch strata.",
+      "claim_id": "E02",
+      "forbidden_stronger_wording": "Do not claim architecture causality, universal dominance, or compute equivalence between AFD and standard.",
+      "raw_evidence_manifest_sha256": "3a17fcd126a909f087e808175041f87b95bd719f2be29c75b8d0e7b169f69f67",
+      "source_evidence": [
+        "audit/eng_compute_migration_20260827/eng_compute_audit.json",
+        "revisions/2026-08-27_eng_compute_extension/eng_compute_v1/analysis/compute_paired_effects.csv",
+        "revisions/2026-08-27_eng_compute_extension/eng_compute_v1/analysis/compute_interface_effects.csv"
+      ],
+      "status": "supported",
+      "uncertainty": "Five model seeds; descriptive Student-t 95% intervals; no p-values or multiplicity tests."
+    },
+    {
+      "allowed_wording": "The explicit transformation cost exceeded the absolute matched AFD-minus-standard CPU effect in 4 of 8 prespecified dataset-by-interface-by-batch strata.",
+      "claim_id": "E03",
+      "forbidden_stronger_wording": "Do not hide null or unfavorable overheads or generalize beyond the two implemented transformations.",
+      "raw_evidence_manifest_sha256": "3a17fcd126a909f087e808175041f87b95bd719f2be29c75b8d0e7b169f69f67",
+      "source_evidence": [
+        "audit/eng_compute_migration_20260827/eng_compute_audit.json",
+        "revisions/2026-08-27_eng_compute_extension/eng_compute_v1/analysis/compute_paired_effects.csv",
+        "revisions/2026-08-27_eng_compute_extension/eng_compute_v1/analysis/compute_interface_effects.csv"
+      ],
+      "status": "supported",
+      "uncertainty": "Five model seeds; descriptive Student-t 95% intervals; no p-values or multiplicity tests."
+    }
+  ],
+  "protocol_id": "eng_compute_v1",
+  "schema_version": 1
+}

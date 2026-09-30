@@ -1,0 +1,90 @@
+{
+  "column_semantics": {
+    "auxiliary_fraction": "public aggregate value",
+    "ci95_lower": "public aggregate value",
+    "ci95_method": "Unadjusted five-run Student-t interval used descriptively; not familywise confirmatory evidence.",
+    "ci95_upper": "public aggregate value",
+    "contrast": "public aggregate value",
+    "dataset": "public aggregate value",
+    "interface": "public aggregate value",
+    "mean": "public aggregate value",
+    "model_seeds": "public aggregate value",
+    "n_model_seeds": "Compatibility column counting paired_model_attacker_run_seed units; it is not a model-only replicate count.",
+    "sample_sd": "public aggregate value",
+    "values": "public aggregate value"
+  },
+  "columns": [
+    {
+      "name": "dataset",
+      "type": "string"
+    },
+    {
+      "name": "interface",
+      "type": "string"
+    },
+    {
+      "name": "auxiliary_fraction",
+      "type": "number"
+    },
+    {
+      "name": "contrast",
+      "type": "string"
+    },
+    {
+      "name": "n_model_seeds",
+      "type": "integer"
+    },
+    {
+      "name": "model_seeds",
+      "type": "string"
+    },
+    {
+      "name": "values",
+      "type": "string"
+    },
+    {
+      "name": "mean",
+      "type": "number"
+    },
+    {
+      "name": "sample_sd",
+      "type": "number"
+    },
+    {
+      "name": "ci95_lower",
+      "type": "number"
+    },
+    {
+      "name": "ci95_upper",
+      "type": "number"
+    },
+    {
+      "name": "ci95_method",
+      "type": "string"
+    }
+  ],
+  "file": "results/benchmark_budget_paired_effects.csv",
+  "release": "v1.1.0",
+  "rows": 12,
+  "schema_version": 2,
+  "statistical_boundary": {
+    "architecture_only_attribution_identified": false,
+    "attacker_configurations": {
+      "deconv_mse": {
+        "architecture": "deconvolutional_decoder",
+        "interpretation": "joint_architecture_objective_configuration",
+        "training_objective": "mse"
+      },
+      "residual_lpips": {
+        "architecture": "residual_upsampling_decoder",
+        "interpretation": "joint_architecture_objective_configuration",
+        "training_objective": "l1_plus_0.1_lpips"
+      }
+    },
+    "attacker_restarts": "optimizer_sensitivity_not_independent_scientific_replicates",
+    "attacker_training_seed_equals_model_seed": true,
+    "budget_interval": "unadjusted_descriptive_two_sided_student_t_interval_df4",
+    "budget_unit": "paired_model_attacker_run_seed",
+    "confirmatory_significance_claims": false
+  }
+}

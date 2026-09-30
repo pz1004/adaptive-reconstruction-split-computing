@@ -1,0 +1,55 @@
+{
+  "schema_version": 2,
+  "study_id": "adaptive_reconstruction_2026-07-22",
+  "title": "Adaptive Reconstruction Attacks against Adversarially Trained Split Representations: A Multi-Setting Empirical Study",
+  "revision_root": "revisions/2026-07-22_adaptive_reconstruction_study",
+  "datasets": ["celeba", "cifar10"],
+  "split_points": {
+    "early": [6, 16, 16],
+    "current": [6, 8, 8]
+  },
+  "seeds": [7, 42, 123, 2024, 2025],
+  "selection_seed": 42,
+  "methods": ["standard", "afd", "laplace", "learned"],
+  "afd_alphas": [0.25, 0.5, 1.0, 2.0],
+  "laplace_scales": [0.025, 0.05, 0.1, 0.2],
+  "learned_l2_limits": [0.5, 1.0, 2.0, 4.0],
+  "utility_loss_limit_percentage_points": 1.0,
+  "encoder": {
+    "epochs": 10,
+    "learning_rate": 0.001,
+    "batch_size": 128,
+    "selection_metric": "validation_accuracy",
+    "checkpoint_policy": "best_validation_accuracy"
+  },
+  "attackers": {
+    "architectures": ["deconv_mse", "residual_lpips"],
+    "losses": {
+      "deconv_mse": "mse",
+      "residual_lpips": "l1_plus_0.1_lpips_alex"
+    },
+    "max_epochs": 50,
+    "patience": 5,
+    "learning_rate": 0.001,
+    "checkpoint_policy": "best_validation_loss"
+  },
+  "learned_perturbation": {
+    "epochs": 5,
+    "learning_rate": 0.01,
+    "constraint": "global_l2_projection_after_every_optimizer_step"
+  },
+  "primary_leakage_metric": "max_adaptive_attacker_ssim",
+  "secondary_leakage_metrics": ["mse", "per_image_psnr", "lpips"],
+  "test_mc_draw_seeds": [1701, 1702, 1703, 1704, 1705],
+  "mc_draws_are_independent_replicates": false,
+  "auxiliary_data_budgets": [0.1, 0.5, 1.0],
+  "communication": {
+    "bandwidth_mbps": [0.5, 1, 2, 5, 10, 20, 50],
+    "feature_precision_bits": [32, 16, 8],
+    "raw_image_precision_bits": 8,
+    "hardware_measurements": false
+  },
+  "selection_partition": "validation_only",
+  "test_access_before_freeze": false,
+  "submission_ready_requires_all_planned_runs": true
+}

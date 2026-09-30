@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "equivalence_claims": false,
+  "excluded_from_release": [
+    "raw technical-block timing records",
+    "model weights and checkpoints",
+    "raw or reconstructed images",
+    "dataset-derived per-example records",
+    "private run artifacts",
+    "manuscript sources and PDFs"
+  ],
+  "inferential_unit": "model_seed",
+  "measurement_exclusions": [
+    "dataset_loading",
+    "serialization",
+    "host_to_device_transfer",
+    "networking",
+    "queueing",
+    "energy"
+  ],
+  "multiplicity_tests": false,
+  "p_values": false,
+  "protocol_id": "eng_compute_v1",
+  "schema_version": 1,
+  "scope": "aggregate numeric component-compute summaries only",
+  "technical_blocks_are_inferential_units": false,
+  "title": "eng_compute_v1 public aggregate package",
+  "uncertainty": "descriptive two-sided Student-t 95% intervals"
+}
