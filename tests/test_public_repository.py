@@ -466,9 +466,10 @@ def test_release_validation_and_export_tolerate_generated_bytecode(tmp_path: Pat
     from scripts import export_eng_compute_public as exporter
     source = tmp_path / 'source'
     target = tmp_path / 'target'
-    shutil.copytree(ROOT / 'release/v1.3.0', source)
-    py_compile.compile(str(source / 'compute_core.py'), doraise=True)
-    assert list(source.rglob('*.pyc'))
+    shutil.copytree(ROOT / 'release/v1.3.0', source, ignore=shutil.ignore_patterns('__pycache__'))
+    cache = source / '__pycache__' / f'compute_core.{sys.implementation.cache_tag}.pyc'
+    py_compile.compile(str(source / 'compute_core.py'), cfile=str(cache), doraise=True)
+    assert cache.is_file()
     assert exporter.validate_public_release(source)['file_count'] == 40
     monkeypatch.setattr(exporter, 'DEFAULT_OUTPUT', source)
     monkeypatch.setattr(exporter, 'build_private_payloads', lambda: {
