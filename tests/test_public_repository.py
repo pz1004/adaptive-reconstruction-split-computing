@@ -459,3 +459,147 @@ def test_mapped_private_candidate_comparison(tmp_path: Path) -> None:
     changed.write_bytes(changed.read_bytes() + b'\n')
     with pytest.raises(RuntimeError, match='differs from retained private candidate'):
         verify_private_candidate(release, tmp_path)
+
+
+def test_release_validation_and_export_tolerate_generated_bytecode(tmp_path: Path, monkeypatch) -> None:
+    import py_compile
+    from scripts import export_eng_compute_public as exporter
+    source = tmp_path / 'source'
+    target = tmp_path / 'target'
+    shutil.copytree(ROOT / 'release/v1.3.0', source)
+    py_compile.compile(str(source / 'compute_core.py'), doraise=True)
+    assert list(source.rglob('*.pyc'))
+    assert exporter.validate_public_release(source)['file_count'] == 40
+    monkeypatch.setattr(exporter, 'DEFAULT_OUTPUT', source)
+    monkeypatch.setattr(exporter, 'build_private_payloads', lambda: {
+        current: (source / current).read_bytes()
+        for current in exporter.LEGACY_LOCATION_MAP.values()
+    })
+    monkeypatch.setattr(exporter, 'verify_private_candidate', exporter.validate_public_release)
+    monkeypatch.setattr(sys, 'argv', ['export', '--output', str(target)])
+    assert exporter.main() == 0
+    assert {p.relative_to(target).as_posix() for p in target.rglob('*') if p.is_file()} == exporter.EXPECTED_FILES
+    (source / '__pycache__/private.json').write_text('{}\n')
+    with pytest.raises(RuntimeError, match='inventory differs'):
+        exporter.validate_public_release(source)
+
+
+@pytest.mark.parametrize('relative', [
+    'evidence/benchmark_budget_attacker_rows.csv',
+    'schemas/benchmark_budget_conditions.schema.json',
+    'expected/compute_group_summary.csv',
+])
+def test_export_restores_missing_private_derived_file(tmp_path: Path, monkeypatch, relative: str) -> None:
+    from scripts import export_eng_compute_public as exporter
+    source = tmp_path / 'release'
+    shutil.copytree(ROOT / 'release/v1.3.0', source)
+    expected = {current: (source / current).read_bytes()
+                for current in exporter.LEGACY_LOCATION_MAP.values()}
+    before = {p.relative_to(source).as_posix(): p.read_bytes() for p in source.rglob('*') if p.is_file()}
+    (source / relative).unlink()
+    monkeypatch.setattr(exporter, 'DEFAULT_OUTPUT', source)
+    monkeypatch.setattr(exporter, 'build_private_payloads', lambda: expected)
+    monkeypatch.setattr(exporter, 'verify_private_candidate', exporter.validate_public_release)
+    monkeypatch.setattr(sys, 'argv', ['export', '--output', str(source)])
+    assert exporter.main() == 0
+    assert {p.relative_to(source).as_posix(): p.read_bytes() for p in source.rglob('*') if p.is_file()} == before
+
+
+def test_full_export_rejects_changed_reproduction_input_before_writes(tmp_path: Path, monkeypatch) -> None:
+    from scripts import export_eng_compute_public as release_exporter
+    from scripts import export_public_results as exporter
+    for relative in EXPECTED_ALLOWLIST:
+        target = tmp_path / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(ROOT / relative, target)
+    release = tmp_path / 'release/v1.3.0'
+    monkeypatch.setattr(release_exporter, 'build_private_payloads', lambda: {
+        current: (ROOT / 'release/v1.3.0' / current).read_bytes()
+        for current in release_exporter.LEGACY_LOCATION_MAP.values()
+    })
+    changed = release / 'inputs/laplace_draw_metrics.csv'
+    changed.write_bytes(changed.read_bytes() + b'\n')
+    manifest = tmp_path / 'results/protocol/disclosure_manifest.json'
+    before = manifest.read_bytes()
+    monkeypatch.setattr(exporter, 'PROJECT_ROOT', tmp_path)
+    monkeypatch.setattr(exporter, 'PROTOCOL_ROOT', manifest.parent)
+    monkeypatch.setattr(exporter, 'MANIFEST_PATH', manifest)
+    monkeypatch.setattr(sys, 'argv', ['export', '--promote-corrected'])
+    with pytest.raises(RuntimeError, match='checksum|Scientific bytes'):
+        exporter.main()
+    assert manifest.read_bytes() == before
+
+
+def test_full_export_preflights_all_conflicts_before_creating_files(tmp_path: Path, monkeypatch) -> None:
+    from scripts import export_public_results as exporter
+    existing = tmp_path / 'results/raw/primary_seed_results.csv'
+    existing.parent.mkdir(parents=True)
+    existing.write_bytes(b'protected\n')
+    monkeypatch.setattr(exporter, 'PROJECT_ROOT', tmp_path)
+    monkeypatch.setattr(exporter, 'render_from_private_sources', lambda: {
+        'first.txt': b'new\n', 'results/raw/primary_seed_results.csv': b'different\n',
+    })
+    monkeypatch.setattr(sys, 'argv', ['export'])
+    with pytest.raises(RuntimeError, match='Refusing to overwrite'):
+        exporter.main()
+    assert not (tmp_path / 'first.txt').exists()
+    assert existing.read_bytes() == b'protected\n'
+
+
+@pytest.mark.parametrize('layout', ['parent_symlink', 'root_symlink', 'broken_symlink', 'parent_file'])
+def test_export_rejects_unsafe_destination_before_any_write(tmp_path: Path, layout: str) -> None:
+    from scripts.export_eng_compute_public import export_payloads
+    destination = tmp_path / 'destination'
+    outside = tmp_path / 'outside'
+    outside.mkdir()
+    if layout == 'root_symlink':
+        destination.symlink_to(outside, target_is_directory=True)
+    else:
+        destination.mkdir()
+        if layout == 'parent_symlink':
+            (destination / 'evidence').symlink_to(outside, target_is_directory=True)
+        elif layout == 'broken_symlink':
+            (destination / 'evidence').symlink_to(outside / 'missing', target_is_directory=True)
+        else:
+            (destination / 'evidence').write_bytes(b'keep\n')
+    with pytest.raises(RuntimeError, match='symlink|directory|overwrite'):
+        export_payloads(destination, {'first.txt': b'new\n', 'evidence/table.csv': b'data\n'})
+    assert not (destination / 'first.txt').exists()
+    assert not list(outside.iterdir())
+
+
+@pytest.mark.parametrize('relative', ['../escaped.csv', '/absolute.csv'])
+def test_export_rejects_paths_outside_destination(tmp_path: Path, relative: str) -> None:
+    from scripts.export_eng_compute_public import export_payloads
+    with pytest.raises(RuntimeError, match='Invalid export path'):
+        export_payloads(tmp_path / 'destination', {'first.txt': b'new\n', relative: b'data\n'})
+    assert not (tmp_path / 'destination/first.txt').exists()
+
+
+def test_export_conflicting_scientific_bytes_prevent_partial_repair(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from scripts import export_eng_compute_public as exporter
+    source = ROOT / 'release/v1.3.0'
+    target = tmp_path / 'release'
+    shutil.copytree(source, target)
+    missing = target / 'analysis/compute_analysis.json'
+    missing.unlink()
+    changed = target / 'evidence/benchmark_budget_attacker_rows.csv'
+    changed.write_bytes(changed.read_bytes() + b'\n')
+    before = {p.relative_to(target).as_posix(): p.read_bytes() for p in target.rglob('*') if p.is_file()}
+    monkeypatch.setattr(exporter, 'DEFAULT_OUTPUT', source)
+    monkeypatch.setattr(exporter, 'build_private_payloads', lambda: {
+        current: (source / current).read_bytes() for current in exporter.LEGACY_LOCATION_MAP.values()
+    })
+    monkeypatch.setattr(sys, 'argv', ['export', '--output', str(target)])
+    with pytest.raises(RuntimeError, match='Refusing to overwrite'):
+        exporter.main()
+    assert {p.relative_to(target).as_posix(): p.read_bytes() for p in target.rglob('*') if p.is_file()} == before
+
+
+def test_release_validator_rejects_symlinked_cache(tmp_path: Path) -> None:
+    from scripts.export_eng_compute_public import validate_public_release
+    release = tmp_path / 'release'
+    shutil.copytree(ROOT / 'release/v1.3.0', release, ignore=shutil.ignore_patterns('__pycache__'))
+    (release / '__pycache__').symlink_to(tmp_path / 'outside', target_is_directory=True)
+    with pytest.raises(RuntimeError, match='symlink'):
+        validate_public_release(release)

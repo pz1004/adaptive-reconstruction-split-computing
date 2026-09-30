@@ -23,7 +23,8 @@ if str(PROJECT_ROOT) not in sys.path:
 from scripts.export_eng_compute_public import (
     CSV_SPECS as RELEASE_CSV_SPECS,
     EXPECTED_FILES as EXPECTED_RELEASE_FILES,
-    build_private_payloads as build_private_release_payloads,
+    build_public_payloads as build_release_payloads,
+    preflight_payloads,
     validate_public_release,
 )
 
@@ -506,6 +507,8 @@ def _json_bytes(payload: Any) -> bytes:
 
 
 def render_from_private_sources() -> dict[str, bytes]:
+    # Validate every release payload before constructing a replacement manifest.
+    release_payloads = build_release_payloads(PROJECT_ROOT / PUBLIC_RELEASE_ROOT)
     missing = [str(path) for path in PRIVATE_SOURCES.values() if not path.is_file()]
     if missing:
         raise RuntimeError("Private canonical source is missing: " + ", ".join(missing))
@@ -583,19 +586,12 @@ def render_from_private_sources() -> dict[str, bytes]:
             "results/protocol/frozen_selection_lock.json": _json_bytes(selection_lock),
         }
     )
-    release_payloads = build_private_release_payloads()
     outputs.update(
         {
             f"{PUBLIC_RELEASE_ROOT}/{relative}": payload
             for relative, payload in release_payloads.items()
         }
     )
-
-    for relative in V13_FILES:
-        payload = (PROJECT_ROOT / relative).read_bytes()
-        if relative in outputs and outputs[relative] != payload:
-            raise RuntimeError(f"Scientific bytes differ from private regeneration: {relative}")
-        outputs[relative] = payload
 
     source_inputs = {
         role: {"sha256": sha256_file(path), "size_bytes": path.stat().st_size}
@@ -769,6 +765,8 @@ def main() -> None:
         print(json.dumps({**public_result, "private_source_regeneration_verified": private_reproduction}, indent=2, sort_keys=True))
         return
     outputs = render_from_private_sources()
+    replaceable = CORRECTED_PROMOTION_REPLACEABLE_OUTPUTS if args.promote_corrected else frozenset()
+    preflight_payloads(PROJECT_ROOT, outputs, replaceable=replaceable)
     states = {
         relative: _atomic_create(
             PROJECT_ROOT / relative,

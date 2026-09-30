@@ -202,11 +202,22 @@ def _schema() -> bytes:
 
 
 
-def _payloads(root: Path) -> dict[str, bytes]:
-    return {
-        path.relative_to(root).as_posix(): path.read_bytes()
-        for path in sorted(path for path in root.rglob("*") if path.is_file())
-    }
+def _release_files(root: Path) -> set[str]:
+    """Inventory delivery files, excluding only generated Python bytecode."""
+    if root.is_symlink() or not root.is_dir():
+        raise RuntimeError(f"Release must be a regular directory: {root}")
+    files = set()
+    for path in root.rglob("*"):
+        if path.is_symlink():
+            raise RuntimeError(f"Release contains a symlink: {path}")
+        if path.is_dir():
+            continue
+        if not path.is_file():
+            raise RuntimeError(f"Release contains a non-regular file: {path}")
+        if path.parent.name == "__pycache__" and path.suffix == ".pyc":
+            continue
+        files.add(path.relative_to(root).as_posix())
+    return files
 
 
 def build_private_payloads() -> dict[str, bytes]:
@@ -225,6 +236,30 @@ def build_private_payloads() -> dict[str, bytes]:
     return payloads
 
 
+def build_public_payloads(source: Path) -> dict[str, bytes]:
+    """Combine canonical evidence with pinned reproduction files before writing."""
+    scientific = build_private_payloads()
+    if set(scientific) != set(LEGACY_LOCATION_MAP.values()):
+        raise RuntimeError("Private evidence inventory differs from the mapped file policy")
+    actual = _release_files(source)
+    required = EXPECTED_FILES - set(scientific)
+    if actual - EXPECTED_FILES or required - actual:
+        raise RuntimeError(
+            "v1.3.0 inventory differs: "
+            f"missing={sorted(required - actual)}, unexpected={sorted(actual - EXPECTED_FILES)}"
+        )
+    payloads = {}
+    for relative, digest in EXPECTED_CHECKSUMS.items():
+        path = source / relative
+        payload = scientific[relative] if relative in scientific else path.read_bytes()
+        if hashlib.sha256(payload).hexdigest() != digest:
+            raise RuntimeError(f"v1.3.0 payload checksum differs: {relative}")
+        if relative in actual and path.read_bytes() != payload:
+            raise RuntimeError(f"Scientific bytes differ from private regeneration: {relative}")
+        payloads[relative] = payload
+    return payloads
+
+
 def mapped_candidate_payloads(candidate: Path = PRIVATE_CANDIDATE) -> dict[str, bytes]:
     """Read retained evidence without requiring obsolete public release paths."""
     return {current: (candidate / historical).read_bytes()
@@ -240,28 +275,41 @@ def verify_private_candidate(root: Path, candidate: Path = PRIVATE_CANDIDATE) ->
             "mapped_scientific_files_verified": len(LEGACY_LOCATION_MAP)}
 
 
+def preflight_payloads(
+    root: Path,
+    payloads: dict[str, bytes],
+    *,
+    replaceable: frozenset[str] = frozenset(),
+) -> None:
+    """Reject path escapes, symlinks and conflicts across the entire write set."""
+    for relative, payload in payloads.items():
+        name = Path(relative)
+        if name.is_absolute() or ".." in name.parts or not name.parts:
+            raise RuntimeError(f"Invalid export path: {relative}")
+        path = root / name
+        for directory in (root, *(root / parent for parent in reversed(name.parents[:-1]))):
+            if directory.is_symlink() or (directory.exists() and not directory.is_dir()):
+                raise RuntimeError(f"Export parent must be a regular directory, not a symlink: {directory}")
+        if path.is_symlink() or (path.exists() and (
+            not path.is_file() or (path.read_bytes() != payload and relative not in replaceable)
+        )):
+            raise RuntimeError(f"Refusing to overwrite byte-different public output: {path}")
+
+
 def export_payloads(root: Path, payloads: dict[str, bytes]) -> None:
     """Preflight every conflict before creating files; preserve unrelated files."""
-    for relative, payload in payloads.items():
-        path = root / relative
-        if path.is_symlink() or (path.exists() and (not path.is_file() or path.read_bytes() != payload)):
-            raise RuntimeError(f"Refusing to overwrite byte-different public output: {path}")
+    preflight_payloads(root, payloads)
     for relative, payload in payloads.items():
         path = root / relative
         if not path.exists():
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_bytes(payload)
+            with path.open("xb") as handle:
+                handle.write(payload)
 
 
 def validate_public_release(root: Path) -> dict[str, object]:
     """Validate the self-contained public v1.3.0 inventory without private inputs."""
-    if not root.is_dir():
-        raise RuntimeError(f"Missing public v1.3.0 release: {root}")
-    actual = {
-        path.relative_to(root).as_posix()
-        for path in root.rglob("*")
-        if path.is_file()
-    }
+    actual = _release_files(root)
     if actual != EXPECTED_FILES:
         raise RuntimeError(
             "v1.3.0 inventory differs: "
@@ -378,15 +426,9 @@ def main() -> int:
         report = validate_public_release(args.output)
         state = "verified_existing_public_only"
     else:
-        expected = build_private_payloads()
+        expected = build_public_payloads(DEFAULT_OUTPUT if not args.check else args.output)
         if not args.check:
-            # Reproduction files are preserved; only private evidence is regenerated.
-            validate_public_release(DEFAULT_OUTPUT)
-            complete = _payloads(DEFAULT_OUTPUT)
-            for relative, payload in expected.items():
-                if complete[relative] != payload:
-                    raise RuntimeError(f"Scientific bytes differ: {relative}")
-            export_payloads(args.output, complete)
+            export_payloads(args.output, expected)
         report = verify_private_candidate(args.output)
         state = "verified_existing_private_regeneration" if args.check else "written"
     print(json.dumps({**report, "state": state, "output": str(args.output),
