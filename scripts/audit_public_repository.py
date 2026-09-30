@@ -115,6 +115,58 @@ EXPECTED_ALLOWLIST = frozenset(
     }
 )
 
+V13_CHECKSUMS = {'release/v1.3.0/DATA_DICTIONARY.md': 'c6ab93a52c632fcfbc8d6183f9ce87c9c63fc344d2ca9960d79d3adef8b25cc3',
+ 'release/v1.3.0/README.md': '00fe8309d7d7ecbc71206404c95a032a4be0ee79193c557d57b6f0621420d824',
+ 'release/v1.3.0/SHA256SUMS': '7b80ff733985ff12eb2a5e014ec19a307ea78628926cd6a443d7bbd7f6f364f9',
+ 'release/v1.3.0/analysis_contract.json': '45124d8e98488df044c8eb672dd9e19a42e04a7320106b4319de9ec47ad1d277',
+ 'release/v1.3.0/budget_figure.py': '49bb7845009a0828fb3ef8667dee1f5584fa6d7d130156ef007ed68fd76f09ae',
+ 'release/v1.3.0/compute_core.py': 'e1a753a324ccfb00335b4cd9b5a1c323f159a2e7468100695a3802a9eb88de3d',
+ 'release/v1.3.0/diagnostics/known-offset-diagnostic.csv': '70862589f7e788891ad8d810cbef8d54757108b6ac9169eb0aee447f997a937b',
+ 'release/v1.3.0/diagnostics/known-offset-diagnostic.json': '3679eb943b4fb948eb64f0941b1125c2609e4ffd2db9f70958ec1a95b3096089',
+ 'release/v1.3.0/expected/attacker_restart_summaries.csv': '89cd56dbb25d57afac00e44012e1c87ecfd32e3c065313a24355c0379e890618',
+ 'release/v1.3.0/expected/benchmark_budget_paired_effects.csv': '8312b09c91612e77b1c35fd713e47ffecf85dfc5a122461ff0aa4ac26c7ce0dc',
+ 'release/v1.3.0/expected/budget_method_summaries.csv': 'd2c3fbb4ea925d063e04c5131aa571d8f603298af298e06d0bfe7b3788a37d34',
+ 'release/v1.3.0/expected/compute_group_summary.csv': '402f17a7ff585944f39f13011e0fecb9b79853cd45af0b04208edbbcf2c90681',
+ 'release/v1.3.0/expected/compute_interface_effects.csv': '3f77831cb296e218030e4c46bbc02cbd7ac4249e2b834e4e43b7773ab5b79164',
+ 'release/v1.3.0/expected/compute_paired_effects.csv': '1ab4edfab53bfefc40beb0022b25a31249a164cc4ca2f62e2950be3240b8c525',
+ 'release/v1.3.0/expected/figure_signatures.json': '9a85f375f44a2490ffe1bdc2fde892d476d15c12e723e926097682a1fd700ed9',
+ 'release/v1.3.0/expected/figure_sources.json': '06fb5ca3aff79413898d3a3daf9540e38ef8a0dbaa250a9add682c572eadd356',
+ 'release/v1.3.0/expected/laplace-single-release-statistics.csv': '33cc3084a7467577e9c541eb72d3107210fefb7afa44fde628a7316b4e28349c',
+ 'release/v1.3.0/expected/supplementary-statistics.csv': 'a387a651be20f087faf91f2f7b6d5a89552e211604b8741559243229e18908b7',
+ 'release/v1.3.0/inputs/attacker_restart_rows.csv': 'b1da933c28665b186b27f081401c9a5445489acb4f6224d8c620c16b07670465',
+ 'release/v1.3.0/inputs/benchmark_budget_conditions.csv': '6d5961a3bae709f1d98e1630bd1e1f90736ae9c06f93199c58685c35f6a8e9c7',
+ 'release/v1.3.0/inputs/compute_condition_metrics.csv': 'beab01892dd8505e889b4f387ebd395efb6495345b15c171fbb6da9184c74f25',
+ 'release/v1.3.0/inputs/laplace_draw_metrics.csv': 'b60fc38b2cf5566c3f78975e1c81d85100ce8e054b3fbf60b3390b48e246b023',
+ 'release/v1.3.0/inputs/laplace_run_metrics.csv': 'df9c810a8c476f5920c6615ccdc4a92e0706b28c933db98f4be417a1f103b395',
+ 'release/v1.3.0/inputs/primary_seed_results.csv': '4a1cec03db1db89a9e2b010ebeeff530a6f88fe3d23e3601db19553ce96b266d',
+ 'release/v1.3.0/inputs/semantic_seed_results.csv': 'd2c3bd11ebbc9277ee8fac7b66ce2b5e3edd3959be3aa0b6a1fc3ef2971eca90',
+ 'release/v1.3.0/primary_figure.py': '6e804e59c2488edab83d9cdae7a10f8e865450a87ad13c6d439d76439408b361',
+ 'release/v1.3.0/provenance.json': '5488e382fef513fe093d83dc258be7c2081e2d0d29f8ca13216ff6d9d18e5e19',
+ 'release/v1.3.0/reproduce.py': '8dac6400dda09011bbb29da676d9970bac78f0cab455cb000d2179003bc4925c',
+ 'release/v1.3.0/requirements.txt': '8ced0882fae5b9298075703d6456f46d729d3ad239034badf90f6bf6bf95aaf9',
+ 'release/v1.3.0/statistics_core.py': '48a62474afc81d7872d6a078bd3778501a9b39c9c77db44b78cfa9ced40ba617'}
+V13_FILES = frozenset(V13_CHECKSUMS)
+V13_LICENSE_SCOPE = ('release/v1.3.0/diagnostics/known-offset-diagnostic.csv',
+ 'release/v1.3.0/diagnostics/known-offset-diagnostic.json',
+ 'release/v1.3.0/expected/attacker_restart_summaries.csv',
+ 'release/v1.3.0/expected/benchmark_budget_paired_effects.csv',
+ 'release/v1.3.0/expected/budget_method_summaries.csv',
+ 'release/v1.3.0/expected/compute_group_summary.csv',
+ 'release/v1.3.0/expected/compute_interface_effects.csv',
+ 'release/v1.3.0/expected/compute_paired_effects.csv',
+ 'release/v1.3.0/expected/figure_signatures.json',
+ 'release/v1.3.0/expected/figure_sources.json',
+ 'release/v1.3.0/expected/laplace-single-release-statistics.csv',
+ 'release/v1.3.0/expected/supplementary-statistics.csv',
+ 'release/v1.3.0/inputs/attacker_restart_rows.csv',
+ 'release/v1.3.0/inputs/benchmark_budget_conditions.csv',
+ 'release/v1.3.0/inputs/compute_condition_metrics.csv',
+ 'release/v1.3.0/inputs/laplace_draw_metrics.csv',
+ 'release/v1.3.0/inputs/laplace_run_metrics.csv',
+ 'release/v1.3.0/inputs/primary_seed_results.csv',
+ 'release/v1.3.0/inputs/semantic_seed_results.csv')
+EXPECTED_ALLOWLIST |= V13_FILES | {"tests/test_aggregate_reproduction.py"}
+
 RESULT_SPECS: dict[str, tuple[int, tuple[str, ...]]] = {
     "results/raw/primary_seed_results.csv": (
         80,
@@ -208,6 +260,7 @@ PUBLIC_OUTPUTS = frozenset(
         "results/protocol/frozen_selection_lock.json",
     }
     | set(RELEASE_FILES)
+    | set(V13_FILES)
 )
 SOURCE_INPUT_ROLES = frozenset(
     {
@@ -226,10 +279,11 @@ EXPECTED_MANIFEST_KEYS = frozenset(
     }
 )
 EXPECTED_RELEASE_DECISION = {
-    "status": "staged_not_published",
-    "staged_on": "2026-08-30",
+    "status": "authorized_for_repository_commit",
+    "staged_on": "2026-09-30",
     "scope": sorted(
         set(RESULT_SPECS)
+        | set(V13_LICENSE_SCOPE)
         | set(RELEASE_RESULT_COUNTS)
         | {
             "release/v1.2.0/analysis/compute_analysis.json",
@@ -237,14 +291,14 @@ EXPECTED_RELEASE_DECISION = {
         }
     ),
     "license": "CC-BY-4.0 for contributor-owned rights only",
-    "publication_authorized": False,
+    "publication_authorized": True,
     "third_party_permission_claimed": False,
     "third_party_terms_superseded": False,
 }
 EXPECTED_RELEASE_STATE = {
-    "version": "1.2.0",
-    "path": "release/v1.2.0",
-    "status": "staged_not_published",
+    "version": "1.3.0",
+    "path": "release/v1.3.0",
+    "status": "authorized_for_repository_commit",
     "release_url": None,
     "release_date": None,
     "doi": None,
@@ -256,7 +310,7 @@ title: "Adaptive Reconstruction Split Computing"
 authors:
   - family-names: "Jang"
     given-names: "Sooyoung"
-version: 1.2.0
+version: 1.3.0
 license: MIT
 """
 
@@ -618,14 +672,14 @@ def _verify_disclosure(read_bytes: Callable[[str], bytes]) -> dict[str, Any]:
     if manifest["release_decision"] != EXPECTED_RELEASE_DECISION:
         raise RuntimeError("Manifest release decision differs from independent policy")
     if manifest["release"] != EXPECTED_RELEASE_STATE:
-        raise RuntimeError("Manifest release state differs from the unpublished v1.2.0 policy")
+        raise RuntimeError("Manifest release state differs from the v1.3.0 repository-commit policy")
     try:
         citation = read_bytes("CITATION.cff").decode("utf-8")
     except UnicodeDecodeError as error:
         raise RuntimeError("Root citation metadata is not UTF-8") from error
     if citation != EXPECTED_CITATION_CFF:
-        raise RuntimeError("Root citation metadata differs from the staged v1.2.0 policy")
-    if manifest["disclosure_date"] != "2026-08-30":
+        raise RuntimeError("Root citation metadata differs from the v1.3.0 repository-commit policy")
+    if manifest["disclosure_date"] != "2026-09-30":
         raise RuntimeError("Manifest disclosure date differs from the local staging date")
     workflow = read_bytes(".github/workflows/public-checks.yml").decode("utf-8")
     expected_actions = [
@@ -658,16 +712,16 @@ def _verify_disclosure(read_bytes: Callable[[str], bytes]) -> dict[str, Any]:
     readme = read_bytes("README.md").decode("utf-8")
     citation_readme_fragments = (
         "# Adaptive Reconstruction Split Computing",
-        "exactly 92 files",
+        "exactly 123 files",
         "2,308 rows",
-        "28 verified public outputs",
-        "staged_not_published",
+        "58 verified public outputs",
+        "authorized_for_repository_commit",
         "CITATION.cff",
         "intentionally omits a repository URL, release date, and DOI",
         "(cd release/v1.2.0 && sha256sum --check SHA256SUMS)",
     )
     if any(fragment not in readme for fragment in citation_readme_fragments):
-        raise RuntimeError("README does not match the staged v1.2.0 citation policy")
+        raise RuntimeError("README does not match the v1.3.0 citation policy")
     if (
         "Adaptive Reconstruction Split Computing aggregate results and analyses "
         "(version 1.2.0)" not in result_license
@@ -678,15 +732,15 @@ def _verify_disclosure(read_bytes: Callable[[str], bytes]) -> dict[str, Any]:
             raise RuntimeError(f"Result license must name the reviewed file exactly once: {relative}")
     required_notice_fragments = {
         "LICENSE-RESULTS": (
-            "15 files are staged locally for review and have not been published",
+            "The listed results are distributed as repository files",
             "No third-party permission or waiver is claimed",
         ),
         "THIRD_PARTY_DATA.md": (
-            "15-file CC BY 4.0 scope is staged locally and has not been published",
+            "The exact CC BY 4.0 scope is listed in LICENSE-RESULTS",
             "No third-party permission or waiver is claimed",
         ),
         "README.md": (
-            "15-file disclosure is staged locally and has not been published",
+            "The licensed results are distributed as repository files",
             "does not claim third-party permission",
         ),
     }
@@ -724,6 +778,9 @@ def _verify_disclosure(read_bytes: Callable[[str], bytes]) -> dict[str, Any]:
         )
         _validate_rows(relative, rows)
         verified_rows += len(rows)
+    for relative, digest in V13_CHECKSUMS.items():
+        if _sha256(read_bytes(relative)) != digest:
+            raise RuntimeError(f"v1.3.0 payload checksum differs: {relative}")
     release_rows, release_result_specs = _verify_release(read_bytes)
     verified_rows += release_rows
     for relative in sorted(PUBLIC_OUTPUTS):

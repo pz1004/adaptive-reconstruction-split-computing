@@ -1,0 +1,14 @@
+{
+  "2": {
+    "sha256": "d720f5755b6d9bbcaccfbc091ec904bd5268c05189f060f831056f264003103a",
+    "file": "figure-02-accuracy-vs-adaptive-ssim.pdf"
+  },
+  "3": {
+    "sha256": "979dad37ccd036db5707eaf5ab1daf6d74a36ef8522cc85cfe35f606ea21222a",
+    "file": "figure-03-attacker-budget-sensitivity.pdf"
+  },
+  "5": {
+    "sha256": "b1aaf7f7eea50ce2341692743a0a2d171be0788f3200c43638b321f5f102e0dc",
+    "file": "figure-05-compute-tradeoffs.pdf"
+  }
+}

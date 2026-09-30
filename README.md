@@ -1,8 +1,8 @@
 # Adaptive Reconstruction Split Computing
 
-This is the official repository for th manuscript on reconstruction risk, task utility, and bounded component compute in split computing. It contains the implementation, frozen protocol records, public verification tools, and aggregate numeric evidence.
+This is the official repository for the manuscript on reconstruction risk, task utility, and bounded component compute in split computing. It contains the implementation, frozen protocol records, public verification tools, and aggregate numeric evidence.
 
-The public boundary is exactly 92 files. It discloses 13 aggregate CSV tables with 2,308 rows: 1,752 rows from the validation-frozen reconstruction, semantic, and auxiliary-budget study, plus 556 benchmark and component-compute rows. 
+The public boundary is exactly 123 files. It discloses 13 aggregate CSV tables with 2,308 rows: 1,752 rows from the validation-frozen reconstruction, semantic, and auxiliary-budget study, plus 556 benchmark and component-compute rows.
 
 ## Study scope
 
@@ -25,7 +25,19 @@ The empirical study evaluates reconstruction exposure and task utility for four 
 - `release/v1.2.0/`: eight supplemental aggregate tables, two compute-analysis JSON files, seven schemas, release notes, and checksums.
 - `tests/`, `.github/workflows/public-checks.yml`, and `run_public_checks.sh`: the public regression and boundary checks.
 
-`results/protocol/disclosure_manifest.json` fixes the exact 92-path allowlist, all 13 CSV schemas and row counts, 28 verified public outputs, the 15-file Creative Commons license scope, and the unpublished v1.2.0 state.
+`results/protocol/disclosure_manifest.json` fixes the exact 123-path allowlist, all 13 CSV schemas and row counts, 58 verified public outputs, the exact Creative Commons license scope, and the authorized v1.3.0 repository-commit state.
+
+## Aggregate reproduction (v1.3.0)
+
+[`release/v1.3.0`](release/v1.3.0) contains seven input tables, full-precision Tables S1–S3, expected budget/retraining/compute outputs, diagnostic aggregates, pinned dependencies and offline reproduction code for Figures 2, 3 and 5. Its 556 input rows overlap earlier tables and do not represent new experimental runs. The 2,308-row count above describes the original 13-table disclosure; it excludes these reproduction copies and derived tables.
+
+```bash
+python -m pip install -r release/v1.3.0/requirements.txt
+python release/v1.3.0/reproduce.py --output-dir /tmp/eng-reproduction --check
+(cd release/v1.3.0 && sha256sum --check SHA256SUMS)
+```
+
+Use Python 3.11. After dependency installation this command runs offline on CPU. It reproduces calculations from aggregate metrics; it does not regenerate predictions, authenticate experiment execution or repeat timing measurements. The journal supplement is one PDF containing Tables S1–S3. See the directory README for its exact coverage and file index. Historical `release/v1.2.0` bytes, including its original staging notes, are retained unchanged.
 
 ## Environment
 
@@ -52,7 +64,7 @@ Synthetic samples are available only through explicit test flags and are never a
 
 ## Public verification
 
-From a checkout containing only the 92 allowed files:
+From a checkout containing only the 123 allowed files:
 
 ```bash
 ./run_public_checks.sh
@@ -94,7 +106,7 @@ python scripts/run_revision_pipeline.py init \
   --revision-root work/adaptive-reconstruction
 ```
 
-Experiment execution requires separately acquired datasets, suitable compute, and locally generated private artifacts. The aggregate tables are sufficient to inspect the disclosed results but not to regenerate private raw-evidence audits or manuscript figures.
+Experiment execution requires separately acquired datasets, suitable compute, and locally generated private artifacts. The aggregate tables are sufficient to inspect the disclosed results but not to regenerate private raw-evidence audits; v1.3.0 reproduces Figures 2, 3 and 5 from aggregate metrics.
 
 ## Excluded material
 
@@ -109,13 +121,11 @@ Never load an untrusted `.pt` file with this code. The manuscript-bound compatib
 ## Licensing
 
 - Authored scripts, source modules, schemas, tests, and documentation are licensed under the MIT License in `LICENSE`.
-- The 13 CSV tables and the two compute-analysis JSON files named in `LICENSE-RESULTS` are licensed under CC BY 4.0 only to the extent the contributors own the applicable rights.
+- The aggregate tables, diagnostics and numeric analysis files named in `LICENSE-RESULTS` are licensed under CC BY 4.0 only to the extent the contributors own the applicable rights.
 - Third-party datasets, labels, images, model weights, logos, templates, and assets are not covered by either grant and are not redistributed.
 
-The Creative Commons grant does not claim third-party permission, supersede dataset terms, or license an underlying dataset. The new 15-file disclosure is staged locally and has not been published.
+The Creative Commons grant does not claim third-party permission, supersede dataset terms, or license an underlying dataset. The licensed results are distributed as repository files.
 
 ## Citation and release status
 
-`CITATION.cff` records software version `1.2.0` but intentionally omits a repository URL, release date, and DOI. Those fields must not be added until a remote and release are separately approved.
-
-Current state: `staged_not_published`. No initial commit, remote, tag, push, GitHub release, upload, DOI registration, manuscript URL replacement, or journal submission is represented by this repository state. After human review of all 92 staged files, each publication action requires separate authorization.
+`CITATION.cff` records software version `1.3.0` and intentionally omits a repository URL, release date, and DOI. The disclosure state `authorized_for_repository_commit` records the authorization for a normal commit and push of the exact file inventory. This version is distributed through the existing repository. No GitHub Release, tag, DOI or journal submission is created by this update.

@@ -139,6 +139,7 @@ PUBLIC_SCRIPTS = (
     "scripts/verify_budget_figure.py",
 )
 PUBLIC_TESTS = (
+    "tests/test_aggregate_reproduction.py",
     "tests/__init__.py",
     "tests/test_budget_result_audit.py",
     "tests/test_code_scripts.py",
@@ -181,9 +182,60 @@ CORRECTED_PROMOTION_REPLACEABLE_OUTPUTS = frozenset(
         "results/protocol/disclosure_manifest.json",
     }
 )
+V13_FILES = ('release/v1.3.0/DATA_DICTIONARY.md',
+ 'release/v1.3.0/README.md',
+ 'release/v1.3.0/SHA256SUMS',
+ 'release/v1.3.0/analysis_contract.json',
+ 'release/v1.3.0/budget_figure.py',
+ 'release/v1.3.0/compute_core.py',
+ 'release/v1.3.0/diagnostics/known-offset-diagnostic.csv',
+ 'release/v1.3.0/diagnostics/known-offset-diagnostic.json',
+ 'release/v1.3.0/expected/attacker_restart_summaries.csv',
+ 'release/v1.3.0/expected/benchmark_budget_paired_effects.csv',
+ 'release/v1.3.0/expected/budget_method_summaries.csv',
+ 'release/v1.3.0/expected/compute_group_summary.csv',
+ 'release/v1.3.0/expected/compute_interface_effects.csv',
+ 'release/v1.3.0/expected/compute_paired_effects.csv',
+ 'release/v1.3.0/expected/figure_signatures.json',
+ 'release/v1.3.0/expected/figure_sources.json',
+ 'release/v1.3.0/expected/laplace-single-release-statistics.csv',
+ 'release/v1.3.0/expected/supplementary-statistics.csv',
+ 'release/v1.3.0/inputs/attacker_restart_rows.csv',
+ 'release/v1.3.0/inputs/benchmark_budget_conditions.csv',
+ 'release/v1.3.0/inputs/compute_condition_metrics.csv',
+ 'release/v1.3.0/inputs/laplace_draw_metrics.csv',
+ 'release/v1.3.0/inputs/laplace_run_metrics.csv',
+ 'release/v1.3.0/inputs/primary_seed_results.csv',
+ 'release/v1.3.0/inputs/semantic_seed_results.csv',
+ 'release/v1.3.0/primary_figure.py',
+ 'release/v1.3.0/provenance.json',
+ 'release/v1.3.0/reproduce.py',
+ 'release/v1.3.0/requirements.txt',
+ 'release/v1.3.0/statistics_core.py')
+V13_LICENSE_SCOPE = ('release/v1.3.0/diagnostics/known-offset-diagnostic.csv',
+ 'release/v1.3.0/diagnostics/known-offset-diagnostic.json',
+ 'release/v1.3.0/expected/attacker_restart_summaries.csv',
+ 'release/v1.3.0/expected/benchmark_budget_paired_effects.csv',
+ 'release/v1.3.0/expected/budget_method_summaries.csv',
+ 'release/v1.3.0/expected/compute_group_summary.csv',
+ 'release/v1.3.0/expected/compute_interface_effects.csv',
+ 'release/v1.3.0/expected/compute_paired_effects.csv',
+ 'release/v1.3.0/expected/figure_signatures.json',
+ 'release/v1.3.0/expected/figure_sources.json',
+ 'release/v1.3.0/expected/laplace-single-release-statistics.csv',
+ 'release/v1.3.0/expected/supplementary-statistics.csv',
+ 'release/v1.3.0/inputs/attacker_restart_rows.csv',
+ 'release/v1.3.0/inputs/benchmark_budget_conditions.csv',
+ 'release/v1.3.0/inputs/compute_condition_metrics.csv',
+ 'release/v1.3.0/inputs/laplace_draw_metrics.csv',
+ 'release/v1.3.0/inputs/laplace_run_metrics.csv',
+ 'release/v1.3.0/inputs/primary_seed_results.csv',
+ 'release/v1.3.0/inputs/semantic_seed_results.csv')
+
 RESULT_LICENSE_SCOPE = tuple(
     sorted(
         set(RESULT_SPECS)
+        | set(V13_LICENSE_SCOPE)
         | {
             f"{PUBLIC_RELEASE_ROOT}/analysis/compute_analysis.json",
             f"{PUBLIC_RELEASE_ROOT}/analysis/compute_claim_audit.json",
@@ -191,18 +243,18 @@ RESULT_LICENSE_SCOPE = tuple(
     )
 )
 RELEASE_DECISION = {
-    "status": "staged_not_published",
-    "staged_on": "2026-08-30",
+    "status": "authorized_for_repository_commit",
+    "staged_on": "2026-09-30",
     "scope": list(RESULT_LICENSE_SCOPE),
     "license": "CC-BY-4.0 for contributor-owned rights only",
-    "publication_authorized": False,
+    "publication_authorized": True,
     "third_party_permission_claimed": False,
     "third_party_terms_superseded": False,
 }
 RELEASE_STATE = {
-    "version": "1.2.0",
-    "path": PUBLIC_RELEASE_ROOT,
-    "status": "staged_not_published",
+    "version": "1.3.0",
+    "path": "release/v1.3.0",
+    "status": "authorized_for_repository_commit",
     "release_url": None,
     "release_date": None,
     "doi": None,
@@ -216,6 +268,7 @@ EXPECTED_PUBLIC_OUTPUTS = frozenset(
         "results/protocol/frozen_selection_lock.json",
     }
     | set(PUBLIC_RELEASE_FILES)
+    | set(V13_FILES)
 )
 
 
@@ -241,6 +294,7 @@ def public_allowlist() -> list[str]:
         | set(RESULT_SPECS)
         | set(PROTOCOL_OUTPUTS)
         | set(PUBLIC_RELEASE_FILES)
+        | set(V13_FILES)
     )
 
 
@@ -527,6 +581,8 @@ def render_from_private_sources() -> dict[str, bytes]:
         }
     )
 
+    outputs.update({relative: (PROJECT_ROOT / relative).read_bytes() for relative in V13_FILES})
+
     source_inputs = {
         role: {"sha256": sha256_file(path), "size_bytes": path.stat().st_size}
         for role, path in sorted(PRIVATE_SOURCES.items())
@@ -541,7 +597,7 @@ def render_from_private_sources() -> dict[str, bytes]:
         "schema_version": 3,
         "repository_name": "adaptive-reconstruction-split-computing",
         "repository_description": "Companion code and aggregate evidence for the Eng reconstruction-utility-compute study in split computing.",
-        "disclosure_date": "2026-08-30",
+        "disclosure_date": "2026-09-30",
         "result_row_count": sum(spec[0] for spec in RESULT_SPECS.values()),
         "base_result_row_count": sum(spec[0] for spec in BASE_RESULT_SPECS.values()),
         "supplemental_result_row_count": sum(
@@ -599,9 +655,9 @@ def verify_public_outputs() -> dict[str, Any]:
     if manifest.get("public_allowlist") != public_allowlist():
         raise RuntimeError("Public allowlist differs from the declared repository boundary")
     if manifest.get("release_decision") != RELEASE_DECISION:
-        raise RuntimeError("Public release decision differs from the staged unpublished boundary")
+        raise RuntimeError("Public release decision differs from the authorized repository-commit boundary")
     if manifest.get("release") != RELEASE_STATE:
-        raise RuntimeError("Public v1.2.0 release state differs from the staged unpublished boundary")
+        raise RuntimeError("Public v1.3.0 release state differs from the authorized repository-commit boundary")
     if "historical_protected_updates" in manifest:
         raise RuntimeError("Public disclosure manifest cannot authorize protected-file updates")
     if manifest.get("result_table_counts") != {
@@ -609,7 +665,7 @@ def verify_public_outputs() -> dict[str, Any]:
     }:
         raise RuntimeError("Public disclosure table counts differ from the 13-table policy")
     if set(manifest.get("public_outputs", {})) != EXPECTED_PUBLIC_OUTPUTS:
-        raise RuntimeError("Public disclosure output set differs from the fixed 28-output policy")
+        raise RuntimeError("Public disclosure output set differs from the fixed output policy")
     if manifest.get("licenses") != {
         "authored_code_schemas_and_documentation": "MIT",
         "contributor_owned_numeric_results_and_compute_analysis": "CC-BY-4.0",
@@ -620,6 +676,10 @@ def verify_public_outputs() -> dict[str, Any]:
     for relative, (count, fields) in BASE_RESULT_SPECS.items():
         rows = _read_public_csv(PROJECT_ROOT / relative, fields, count)
         verified_rows += len(rows)
+    from scripts.audit_public_repository import V13_CHECKSUMS
+    for relative, digest in V13_CHECKSUMS.items():
+        if sha256_file(PROJECT_ROOT / relative) != digest:
+            raise RuntimeError(f"v1.3.0 payload checksum differs: {relative}")
     release_report = validate_public_release(PROJECT_ROOT / PUBLIC_RELEASE_ROOT)
     verified_rows += int(release_report["aggregate_rows"])
     for relative, record in manifest.get("public_outputs", {}).items():

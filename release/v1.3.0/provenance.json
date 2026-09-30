@@ -1,0 +1,141 @@
+{
+  "base_commit": "521047369af7dc6e45a93267780813b776ac469d",
+  "inputs": {
+    "primary_seed_results.csv": {
+      "sha256": "4a1cec03db1db89a9e2b010ebeeff530a6f88fe3d23e3601db19553ce96b266d",
+      "rows": 80,
+      "fields": [
+        "run_id",
+        "dataset",
+        "split_point",
+        "seed",
+        "method",
+        "selected_defense_value",
+        "accuracy_percentage_points",
+        "utility_loss_vs_standard_percentage_points",
+        "test_utility_loss_exceeds_validation_limit",
+        "worst_case_ssim",
+        "strongest_attacker",
+        "validation_selected_attacker",
+        "record_passed"
+      ],
+      "origin": "retained_aggregate_metrics"
+    },
+    "semantic_seed_results.csv": {
+      "sha256": "d2c3bd11ebbc9277ee8fac7b66ce2b5e3edd3959be3aa0b6a1fc3ef2971eca90",
+      "rows": 40,
+      "fields": [
+        "run_id",
+        "dataset",
+        "split_point",
+        "seed",
+        "method",
+        "selected_defense_value",
+        "macro_auroc",
+        "macro_balanced_accuracy",
+        "attribute_auroc_sample_sd",
+        "attribute_balanced_accuracy_sample_sd",
+        "semantic_draw_count",
+        "semantic_draw_seeds",
+        "record_passed"
+      ],
+      "origin": "retained_aggregate_metrics"
+    },
+    "benchmark_budget_conditions.csv": {
+      "sha256": "6d5961a3bae709f1d98e1630bd1e1f90736ae9c06f93199c58685c35f6a8e9c7",
+      "rows": 120,
+      "fields": [
+        "run_id",
+        "dataset",
+        "interface",
+        "method",
+        "model_seed",
+        "attacker_training_seed",
+        "auxiliary_fraction",
+        "auxiliary_examples",
+        "strongest_attacker",
+        "worst_case_ssim",
+        "origin"
+      ],
+      "origin": "retained_aggregate_metrics"
+    },
+    "attacker_restart_rows.csv": {
+      "sha256": "b1da933c28665b186b27f081401c9a5445489acb4f6224d8c620c16b07670465",
+      "rows": 96,
+      "fields": [
+        "run_id",
+        "dataset",
+        "interface",
+        "method",
+        "architecture",
+        "model_seed",
+        "attacker_training_seed",
+        "mse",
+        "psnr",
+        "ssim",
+        "lpips",
+        "origin"
+      ],
+      "origin": "retained_aggregate_metrics"
+    },
+    "compute_condition_metrics.csv": {
+      "sha256": "beab01892dd8505e889b4f387ebd395efb6495345b15c171fbb6da9184c74f25",
+      "rows": 160,
+      "fields": [
+        "condition_id",
+        "dataset",
+        "interface",
+        "method",
+        "model_seed",
+        "batch_size",
+        "cpu_encoder_plus_defense_latency_seconds",
+        "cpu_encoder_plus_defense_throughput_per_second",
+        "defense_only_latency_seconds",
+        "defense_only_throughput_per_second",
+        "gpu_classifier_latency_seconds",
+        "gpu_classifier_throughput_per_second",
+        "summed_component_time_seconds",
+        "isolated_cpu_rss_delta_bytes",
+        "cuda_peak_allocation_bytes",
+        "static_edge_encoder_bytes",
+        "static_cloud_classifier_bytes",
+        "static_defense_bytes",
+        "static_total_bytes",
+        "attempt_count"
+      ],
+      "origin": "retained_aggregate_metrics"
+    },
+    "laplace_draw_metrics.csv": {
+      "sha256": "b60fc38b2cf5566c3f78975e1c81d85100ce8e054b3fbf60b3390b48e246b023",
+      "rows": 50,
+      "fields": [
+        "dataset",
+        "interface",
+        "model_seed",
+        "draw_seed",
+        "macro_auroc",
+        "macro_balanced_accuracy",
+        "source_sha256"
+      ],
+      "origin": "posthoc_retained_draw_analysis"
+    },
+    "laplace_run_metrics.csv": {
+      "sha256": "df9c810a8c476f5920c6615ccdc4a92e0706b28c933db98f4be417a1f103b395",
+      "rows": 10,
+      "fields": [
+        "dataset",
+        "interface",
+        "model_seed",
+        "draw_count",
+        "attribute_count",
+        "single_release_macro_auroc",
+        "five_realization_macro_auroc",
+        "single_release_macro_balanced_accuracy",
+        "five_realization_macro_balanced_accuracy",
+        "source_sha256"
+      ],
+      "origin": "posthoc_retained_draw_analysis"
+    }
+  },
+  "analysis_contract_sha256": "45124d8e98488df044c8eb672dd9e19a42e04a7320106b4319de9ec47ad1d277"
+}

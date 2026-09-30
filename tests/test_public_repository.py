@@ -38,7 +38,7 @@ title: "Adaptive Reconstruction Split Computing"
 authors:
   - family-names: "Jang"
     given-names: "Sooyoung"
-version: 1.2.0
+version: 1.3.0
 license: MIT
 """
 
@@ -47,8 +47,8 @@ def test_public_outputs_have_exact_counts_schemas_and_hashes() -> None:
     result = verify_public_outputs()
     assert result["passed"] is True
     assert result["result_rows_verified"] == 2308
-    assert result["public_outputs_verified"] == 28
-    assert result["allowlist_files"] == 92
+    assert result["public_outputs_verified"] == 58
+    assert result["allowlist_files"] == 123
 
 
 def test_disclosure_manifest_has_exact_allowlist_and_licenses() -> None:
@@ -60,7 +60,7 @@ def test_disclosure_manifest_has_exact_allowlist_and_licenses() -> None:
     assert manifest["base_result_row_count"] == 1752
     assert manifest["supplemental_result_row_count"] == 556
     assert len(manifest["result_table_counts"]) == 13
-    assert len(manifest["public_outputs"]) == 28
+    assert len(manifest["public_outputs"]) == 58
     assert manifest["semantic_attribute_boundary"] == {
         "published_indices": [index for index in range(40) if index != 31],
         "excluded_index": 31,
@@ -74,17 +74,17 @@ def test_disclosure_manifest_has_exact_allowlist_and_licenses() -> None:
     assert manifest["schema_version"] == 3
     assert manifest["repository_name"] == "adaptive-reconstruction-split-computing"
     assert "historical_protected_updates" not in manifest
-    assert manifest["disclosure_date"] == "2026-08-30"
+    assert manifest["disclosure_date"] == "2026-09-30"
     assert manifest["release"] == {
-        "version": "1.2.0",
-        "path": "release/v1.2.0",
-        "status": "staged_not_published",
+        "version": "1.3.0",
+        "path": "release/v1.3.0",
+        "status": "authorized_for_repository_commit",
         "release_url": None,
         "release_date": None,
         "doi": None,
     }
-    assert len(manifest["release_decision"]["scope"]) == 15
-    assert manifest["release_decision"]["publication_authorized"] is False
+    assert len(manifest["release_decision"]["scope"]) == 34
+    assert manifest["release_decision"]["publication_authorized"] is True
     assert manifest["release_decision"] == EXPECTED_RELEASE_DECISION
 
 
@@ -117,7 +117,7 @@ def test_citation_metadata_is_exact_and_tampering_is_rejected() -> None:
 
     payloads = {path: (ROOT / path).read_bytes() for path in EXPECTED_ALLOWLIST}
     payloads["CITATION.cff"] = payloads["CITATION.cff"].replace(
-        b"\nversion: 1.2.0\n",
+        b"\nversion: 1.3.0\n",
         b"\nversion: 1.2.1\n",
     )
     with pytest.raises(RuntimeError, match="citation metadata"):
@@ -229,7 +229,7 @@ def test_public_auditor_accepts_git_checkout_without_private_paths(tmp_path: Pat
     assert completed.returncode == 0, completed.stderr
     report = json.loads(completed.stdout)
     assert report["passed"] is True
-    assert report["candidate_files"] == 92
+    assert report["candidate_files"] == 123
     assert report["ignored_boundary_paths_verified"] == 12
 
 

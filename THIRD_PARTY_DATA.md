@@ -16,8 +16,7 @@ non-redistribution measure, not anonymization. Index 31, the supervised task
 target, is excluded from that table.
 
 The MIT grant applies to authored code, schemas, tests, and documentation. The
-CC BY 4.0 grant applies only to the 13 aggregate CSV tables and two compute-
-analysis JSON files named in `LICENSE-RESULTS`, and only to rights the
+CC BY 4.0 grant applies only to the aggregate tables, diagnostics and numeric analysis files named in `LICENSE-RESULTS`, and only to rights the
 contributors can grant. Neither license grants rights to third-party data or
 assets.
 
@@ -27,8 +26,8 @@ determination that aggregate measurements are outside that clause. CC BY 4.0
 permits commercial reuse only for rights the licensor can grant; it does not
 override the CelebA terms.
 
-The 15-file CC BY 4.0 scope is staged locally and has not been published. This
-staging state is not a representation that MMLAB, image owners, or another
+The exact CC BY 4.0 scope is listed in LICENSE-RESULTS. Distribution as repository
+files is not a representation that MMLAB, image owners, or another
 rights holder authorized commercial use. No third-party permission or waiver is
 claimed, no third-party terms are superseded, and recipients remain responsible
 for rights outside the contributors' license grant.

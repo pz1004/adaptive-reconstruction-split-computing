@@ -74,6 +74,7 @@ cd "${REPOSITORY_ROOT}"
 "${PYTHON_BIN}" scripts/audit_public_repository.py
 "${PYTHON_BIN}" -m compileall -q src scripts tests
 "${PYTHON_BIN}" -m pytest -q -p no:cacheprovider \
+  tests/test_aggregate_reproduction.py \
   tests/test_budget_result_audit.py \
   tests/test_code_scripts.py \
   tests/test_dataset_remedy.py \
