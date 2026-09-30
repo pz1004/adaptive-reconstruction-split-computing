@@ -82,7 +82,7 @@ BASE_RESULT_SPECS = {
     "results/raw/budget_cell_results.csv": (24, BUDGET_CELL_FIELDS),
     "results/raw/budget_attacker_results.csv": (48, BUDGET_ATTACKER_FIELDS),
 }
-PUBLIC_RELEASE_ROOT = "release/v1.2.0"
+PUBLIC_RELEASE_ROOT = "release/v1.3.0"
 RELEASE_RESULT_SPECS = {
     f"{PUBLIC_RELEASE_ROOT}/{relative}": spec
     for relative, spec in RELEASE_CSV_SPECS.items()
@@ -185,11 +185,14 @@ CORRECTED_PROMOTION_REPLACEABLE_OUTPUTS = frozenset(
 V13_FILES = ('release/v1.3.0/DATA_DICTIONARY.md',
  'release/v1.3.0/README.md',
  'release/v1.3.0/SHA256SUMS',
+ 'release/v1.3.0/analysis/compute_analysis.json',
+ 'release/v1.3.0/analysis/compute_claim_audit.json',
  'release/v1.3.0/analysis_contract.json',
  'release/v1.3.0/budget_figure.py',
  'release/v1.3.0/compute_core.py',
  'release/v1.3.0/diagnostics/known-offset-diagnostic.csv',
  'release/v1.3.0/diagnostics/known-offset-diagnostic.json',
+ 'release/v1.3.0/evidence/benchmark_budget_attacker_rows.csv',
  'release/v1.3.0/expected/attacker_restart_summaries.csv',
  'release/v1.3.0/expected/benchmark_budget_paired_effects.csv',
  'release/v1.3.0/expected/budget_method_summaries.csv',
@@ -211,6 +214,13 @@ V13_FILES = ('release/v1.3.0/DATA_DICTIONARY.md',
  'release/v1.3.0/provenance.json',
  'release/v1.3.0/reproduce.py',
  'release/v1.3.0/requirements.txt',
+ 'release/v1.3.0/schemas/attacker_restart_rows.schema.json',
+ 'release/v1.3.0/schemas/attacker_restart_summaries.schema.json',
+ 'release/v1.3.0/schemas/benchmark_budget_attacker_rows.schema.json',
+ 'release/v1.3.0/schemas/benchmark_budget_conditions.schema.json',
+ 'release/v1.3.0/schemas/benchmark_budget_paired_effects.schema.json',
+ 'release/v1.3.0/schemas/benchmark_v1_tables.schema.json',
+ 'release/v1.3.0/schemas/eng_compute_v1.schema.json',
  'release/v1.3.0/statistics_core.py')
 V13_LICENSE_SCOPE = ('release/v1.3.0/diagnostics/known-offset-diagnostic.csv',
  'release/v1.3.0/diagnostics/known-offset-diagnostic.json',
@@ -581,7 +591,11 @@ def render_from_private_sources() -> dict[str, bytes]:
         }
     )
 
-    outputs.update({relative: (PROJECT_ROOT / relative).read_bytes() for relative in V13_FILES})
+    for relative in V13_FILES:
+        payload = (PROJECT_ROOT / relative).read_bytes()
+        if relative in outputs and outputs[relative] != payload:
+            raise RuntimeError(f"Scientific bytes differ from private regeneration: {relative}")
+        outputs[relative] = payload
 
     source_inputs = {
         role: {"sha256": sha256_file(path), "size_bytes": path.stat().st_size}

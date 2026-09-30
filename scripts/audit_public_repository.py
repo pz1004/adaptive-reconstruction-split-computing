@@ -41,25 +41,23 @@ EXPECTED_ALLOWLIST = frozenset(
         "results/raw/primary_seed_results.csv",
         "results/raw/semantic_attribute_results.csv",
         "results/raw/semantic_seed_results.csv",
-        "release/v1.2.0/RELEASE_NOTES.md",
-        "release/v1.2.0/SHA256SUMS",
-        "release/v1.2.0/analysis/compute_analysis.json",
-        "release/v1.2.0/analysis/compute_claim_audit.json",
-        "release/v1.2.0/results/attacker_restart_rows.csv",
-        "release/v1.2.0/results/attacker_restart_summaries.csv",
-        "release/v1.2.0/results/benchmark_budget_attacker_rows.csv",
-        "release/v1.2.0/results/benchmark_budget_conditions.csv",
-        "release/v1.2.0/results/benchmark_budget_paired_effects.csv",
-        "release/v1.2.0/results/compute_group_summary.csv",
-        "release/v1.2.0/results/compute_interface_effects.csv",
-        "release/v1.2.0/results/compute_paired_effects.csv",
-        "release/v1.2.0/schemas/attacker_restart_rows.schema.json",
-        "release/v1.2.0/schemas/attacker_restart_summaries.schema.json",
-        "release/v1.2.0/schemas/benchmark_budget_attacker_rows.schema.json",
-        "release/v1.2.0/schemas/benchmark_budget_conditions.schema.json",
-        "release/v1.2.0/schemas/benchmark_budget_paired_effects.schema.json",
-        "release/v1.2.0/schemas/benchmark_v1_tables.schema.json",
-        "release/v1.2.0/schemas/eng_compute_v1.schema.json",
+        "release/v1.3.0/analysis/compute_analysis.json",
+        "release/v1.3.0/analysis/compute_claim_audit.json",
+        "release/v1.3.0/inputs/attacker_restart_rows.csv",
+        "release/v1.3.0/expected/attacker_restart_summaries.csv",
+        "release/v1.3.0/evidence/benchmark_budget_attacker_rows.csv",
+        "release/v1.3.0/inputs/benchmark_budget_conditions.csv",
+        "release/v1.3.0/expected/benchmark_budget_paired_effects.csv",
+        "release/v1.3.0/expected/compute_group_summary.csv",
+        "release/v1.3.0/expected/compute_interface_effects.csv",
+        "release/v1.3.0/expected/compute_paired_effects.csv",
+        "release/v1.3.0/schemas/attacker_restart_rows.schema.json",
+        "release/v1.3.0/schemas/attacker_restart_summaries.schema.json",
+        "release/v1.3.0/schemas/benchmark_budget_attacker_rows.schema.json",
+        "release/v1.3.0/schemas/benchmark_budget_conditions.schema.json",
+        "release/v1.3.0/schemas/benchmark_budget_paired_effects.schema.json",
+        "release/v1.3.0/schemas/benchmark_v1_tables.schema.json",
+        "release/v1.3.0/schemas/eng_compute_v1.schema.json",
         "run_public_checks.sh",
         "scripts/analyze_budget_results.py",
         "scripts/analyze_revision.py",
@@ -116,13 +114,16 @@ EXPECTED_ALLOWLIST = frozenset(
 )
 
 V13_CHECKSUMS = {'release/v1.3.0/DATA_DICTIONARY.md': 'c6ab93a52c632fcfbc8d6183f9ce87c9c63fc344d2ca9960d79d3adef8b25cc3',
- 'release/v1.3.0/README.md': '00fe8309d7d7ecbc71206404c95a032a4be0ee79193c557d57b6f0621420d824',
- 'release/v1.3.0/SHA256SUMS': '7b80ff733985ff12eb2a5e014ec19a307ea78628926cd6a443d7bbd7f6f364f9',
+ 'release/v1.3.0/README.md': '9594886e7161a255b3ea9df5eb8f5a250ee75432d4b2089c3fe89514ceee8abd',
+ 'release/v1.3.0/SHA256SUMS': 'fdf5ac093f7bea5b6a255b27e1ddf7669da8d966db633aab1b1606abc833ec4d',
+ 'release/v1.3.0/analysis/compute_analysis.json': '262741aee3a21052f7c3d7e901f4c5943e0ac26b09ad41d39679bb9e9a4a67f1',
+ 'release/v1.3.0/analysis/compute_claim_audit.json': '001a6e433d6d3a1749224bfe8533ee1313690e2e78c31f0f2a7c62f36fcd3bd6',
  'release/v1.3.0/analysis_contract.json': '45124d8e98488df044c8eb672dd9e19a42e04a7320106b4319de9ec47ad1d277',
  'release/v1.3.0/budget_figure.py': '49bb7845009a0828fb3ef8667dee1f5584fa6d7d130156ef007ed68fd76f09ae',
  'release/v1.3.0/compute_core.py': 'e1a753a324ccfb00335b4cd9b5a1c323f159a2e7468100695a3802a9eb88de3d',
  'release/v1.3.0/diagnostics/known-offset-diagnostic.csv': '70862589f7e788891ad8d810cbef8d54757108b6ac9169eb0aee447f997a937b',
  'release/v1.3.0/diagnostics/known-offset-diagnostic.json': '3679eb943b4fb948eb64f0941b1125c2609e4ffd2db9f70958ec1a95b3096089',
+ 'release/v1.3.0/evidence/benchmark_budget_attacker_rows.csv': '0523fb0265b21f7850742645d728441c21c63f847c941f63cfb41a469b79e49a',
  'release/v1.3.0/expected/attacker_restart_summaries.csv': '89cd56dbb25d57afac00e44012e1c87ecfd32e3c065313a24355c0379e890618',
  'release/v1.3.0/expected/benchmark_budget_paired_effects.csv': '8312b09c91612e77b1c35fd713e47ffecf85dfc5a122461ff0aa4ac26c7ce0dc',
  'release/v1.3.0/expected/budget_method_summaries.csv': 'd2c3fbb4ea925d063e04c5131aa571d8f603298af298e06d0bfe7b3788a37d34',
@@ -144,6 +145,13 @@ V13_CHECKSUMS = {'release/v1.3.0/DATA_DICTIONARY.md': 'c6ab93a52c632fcfbc8d6183f
  'release/v1.3.0/provenance.json': '5488e382fef513fe093d83dc258be7c2081e2d0d29f8ca13216ff6d9d18e5e19',
  'release/v1.3.0/reproduce.py': '8dac6400dda09011bbb29da676d9970bac78f0cab455cb000d2179003bc4925c',
  'release/v1.3.0/requirements.txt': '8ced0882fae5b9298075703d6456f46d729d3ad239034badf90f6bf6bf95aaf9',
+ 'release/v1.3.0/schemas/attacker_restart_rows.schema.json': '9a36bdd36307a32610a4980dfba9213d0e75ded5338771c1dda2fa6e12ee6dce',
+ 'release/v1.3.0/schemas/attacker_restart_summaries.schema.json': 'ce6985e37b110c0b9265bc34ce815bad8f4edd71b85d61a543455248dd7d81bf',
+ 'release/v1.3.0/schemas/benchmark_budget_attacker_rows.schema.json': '32b7203b5f3d606095c0a0f689ad971c86533aefcf835900c4a4bd06583babc6',
+ 'release/v1.3.0/schemas/benchmark_budget_conditions.schema.json': '2ab0feb1e3d5c3a6dc02fd2f8146671ba51b5ef655d365edb52eb703e0bb1471',
+ 'release/v1.3.0/schemas/benchmark_budget_paired_effects.schema.json': '8e6a8338fcbdd887b9935ce4ceb282c05a29dd50eeb21803e8ae2c576d74c715',
+ 'release/v1.3.0/schemas/benchmark_v1_tables.schema.json': '900ce37be4ff8df523ffa4a97888a5accd7098a297492dbb8b09e1ad360c08f3',
+ 'release/v1.3.0/schemas/eng_compute_v1.schema.json': '5e2603047b488be03c800de0c897ce0ac0134c44d8e546d684e42b2639f498a1',
  'release/v1.3.0/statistics_core.py': '48a62474afc81d7872d6a078bd3778501a9b39c9c77db44b78cfa9ced40ba617'}
 V13_FILES = frozenset(V13_CHECKSUMS)
 V13_LICENSE_SCOPE = ('release/v1.3.0/diagnostics/known-offset-diagnostic.csv',
@@ -217,39 +225,28 @@ RESULT_SPECS: dict[str, tuple[int, tuple[str, ...]]] = {
 }
 
 RELEASE_RESULT_COUNTS = {
-    "release/v1.2.0/results/attacker_restart_rows.csv": 96,
-    "release/v1.2.0/results/attacker_restart_summaries.csv": 32,
-    "release/v1.2.0/results/benchmark_budget_attacker_rows.csv": 240,
-    "release/v1.2.0/results/benchmark_budget_conditions.csv": 120,
-    "release/v1.2.0/results/benchmark_budget_paired_effects.csv": 12,
-    "release/v1.2.0/results/compute_group_summary.csv": 32,
-    "release/v1.2.0/results/compute_interface_effects.csv": 16,
-    "release/v1.2.0/results/compute_paired_effects.csv": 8,
+    "release/v1.3.0/inputs/attacker_restart_rows.csv": 96,
+    "release/v1.3.0/expected/attacker_restart_summaries.csv": 32,
+    "release/v1.3.0/evidence/benchmark_budget_attacker_rows.csv": 240,
+    "release/v1.3.0/inputs/benchmark_budget_conditions.csv": 120,
+    "release/v1.3.0/expected/benchmark_budget_paired_effects.csv": 12,
+    "release/v1.3.0/expected/compute_group_summary.csv": 32,
+    "release/v1.3.0/expected/compute_interface_effects.csv": 16,
+    "release/v1.3.0/expected/compute_paired_effects.csv": 8,
 }
 EXPECTED_RELEASE_CHECKSUMS = {
-    "RELEASE_NOTES.md": "cd07d1c9dbf55a3e63d8fcb0dbc7855637335572251949dcd2ff42a5a17fb911",
-    "analysis/compute_analysis.json": "262741aee3a21052f7c3d7e901f4c5943e0ac26b09ad41d39679bb9e9a4a67f1",
-    "analysis/compute_claim_audit.json": "001a6e433d6d3a1749224bfe8533ee1313690e2e78c31f0f2a7c62f36fcd3bd6",
-    "results/attacker_restart_rows.csv": "b1da933c28665b186b27f081401c9a5445489acb4f6224d8c620c16b07670465",
-    "results/attacker_restart_summaries.csv": "89cd56dbb25d57afac00e44012e1c87ecfd32e3c065313a24355c0379e890618",
-    "results/benchmark_budget_attacker_rows.csv": "0523fb0265b21f7850742645d728441c21c63f847c941f63cfb41a469b79e49a",
-    "results/benchmark_budget_conditions.csv": "6d5961a3bae709f1d98e1630bd1e1f90736ae9c06f93199c58685c35f6a8e9c7",
-    "results/benchmark_budget_paired_effects.csv": "8312b09c91612e77b1c35fd713e47ffecf85dfc5a122461ff0aa4ac26c7ce0dc",
-    "results/compute_group_summary.csv": "402f17a7ff585944f39f13011e0fecb9b79853cd45af0b04208edbbcf2c90681",
-    "results/compute_interface_effects.csv": "3f77831cb296e218030e4c46bbc02cbd7ac4249e2b834e4e43b7773ab5b79164",
-    "results/compute_paired_effects.csv": "1ab4edfab53bfefc40beb0022b25a31249a164cc4ca2f62e2950be3240b8c525",
-    "schemas/attacker_restart_rows.schema.json": "9a36bdd36307a32610a4980dfba9213d0e75ded5338771c1dda2fa6e12ee6dce",
-    "schemas/attacker_restart_summaries.schema.json": "ce6985e37b110c0b9265bc34ce815bad8f4edd71b85d61a543455248dd7d81bf",
-    "schemas/benchmark_budget_attacker_rows.schema.json": "32b7203b5f3d606095c0a0f689ad971c86533aefcf835900c4a4bd06583babc6",
-    "schemas/benchmark_budget_conditions.schema.json": "2ab0feb1e3d5c3a6dc02fd2f8146671ba51b5ef655d365edb52eb703e0bb1471",
-    "schemas/benchmark_budget_paired_effects.schema.json": "8e6a8338fcbdd887b9935ce4ceb282c05a29dd50eeb21803e8ae2c576d74c715",
-    "schemas/benchmark_v1_tables.schema.json": "900ce37be4ff8df523ffa4a97888a5accd7098a297492dbb8b09e1ad360c08f3",
-    "schemas/eng_compute_v1.schema.json": "5e2603047b488be03c800de0c897ce0ac0134c44d8e546d684e42b2639f498a1",
+    path.removeprefix("release/v1.3.0/"): digest
+    for path, digest in V13_CHECKSUMS.items() if not path.endswith("/SHA256SUMS")
 }
-RELEASE_FILES = frozenset(
-    {"release/v1.2.0/SHA256SUMS"}
-    | {f"release/v1.2.0/{relative}" for relative in EXPECTED_RELEASE_CHECKSUMS}
-)
+SCHEMA_LOCATIONS = {'results/attacker_restart_rows.csv': 'inputs/attacker_restart_rows.csv',
+ 'results/attacker_restart_summaries.csv': 'expected/attacker_restart_summaries.csv',
+ 'results/benchmark_budget_attacker_rows.csv': 'evidence/benchmark_budget_attacker_rows.csv',
+ 'results/benchmark_budget_conditions.csv': 'inputs/benchmark_budget_conditions.csv',
+ 'results/benchmark_budget_paired_effects.csv': 'expected/benchmark_budget_paired_effects.csv',
+ 'results/compute_group_summary.csv': 'expected/compute_group_summary.csv',
+ 'results/compute_interface_effects.csv': 'expected/compute_interface_effects.csv',
+ 'results/compute_paired_effects.csv': 'expected/compute_paired_effects.csv'}
+RELEASE_FILES = V13_FILES
 
 PUBLIC_OUTPUTS = frozenset(
     set(RESULT_SPECS)
@@ -286,8 +283,8 @@ EXPECTED_RELEASE_DECISION = {
         | set(V13_LICENSE_SCOPE)
         | set(RELEASE_RESULT_COUNTS)
         | {
-            "release/v1.2.0/analysis/compute_analysis.json",
-            "release/v1.2.0/analysis/compute_claim_audit.json",
+            "release/v1.3.0/analysis/compute_analysis.json",
+            "release/v1.3.0/analysis/compute_claim_audit.json",
         }
     ),
     "license": "CC-BY-4.0 for contributor-owned rights only",
@@ -536,21 +533,21 @@ def _parse_requirements(payload: bytes) -> dict[str, str]:
 def _verify_release(
     read_bytes: Callable[[str], bytes],
 ) -> tuple[int, dict[str, tuple[int, tuple[str, ...]]]]:
-    checksum_payload = read_bytes("release/v1.2.0/SHA256SUMS").decode("utf-8")
+    checksum_payload = read_bytes("release/v1.3.0/SHA256SUMS").decode("utf-8")
     checksum_rows: dict[str, str] = {}
     for line in checksum_payload.splitlines():
         try:
             digest, relative = line.split("  ", 1)
         except ValueError as error:
-            raise RuntimeError(f"Malformed v1.2.0 checksum row: {line!r}") from error
+            raise RuntimeError(f"Malformed v1.3.0 checksum row: {line!r}") from error
         if relative in checksum_rows or not SHA256_RE.fullmatch(digest):
-            raise RuntimeError(f"Invalid or duplicate v1.2.0 checksum row: {line!r}")
+            raise RuntimeError(f"Invalid or duplicate v1.3.0 checksum row: {line!r}")
         checksum_rows[relative] = digest
     if checksum_rows != EXPECTED_RELEASE_CHECKSUMS:
-        raise RuntimeError("v1.2.0 checksums differ from the independent fixed policy")
+        raise RuntimeError("v1.3.0 checksums differ from the independent fixed policy")
     for relative, digest in EXPECTED_RELEASE_CHECKSUMS.items():
-        if _sha256(read_bytes(f"release/v1.2.0/{relative}")) != digest:
-            raise RuntimeError(f"v1.2.0 payload checksum differs: {relative}")
+        if _sha256(read_bytes(f"release/v1.3.0/{relative}")) != digest:
+            raise RuntimeError(f"v1.3.0 payload checksum differs: {relative}")
 
     result_specs: dict[str, tuple[int, tuple[str, ...]]] = {}
     result_rows = 0
@@ -560,39 +557,41 @@ def _verify_release(
         fields = tuple(reader.fieldnames or ())
         rows = list(reader)
         if not fields or len(rows) != expected_count:
-            raise RuntimeError(f"v1.2.0 CSV schema/count differs: {relative}")
+            raise RuntimeError(f"v1.3.0 CSV schema/count differs: {relative}")
         if any(set(row) != set(fields) or None in row.values() for row in rows):
-            raise RuntimeError(f"Malformed v1.2.0 CSV row: {relative}")
+            raise RuntimeError(f"Malformed v1.3.0 CSV row: {relative}")
         result_specs[relative] = (expected_count, fields)
         result_rows += len(rows)
 
     schema_pairs = {
-        "release/v1.2.0/results/attacker_restart_rows.csv": "release/v1.2.0/schemas/attacker_restart_rows.schema.json",
-        "release/v1.2.0/results/attacker_restart_summaries.csv": "release/v1.2.0/schemas/attacker_restart_summaries.schema.json",
-        "release/v1.2.0/results/benchmark_budget_attacker_rows.csv": "release/v1.2.0/schemas/benchmark_budget_attacker_rows.schema.json",
-        "release/v1.2.0/results/benchmark_budget_conditions.csv": "release/v1.2.0/schemas/benchmark_budget_conditions.schema.json",
-        "release/v1.2.0/results/benchmark_budget_paired_effects.csv": "release/v1.2.0/schemas/benchmark_budget_paired_effects.schema.json",
+        "release/v1.3.0/inputs/attacker_restart_rows.csv": "release/v1.3.0/schemas/attacker_restart_rows.schema.json",
+        "release/v1.3.0/expected/attacker_restart_summaries.csv": "release/v1.3.0/schemas/attacker_restart_summaries.schema.json",
+        "release/v1.3.0/evidence/benchmark_budget_attacker_rows.csv": "release/v1.3.0/schemas/benchmark_budget_attacker_rows.schema.json",
+        "release/v1.3.0/inputs/benchmark_budget_conditions.csv": "release/v1.3.0/schemas/benchmark_budget_conditions.schema.json",
+        "release/v1.3.0/expected/benchmark_budget_paired_effects.csv": "release/v1.3.0/schemas/benchmark_budget_paired_effects.schema.json",
     }
     for csv_relative, schema_relative in schema_pairs.items():
+        historical = next(old for old, current in SCHEMA_LOCATIONS.items()
+                          if "release/v1.3.0/" + current == csv_relative)
         schema = json.loads(read_bytes(schema_relative))
         schema_fields = tuple(column["name"] for column in schema.get("columns", []))
         expected_count, expected_fields = result_specs[csv_relative]
         if (
             schema.get("schema_version") != 2
-            or schema.get("file") != csv_relative.removeprefix("release/v1.2.0/")
+            or schema.get("file") != historical
             or schema.get("rows") != expected_count
             or schema_fields != expected_fields
         ):
-            raise RuntimeError(f"v1.2.0 schema metadata differs: {schema_relative}")
+            raise RuntimeError(f"v1.3.0 schema metadata differs: {schema_relative}")
     benchmark_schema = json.loads(
-        read_bytes("release/v1.2.0/schemas/benchmark_v1_tables.schema.json")
+        read_bytes("release/v1.3.0/schemas/benchmark_v1_tables.schema.json")
     )
     if benchmark_schema.get("schema_version") != 2 or set(
         benchmark_schema.get("tables", {})
     ) != {Path(relative).name for relative in schema_pairs}:
-        raise RuntimeError("v1.2.0 benchmark schema differs from the fixed table set")
+        raise RuntimeError("v1.3.0 benchmark schema differs from the fixed table set")
     compute_schema = json.loads(
-        read_bytes("release/v1.2.0/schemas/eng_compute_v1.schema.json")
+        read_bytes("release/v1.3.0/schemas/eng_compute_v1.schema.json")
     )
     if (
         compute_schema.get("schema_version") != 1
@@ -603,9 +602,9 @@ def _verify_release(
         or compute_schema.get("multiplicity_tests") is not False
         or compute_schema.get("equivalence_claims") is not False
     ):
-        raise RuntimeError("v1.2.0 compute schema boundary differs")
-    analysis = json.loads(read_bytes("release/v1.2.0/analysis/compute_analysis.json"))
-    claims = json.loads(read_bytes("release/v1.2.0/analysis/compute_claim_audit.json"))
+        raise RuntimeError("v1.3.0 compute schema boundary differs")
+    analysis = json.loads(read_bytes("release/v1.3.0/analysis/compute_analysis.json"))
+    claims = json.loads(read_bytes("release/v1.3.0/analysis/compute_claim_audit.json"))
     if (
         analysis.get("protocol_id") != "eng_compute_v1"
         or analysis.get("condition_count") != 160
@@ -613,22 +612,13 @@ def _verify_release(
         or analysis.get("inferential_unit") != "model_seed"
         or analysis.get("technical_blocks_are_inferential_units") is not False
     ):
-        raise RuntimeError("v1.2.0 compute analysis boundary differs")
+        raise RuntimeError("v1.3.0 compute analysis boundary differs")
     if [(row.get("claim_id"), row.get("status")) for row in claims.get("claims", [])] != [
         ("E01", "supported"),
         ("E02", "supported"),
         ("E03", "supported"),
     ]:
-        raise RuntimeError("v1.2.0 compute claim audit differs")
-    notes = read_bytes("release/v1.2.0/RELEASE_NOTES.md").decode("utf-8")
-    for fragment in (
-        "local staging artifact",
-        "not a published GitHub release or live URL",
-        "V1.2.0_RELEASE_URL_REQUIRED",
-        "No tag, release, upload, DOI, or external service action has occurred.",
-    ):
-        if fragment not in notes:
-            raise RuntimeError(f"v1.2.0 release notes missing boundary: {fragment}")
+        raise RuntimeError("v1.3.0 compute claim audit differs")
     return result_rows, result_specs
 
 
@@ -680,7 +670,7 @@ def _verify_disclosure(read_bytes: Callable[[str], bytes]) -> dict[str, Any]:
     if citation != EXPECTED_CITATION_CFF:
         raise RuntimeError("Root citation metadata differs from the v1.3.0 repository-commit policy")
     if manifest["disclosure_date"] != "2026-09-30":
-        raise RuntimeError("Manifest disclosure date differs from the local staging date")
+        raise RuntimeError("Manifest disclosure date differs from the recorded disclosure date")
     workflow = read_bytes(".github/workflows/public-checks.yml").decode("utf-8")
     expected_actions = [
         "actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09",
@@ -712,19 +702,19 @@ def _verify_disclosure(read_bytes: Callable[[str], bytes]) -> dict[str, Any]:
     readme = read_bytes("README.md").decode("utf-8")
     citation_readme_fragments = (
         "# Adaptive Reconstruction Split Computing",
-        "exactly 123 files",
+        "exactly 114 files",
         "2,308 rows",
-        "58 verified public outputs",
+        "49 verified public outputs",
         "authorized_for_repository_commit",
         "CITATION.cff",
         "intentionally omits a repository URL, release date, and DOI",
-        "(cd release/v1.2.0 && sha256sum --check SHA256SUMS)",
+        "(cd release/v1.3.0 && sha256sum --check SHA256SUMS)",
     )
     if any(fragment not in readme for fragment in citation_readme_fragments):
         raise RuntimeError("README does not match the v1.3.0 citation policy")
     if (
         "Adaptive Reconstruction Split Computing aggregate results and analyses "
-        "(version 1.2.0)" not in result_license
+        "(version 1.3.0)" not in result_license
     ):
         raise RuntimeError("Result-license attribution differs from the public identity")
     for relative in EXPECTED_RELEASE_DECISION["scope"]:

@@ -2,7 +2,7 @@
 
 This is the official repository for the manuscript on reconstruction risk, task utility, and bounded component compute in split computing. It contains the implementation, frozen protocol records, public verification tools, and aggregate numeric evidence.
 
-The public boundary is exactly 123 files. It discloses 13 aggregate CSV tables with 2,308 rows: 1,752 rows from the validation-frozen reconstruction, semantic, and auxiliary-budget study, plus 556 benchmark and component-compute rows.
+The public boundary is exactly 114 files. It discloses 13 aggregate CSV tables with 2,308 rows: 1,752 rows from the validation-frozen reconstruction, semantic, and auxiliary-budget study, plus 556 benchmark and component-compute rows.
 
 ## Study scope
 
@@ -22,10 +22,10 @@ The empirical study evaluates reconstruction exposure and task utility for four 
 - `config/`: the frozen study contract and the executable implementation supplement.
 - `results/raw/`: five public-safe aggregate base tables. The directory name refers to the disclosure layer; these are not private per-example records.
 - `results/protocol/`: the sanitized environment, frozen-selection commitment, and schema-version-3 disclosure manifest.
-- `release/v1.2.0/`: eight supplemental aggregate tables, two compute-analysis JSON files, seven schemas, release notes, and checksums.
+- `release/v1.3.0/`: consolidated aggregate reproduction code and inputs, expected outputs, the additional benchmark-attacker evidence table, two compute-analysis JSON files, seven historical schemas, diagnostics and checksums.
 - `tests/`, `.github/workflows/public-checks.yml`, and `run_public_checks.sh`: the public regression and boundary checks.
 
-`results/protocol/disclosure_manifest.json` fixes the exact 123-path allowlist, all 13 CSV schemas and row counts, 58 verified public outputs, the exact Creative Commons license scope, and the authorized v1.3.0 repository-commit state.
+`results/protocol/disclosure_manifest.json` fixes the exact 114-path allowlist, all 13 CSV schemas and row counts, 49 verified public outputs, the exact Creative Commons license scope, and the authorized v1.3.0 repository-commit state.
 
 ## Aggregate reproduction (v1.3.0)
 
@@ -37,7 +37,9 @@ python release/v1.3.0/reproduce.py --output-dir /tmp/eng-reproduction --check
 (cd release/v1.3.0 && sha256sum --check SHA256SUMS)
 ```
 
-Use Python 3.11. After dependency installation this command runs offline on CPU. It reproduces calculations from aggregate metrics; it does not regenerate predictions, authenticate experiment execution or repeat timing measurements. The journal supplement is one PDF containing Tables S1–S3. See the directory README for its exact coverage and file index. Historical `release/v1.2.0` bytes, including its original staging notes, are retained unchanged.
+Use Python 3.11. After dependency installation this command runs offline on CPU. It reproduces calculations from aggregate metrics; it does not regenerate predictions, authenticate experiment execution or repeat timing measurements. The journal supplement is one PDF containing Tables S1–S3. See the directory README for its exact coverage and file index. The consolidated directory has 40 files and 39 checksum entries. Its additional `evidence/benchmark_budget_attacker_rows.csv` contains 240 previously disclosed rows and is separate from the unchanged seven reproduction inputs containing 556 rows. Historical packages remain in Git history and the authors’ private records.
+
+Historical schema `file` identifiers are preserved. `results/attacker_restart_rows.csv` and `results/benchmark_budget_conditions.csv` map to `inputs/`; `results/benchmark_budget_attacker_rows.csv` maps to `evidence/`; the other five historical result tables map to `expected/`, retaining filenames. Schemas live under `schemas/`, and compute analyses under `analysis/`. See the [complete schema-location mapping](release/v1.3.0/README.md#schema-location-mapping).
 
 ## Environment
 
@@ -64,7 +66,7 @@ Synthetic samples are available only through explicit test flags and are never a
 
 ## Public verification
 
-From a checkout containing only the 123 allowed files:
+From a checkout containing only the 114 allowed files:
 
 ```bash
 ./run_public_checks.sh
@@ -72,10 +74,10 @@ From a checkout containing only the 123 allowed files:
 
 The runner verifies both public exporters in public-only mode, the fixed inventory, SHA-256 values, schemas, row counts, licensing, citation policy, file-size ceiling, common secret patterns, source compilation, and public tests. It establishes integrity of the disclosed bytes. It does not authenticate unpublished private inputs or reproduce the experiments.
 
-Verify the 18 versioned-release checksum entries from the repository root with:
+Verify the 39 consolidated checksum entries from the repository root with:
 
 ```bash
-(cd release/v1.2.0 && sha256sum --check SHA256SUMS)
+(cd release/v1.3.0 && sha256sum --check SHA256SUMS)
 ```
 
 Individual public-only checks are:
@@ -86,7 +88,7 @@ python scripts/export_public_results.py --check --public-only
 python scripts/audit_public_repository.py
 ```
 
-In the full private workspace, stronger regeneration checks rebuild the public tables and v1.2.0 package from canonical private evidence and require the staged release to match the retained private candidate byte-for-byte:
+In the full private workspace, stronger regeneration checks rebuild the public tables from canonical private evidence and compare the 17 mapped scientific/schema files with the retained private candidate byte-for-byte. The independent auditor can also check the Git index in a Git checkout:
 
 ```bash
 python scripts/export_eng_compute_public.py --check
@@ -94,7 +96,7 @@ python scripts/export_public_results.py --check
 python scripts/audit_public_repository.py --require-staged
 ```
 
-The private commands require canonical manifests, audit records, checkpoints, timing records, or other evidence that is intentionally absent from a public-only checkout.
+`--require-staged` checks Git-index bytes; it does not denote publication status. The private commands require canonical manifests, audit records, checkpoints, timing records, or other evidence that is intentionally absent from a public-only checkout.
 
 ## Running the disclosed implementation
 

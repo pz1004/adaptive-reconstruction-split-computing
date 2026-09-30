@@ -47,8 +47,8 @@ def test_public_outputs_have_exact_counts_schemas_and_hashes() -> None:
     result = verify_public_outputs()
     assert result["passed"] is True
     assert result["result_rows_verified"] == 2308
-    assert result["public_outputs_verified"] == 58
-    assert result["allowlist_files"] == 123
+    assert result["public_outputs_verified"] == 49
+    assert result["allowlist_files"] == 114
 
 
 def test_disclosure_manifest_has_exact_allowlist_and_licenses() -> None:
@@ -60,7 +60,7 @@ def test_disclosure_manifest_has_exact_allowlist_and_licenses() -> None:
     assert manifest["base_result_row_count"] == 1752
     assert manifest["supplemental_result_row_count"] == 556
     assert len(manifest["result_table_counts"]) == 13
-    assert len(manifest["public_outputs"]) == 58
+    assert len(manifest["public_outputs"]) == 49
     assert manifest["semantic_attribute_boundary"] == {
         "published_indices": [index for index in range(40) if index != 31],
         "excluded_index": 31,
@@ -83,7 +83,7 @@ def test_disclosure_manifest_has_exact_allowlist_and_licenses() -> None:
         "release_date": None,
         "doi": None,
     }
-    assert len(manifest["release_decision"]["scope"]) == 34
+    assert len(manifest["release_decision"]["scope"]) == 27
     assert manifest["release_decision"]["publication_authorized"] is True
     assert manifest["release_decision"] == EXPECTED_RELEASE_DECISION
 
@@ -128,10 +128,10 @@ def test_public_title_checksum_command_and_result_attribution_are_canonical() ->
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     result_license = (ROOT / "LICENSE-RESULTS").read_text(encoding="utf-8")
     assert readme.startswith("# Adaptive Reconstruction Split Computing\n")
-    assert "(cd release/v1.2.0 && sha256sum --check SHA256SUMS)" in readme
+    assert "(cd release/v1.3.0 && sha256sum --check SHA256SUMS)" in readme
     assert (
         "Adaptive Reconstruction Split Computing aggregate results and analyses "
-        "(version 1.2.0)" in result_license
+        "(version 1.3.0)" in result_license
     )
     assert "repository-code:" not in (ROOT / "CITATION.cff").read_text(encoding="utf-8")
 
@@ -229,7 +229,7 @@ def test_public_auditor_accepts_git_checkout_without_private_paths(tmp_path: Pat
     assert completed.returncode == 0, completed.stderr
     report = json.loads(completed.stdout)
     assert report["passed"] is True
-    assert report["candidate_files"] == 123
+    assert report["candidate_files"] == 114
     assert report["ignored_boundary_paths_verified"] == 12
 
 
@@ -258,7 +258,7 @@ def test_independent_auditor_rejects_license_notice_scope_drift() -> None:
 
 def test_independent_auditor_rejects_release_payload_tampering() -> None:
     payloads = {path: (ROOT / path).read_bytes() for path in EXPECTED_ALLOWLIST}
-    relative = "release/v1.2.0/results/compute_paired_effects.csv"
+    relative = "release/v1.3.0/expected/compute_paired_effects.csv"
     payloads[relative] += b"\n"
     manifest = json.loads(payloads["results/protocol/disclosure_manifest.json"])
     manifest["public_outputs"][relative]["sha256"] = hashlib.sha256(
@@ -364,3 +364,98 @@ def test_unsafe_pytorch_loading_is_bounded_and_prominently_disclosed() -> None:
             offenders.append(relative)
     assert offenders == ["src/checkpointing.py", "src/defenses.py"]
     assert "Never load an untrusted `.pt` file" in (ROOT / "README.md").read_text(encoding="utf-8")
+
+
+def test_consolidated_release_inventory_and_historical_schema_mapping() -> None:
+    from scripts.export_eng_compute_public import (
+        CSV_SPECS, EXPECTED_FILES, LEGACY_LOCATION_MAP, validate_public_release,
+    )
+    release = ROOT / 'release/v1.3.0'
+    assert not (ROOT / 'release/v1.2.0').exists()
+    assert len(EXPECTED_FILES) == 40
+    assert len(LEGACY_LOCATION_MAP) == 17
+    assert len(set(LEGACY_LOCATION_MAP.values())) == 17
+    assert validate_public_release(release)['checksum_entries'] == 39
+    for historical, current in LEGACY_LOCATION_MAP.items():
+        schema = release / 'schemas' / (Path(historical).stem + '.schema.json')
+        if historical.startswith('results/') and schema.exists():
+            record = json.loads(schema.read_text())
+            assert record['file'] == historical
+            assert record['rows'] == CSV_SPECS[current][0]
+            assert tuple(column['name'] for column in record['columns']) == CSV_SPECS[current][1]
+    inputs = list((release / 'inputs').glob('*.csv'))
+    assert len(inputs) == 7
+    assert sum(len(list(csv.DictReader(path.open(newline='')))) for path in inputs) == 556
+    evidence = release / 'evidence/benchmark_budget_attacker_rows.csv'
+    with evidence.open(newline='') as handle:
+        assert len(list(csv.DictReader(handle))) == 240
+
+
+@pytest.mark.parametrize('relative', [
+    'analysis/compute_analysis.json',
+    'evidence/benchmark_budget_attacker_rows.csv',
+    'schemas/benchmark_budget_conditions.schema.json',
+    'inputs/attacker_restart_rows.csv',
+    'expected/compute_group_summary.csv',
+])
+@pytest.mark.parametrize('mutation', ['missing', 'altered'])
+def test_consolidated_evidence_rejects_missing_or_altered_bytes(
+    tmp_path: Path, relative: str, mutation: str,
+) -> None:
+    from scripts.export_eng_compute_public import validate_public_release
+    release = tmp_path / 'release'
+    shutil.copytree(ROOT / 'release/v1.3.0', release)
+    path = release / relative
+    if mutation == 'missing':
+        path.unlink()
+    else:
+        path.write_bytes(path.read_bytes() + b'\n')
+        # Even a self-consistently rewritten inventory cannot authorize changed evidence.
+        checksum = release / 'SHA256SUMS'
+        lines = checksum.read_text().splitlines()
+        checksum.write_text('\n'.join(
+            hashlib.sha256(path.read_bytes()).hexdigest() + '  ' + relative
+            if line.endswith('  ' + relative) else line for line in lines
+        ) + '\n')
+    with pytest.raises(RuntimeError, match='inventory differs|payload checksum differs'):
+        validate_public_release(release)
+
+
+def test_consolidated_export_preserves_unrelated_files_and_preflights_conflicts(tmp_path: Path) -> None:
+    from scripts.export_eng_compute_public import export_payloads
+    reproduction = tmp_path / 'reproduce.py'
+    reproduction.write_bytes(b'preserved reproduction implementation\n')
+    evidence = tmp_path / 'evidence/table.csv'
+    evidence.parent.mkdir()
+    evidence.write_bytes(b'original\n')
+    export_payloads(tmp_path, {'evidence/table.csv': b'original\n', 'analysis/extra.json': b'{}\n'})
+    assert reproduction.read_bytes() == b'preserved reproduction implementation\n'
+    assert evidence.read_bytes() == b'original\n'
+    with pytest.raises(RuntimeError, match='Refusing to overwrite'):
+        export_payloads(tmp_path, {'first.txt': b'new\n', 'evidence/table.csv': b'different\n'})
+    assert not (tmp_path / 'first.txt').exists()
+    assert evidence.read_bytes() == b'original\n'
+
+
+def test_consolidated_release_rejects_private_extras(tmp_path: Path) -> None:
+    from scripts.export_eng_compute_public import validate_public_release
+    release = tmp_path / 'release'
+    shutil.copytree(ROOT / 'release/v1.3.0', release)
+    (release / 'schemas/private-evidence.json').write_text('{}\n')
+    with pytest.raises(RuntimeError, match='inventory differs'):
+        validate_public_release(release)
+
+
+def test_mapped_private_candidate_comparison(tmp_path: Path) -> None:
+    from scripts.export_eng_compute_public import LEGACY_LOCATION_MAP, verify_private_candidate
+    release = ROOT / 'release/v1.3.0'
+    for historical, current in LEGACY_LOCATION_MAP.items():
+        target = tmp_path / historical
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((release / current).read_bytes())
+    report = verify_private_candidate(release, tmp_path)
+    assert report['mapped_scientific_files_verified'] == 17
+    changed = tmp_path / 'results/benchmark_budget_attacker_rows.csv'
+    changed.write_bytes(changed.read_bytes() + b'\n')
+    with pytest.raises(RuntimeError, match='differs from retained private candidate'):
+        verify_private_candidate(release, tmp_path)

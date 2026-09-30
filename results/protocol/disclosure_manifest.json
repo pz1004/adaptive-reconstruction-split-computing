@@ -28,33 +28,17 @@
     "config/implementation_protocol_v2.json",
     "config/study_contract.json",
     "pytest.ini",
-    "release/v1.2.0/RELEASE_NOTES.md",
-    "release/v1.2.0/SHA256SUMS",
-    "release/v1.2.0/analysis/compute_analysis.json",
-    "release/v1.2.0/analysis/compute_claim_audit.json",
-    "release/v1.2.0/results/attacker_restart_rows.csv",
-    "release/v1.2.0/results/attacker_restart_summaries.csv",
-    "release/v1.2.0/results/benchmark_budget_attacker_rows.csv",
-    "release/v1.2.0/results/benchmark_budget_conditions.csv",
-    "release/v1.2.0/results/benchmark_budget_paired_effects.csv",
-    "release/v1.2.0/results/compute_group_summary.csv",
-    "release/v1.2.0/results/compute_interface_effects.csv",
-    "release/v1.2.0/results/compute_paired_effects.csv",
-    "release/v1.2.0/schemas/attacker_restart_rows.schema.json",
-    "release/v1.2.0/schemas/attacker_restart_summaries.schema.json",
-    "release/v1.2.0/schemas/benchmark_budget_attacker_rows.schema.json",
-    "release/v1.2.0/schemas/benchmark_budget_conditions.schema.json",
-    "release/v1.2.0/schemas/benchmark_budget_paired_effects.schema.json",
-    "release/v1.2.0/schemas/benchmark_v1_tables.schema.json",
-    "release/v1.2.0/schemas/eng_compute_v1.schema.json",
     "release/v1.3.0/DATA_DICTIONARY.md",
     "release/v1.3.0/README.md",
     "release/v1.3.0/SHA256SUMS",
+    "release/v1.3.0/analysis/compute_analysis.json",
+    "release/v1.3.0/analysis/compute_claim_audit.json",
     "release/v1.3.0/analysis_contract.json",
     "release/v1.3.0/budget_figure.py",
     "release/v1.3.0/compute_core.py",
     "release/v1.3.0/diagnostics/known-offset-diagnostic.csv",
     "release/v1.3.0/diagnostics/known-offset-diagnostic.json",
+    "release/v1.3.0/evidence/benchmark_budget_attacker_rows.csv",
     "release/v1.3.0/expected/attacker_restart_summaries.csv",
     "release/v1.3.0/expected/benchmark_budget_paired_effects.csv",
     "release/v1.3.0/expected/budget_method_summaries.csv",
@@ -76,6 +60,13 @@
     "release/v1.3.0/provenance.json",
     "release/v1.3.0/reproduce.py",
     "release/v1.3.0/requirements.txt",
+    "release/v1.3.0/schemas/attacker_restart_rows.schema.json",
+    "release/v1.3.0/schemas/attacker_restart_summaries.schema.json",
+    "release/v1.3.0/schemas/benchmark_budget_attacker_rows.schema.json",
+    "release/v1.3.0/schemas/benchmark_budget_conditions.schema.json",
+    "release/v1.3.0/schemas/benchmark_budget_paired_effects.schema.json",
+    "release/v1.3.0/schemas/benchmark_v1_tables.schema.json",
+    "release/v1.3.0/schemas/eng_compute_v1.schema.json",
     "release/v1.3.0/statistics_core.py",
     "requirements-figures.txt",
     "requirements.txt",
@@ -150,60 +141,47 @@
       "sha256": "e43780aa31661ba797d1832151cc5363a3933f90edc8f7e3375ac39e11bb9ef0",
       "size_bytes": 1913
     },
-    "release/v1.2.0/RELEASE_NOTES.md": {
-      "sha256": "cd07d1c9dbf55a3e63d8fcb0dbc7855637335572251949dcd2ff42a5a17fb911",
-      "size_bytes": 976
+    "release/v1.3.0/DATA_DICTIONARY.md": {
+      "sha256": "c6ab93a52c632fcfbc8d6183f9ce87c9c63fc344d2ca9960d79d3adef8b25cc3",
+      "size_bytes": 5391
     },
-    "release/v1.2.0/SHA256SUMS": {
-      "sha256": "0b0aa70e420f236904b8e2ba06e57d53d6e247108e0e8d3452c79f2b2955cd54",
-      "size_bytes": 1892
+    "release/v1.3.0/README.md": {
+      "sha256": "9594886e7161a255b3ea9df5eb8f5a250ee75432d4b2089c3fe89514ceee8abd",
+      "size_bytes": 7601
     },
-    "release/v1.2.0/analysis/compute_analysis.json": {
+    "release/v1.3.0/SHA256SUMS": {
+      "sha256": "fdf5ac093f7bea5b6a255b27e1ddf7669da8d966db633aab1b1606abc833ec4d",
+      "size_bytes": 3862
+    },
+    "release/v1.3.0/analysis/compute_analysis.json": {
       "sha256": "262741aee3a21052f7c3d7e901f4c5943e0ac26b09ad41d39679bb9e9a4a67f1",
       "size_bytes": 1284
     },
-    "release/v1.2.0/analysis/compute_claim_audit.json": {
+    "release/v1.3.0/analysis/compute_claim_audit.json": {
       "sha256": "001a6e433d6d3a1749224bfe8533ee1313690e2e78c31f0f2a7c62f36fcd3bd6",
       "size_bytes": 2874
     },
-    "release/v1.2.0/results/attacker_restart_rows.csv": {
-      "fields": [
-        "run_id",
-        "dataset",
-        "interface",
-        "method",
-        "architecture",
-        "model_seed",
-        "attacker_training_seed",
-        "mse",
-        "psnr",
-        "ssim",
-        "lpips",
-        "origin"
-      ],
-      "row_count": 96,
-      "sha256": "b1da933c28665b186b27f081401c9a5445489acb4f6224d8c620c16b07670465",
-      "size_bytes": 21010
+    "release/v1.3.0/analysis_contract.json": {
+      "sha256": "45124d8e98488df044c8eb672dd9e19a42e04a7320106b4319de9ec47ad1d277",
+      "size_bytes": 1792
     },
-    "release/v1.2.0/results/attacker_restart_summaries.csv": {
-      "fields": [
-        "dataset",
-        "interface",
-        "method",
-        "architecture",
-        "model_seed",
-        "attacker_training_seeds",
-        "ssim_values",
-        "median_ssim",
-        "minimum_ssim",
-        "maximum_ssim",
-        "range_ssim"
-      ],
-      "row_count": 32,
-      "sha256": "89cd56dbb25d57afac00e44012e1c87ecfd32e3c065313a24355c0379e890618",
-      "size_bytes": 6450
+    "release/v1.3.0/budget_figure.py": {
+      "sha256": "49bb7845009a0828fb3ef8667dee1f5584fa6d7d130156ef007ed68fd76f09ae",
+      "size_bytes": 5298
     },
-    "release/v1.2.0/results/benchmark_budget_attacker_rows.csv": {
+    "release/v1.3.0/compute_core.py": {
+      "sha256": "e1a753a324ccfb00335b4cd9b5a1c323f159a2e7468100695a3802a9eb88de3d",
+      "size_bytes": 16194
+    },
+    "release/v1.3.0/diagnostics/known-offset-diagnostic.csv": {
+      "sha256": "70862589f7e788891ad8d810cbef8d54757108b6ac9169eb0aee447f997a937b",
+      "size_bytes": 8716
+    },
+    "release/v1.3.0/diagnostics/known-offset-diagnostic.json": {
+      "sha256": "3679eb943b4fb948eb64f0941b1125c2609e4ffd2db9f70958ec1a95b3096089",
+      "size_bytes": 25895
+    },
+    "release/v1.3.0/evidence/benchmark_budget_attacker_rows.csv": {
       "fields": [
         "run_id",
         "dataset",
@@ -224,25 +202,25 @@
       "sha256": "0523fb0265b21f7850742645d728441c21c63f847c941f63cfb41a469b79e49a",
       "size_bytes": 54079
     },
-    "release/v1.2.0/results/benchmark_budget_conditions.csv": {
+    "release/v1.3.0/expected/attacker_restart_summaries.csv": {
       "fields": [
-        "run_id",
         "dataset",
         "interface",
         "method",
+        "architecture",
         "model_seed",
-        "attacker_training_seed",
-        "auxiliary_fraction",
-        "auxiliary_examples",
-        "strongest_attacker",
-        "worst_case_ssim",
-        "origin"
+        "attacker_training_seeds",
+        "ssim_values",
+        "median_ssim",
+        "minimum_ssim",
+        "maximum_ssim",
+        "range_ssim"
       ],
-      "row_count": 120,
-      "sha256": "6d5961a3bae709f1d98e1630bd1e1f90736ae9c06f93199c58685c35f6a8e9c7",
-      "size_bytes": 20197
+      "row_count": 32,
+      "sha256": "89cd56dbb25d57afac00e44012e1c87ecfd32e3c065313a24355c0379e890618",
+      "size_bytes": 6450
     },
-    "release/v1.2.0/results/benchmark_budget_paired_effects.csv": {
+    "release/v1.3.0/expected/benchmark_budget_paired_effects.csv": {
       "fields": [
         "dataset",
         "interface",
@@ -261,7 +239,11 @@
       "sha256": "8312b09c91612e77b1c35fd713e47ffecf85dfc5a122461ff0aa4ac26c7ce0dc",
       "size_bytes": 4088
     },
-    "release/v1.2.0/results/compute_group_summary.csv": {
+    "release/v1.3.0/expected/budget_method_summaries.csv": {
+      "sha256": "d2c3fbb4ea925d063e04c5131aa571d8f603298af298e06d0bfe7b3788a37d34",
+      "size_bytes": 2545
+    },
+    "release/v1.3.0/expected/compute_group_summary.csv": {
       "fields": [
         "dataset",
         "interface",
@@ -327,7 +309,7 @@
       "sha256": "402f17a7ff585944f39f13011e0fecb9b79853cd45af0b04208edbbcf2c90681",
       "size_bytes": 24343
     },
-    "release/v1.2.0/results/compute_interface_effects.csv": {
+    "release/v1.3.0/expected/compute_interface_effects.csv": {
       "fields": [
         "dataset",
         "method",
@@ -349,7 +331,7 @@
       "sha256": "3f77831cb296e218030e4c46bbc02cbd7ac4249e2b834e4e43b7773ab5b79164",
       "size_bytes": 7218
     },
-    "release/v1.2.0/results/compute_paired_effects.csv": {
+    "release/v1.3.0/expected/compute_paired_effects.csv": {
       "fields": [
         "dataset",
         "interface",
@@ -377,90 +359,6 @@
       "sha256": "1ab4edfab53bfefc40beb0022b25a31249a164cc4ca2f62e2950be3240b8c525",
       "size_bytes": 5460
     },
-    "release/v1.2.0/schemas/attacker_restart_rows.schema.json": {
-      "sha256": "9a36bdd36307a32610a4980dfba9213d0e75ded5338771c1dda2fa6e12ee6dce",
-      "size_bytes": 2637
-    },
-    "release/v1.2.0/schemas/attacker_restart_summaries.schema.json": {
-      "sha256": "ce6985e37b110c0b9265bc34ce815bad8f4edd71b85d61a543455248dd7d81bf",
-      "size_bytes": 2489
-    },
-    "release/v1.2.0/schemas/benchmark_budget_attacker_rows.schema.json": {
-      "sha256": "32b7203b5f3d606095c0a0f689ad971c86533aefcf835900c4a4bd06583babc6",
-      "size_bytes": 2896
-    },
-    "release/v1.2.0/schemas/benchmark_budget_conditions.schema.json": {
-      "sha256": "2ab0feb1e3d5c3a6dc02fd2f8146671ba51b5ef655d365edb52eb703e0bb1471",
-      "size_bytes": 2405
-    },
-    "release/v1.2.0/schemas/benchmark_budget_paired_effects.schema.json": {
-      "sha256": "8e6a8338fcbdd887b9935ce4ceb282c05a29dd50eeb21803e8ae2c576d74c715",
-      "size_bytes": 2467
-    },
-    "release/v1.2.0/schemas/benchmark_v1_tables.schema.json": {
-      "sha256": "900ce37be4ff8df523ffa4a97888a5accd7098a297492dbb8b09e1ad360c08f3",
-      "size_bytes": 11785
-    },
-    "release/v1.2.0/schemas/eng_compute_v1.schema.json": {
-      "sha256": "5e2603047b488be03c800de0c897ce0ac0134c44d8e546d684e42b2639f498a1",
-      "size_bytes": 888
-    },
-    "release/v1.3.0/DATA_DICTIONARY.md": {
-      "sha256": "c6ab93a52c632fcfbc8d6183f9ce87c9c63fc344d2ca9960d79d3adef8b25cc3",
-      "size_bytes": 5391
-    },
-    "release/v1.3.0/README.md": {
-      "sha256": "00fe8309d7d7ecbc71206404c95a032a4be0ee79193c557d57b6f0621420d824",
-      "size_bytes": 5268
-    },
-    "release/v1.3.0/SHA256SUMS": {
-      "sha256": "7b80ff733985ff12eb2a5e014ec19a307ea78628926cd6a443d7bbd7f6f364f9",
-      "size_bytes": 2778
-    },
-    "release/v1.3.0/analysis_contract.json": {
-      "sha256": "45124d8e98488df044c8eb672dd9e19a42e04a7320106b4319de9ec47ad1d277",
-      "size_bytes": 1792
-    },
-    "release/v1.3.0/budget_figure.py": {
-      "sha256": "49bb7845009a0828fb3ef8667dee1f5584fa6d7d130156ef007ed68fd76f09ae",
-      "size_bytes": 5298
-    },
-    "release/v1.3.0/compute_core.py": {
-      "sha256": "e1a753a324ccfb00335b4cd9b5a1c323f159a2e7468100695a3802a9eb88de3d",
-      "size_bytes": 16194
-    },
-    "release/v1.3.0/diagnostics/known-offset-diagnostic.csv": {
-      "sha256": "70862589f7e788891ad8d810cbef8d54757108b6ac9169eb0aee447f997a937b",
-      "size_bytes": 8716
-    },
-    "release/v1.3.0/diagnostics/known-offset-diagnostic.json": {
-      "sha256": "3679eb943b4fb948eb64f0941b1125c2609e4ffd2db9f70958ec1a95b3096089",
-      "size_bytes": 25895
-    },
-    "release/v1.3.0/expected/attacker_restart_summaries.csv": {
-      "sha256": "89cd56dbb25d57afac00e44012e1c87ecfd32e3c065313a24355c0379e890618",
-      "size_bytes": 6450
-    },
-    "release/v1.3.0/expected/benchmark_budget_paired_effects.csv": {
-      "sha256": "8312b09c91612e77b1c35fd713e47ffecf85dfc5a122461ff0aa4ac26c7ce0dc",
-      "size_bytes": 4088
-    },
-    "release/v1.3.0/expected/budget_method_summaries.csv": {
-      "sha256": "d2c3fbb4ea925d063e04c5131aa571d8f603298af298e06d0bfe7b3788a37d34",
-      "size_bytes": 2545
-    },
-    "release/v1.3.0/expected/compute_group_summary.csv": {
-      "sha256": "402f17a7ff585944f39f13011e0fecb9b79853cd45af0b04208edbbcf2c90681",
-      "size_bytes": 24343
-    },
-    "release/v1.3.0/expected/compute_interface_effects.csv": {
-      "sha256": "3f77831cb296e218030e4c46bbc02cbd7ac4249e2b834e4e43b7773ab5b79164",
-      "size_bytes": 7218
-    },
-    "release/v1.3.0/expected/compute_paired_effects.csv": {
-      "sha256": "1ab4edfab53bfefc40beb0022b25a31249a164cc4ca2f62e2950be3240b8c525",
-      "size_bytes": 5460
-    },
     "release/v1.3.0/expected/figure_signatures.json": {
       "sha256": "9a85f375f44a2490ffe1bdc2fde892d476d15c12e723e926097682a1fd700ed9",
       "size_bytes": 201423
@@ -478,10 +376,39 @@
       "size_bytes": 13818
     },
     "release/v1.3.0/inputs/attacker_restart_rows.csv": {
+      "fields": [
+        "run_id",
+        "dataset",
+        "interface",
+        "method",
+        "architecture",
+        "model_seed",
+        "attacker_training_seed",
+        "mse",
+        "psnr",
+        "ssim",
+        "lpips",
+        "origin"
+      ],
+      "row_count": 96,
       "sha256": "b1da933c28665b186b27f081401c9a5445489acb4f6224d8c620c16b07670465",
       "size_bytes": 21010
     },
     "release/v1.3.0/inputs/benchmark_budget_conditions.csv": {
+      "fields": [
+        "run_id",
+        "dataset",
+        "interface",
+        "method",
+        "model_seed",
+        "attacker_training_seed",
+        "auxiliary_fraction",
+        "auxiliary_examples",
+        "strongest_attacker",
+        "worst_case_ssim",
+        "origin"
+      ],
+      "row_count": 120,
       "sha256": "6d5961a3bae709f1d98e1630bd1e1f90736ae9c06f93199c58685c35f6a8e9c7",
       "size_bytes": 20197
     },
@@ -520,6 +447,34 @@
     "release/v1.3.0/requirements.txt": {
       "sha256": "8ced0882fae5b9298075703d6456f46d729d3ad239034badf90f6bf6bf95aaf9",
       "size_bytes": 47
+    },
+    "release/v1.3.0/schemas/attacker_restart_rows.schema.json": {
+      "sha256": "9a36bdd36307a32610a4980dfba9213d0e75ded5338771c1dda2fa6e12ee6dce",
+      "size_bytes": 2637
+    },
+    "release/v1.3.0/schemas/attacker_restart_summaries.schema.json": {
+      "sha256": "ce6985e37b110c0b9265bc34ce815bad8f4edd71b85d61a543455248dd7d81bf",
+      "size_bytes": 2489
+    },
+    "release/v1.3.0/schemas/benchmark_budget_attacker_rows.schema.json": {
+      "sha256": "32b7203b5f3d606095c0a0f689ad971c86533aefcf835900c4a4bd06583babc6",
+      "size_bytes": 2896
+    },
+    "release/v1.3.0/schemas/benchmark_budget_conditions.schema.json": {
+      "sha256": "2ab0feb1e3d5c3a6dc02fd2f8146671ba51b5ef655d365edb52eb703e0bb1471",
+      "size_bytes": 2405
+    },
+    "release/v1.3.0/schemas/benchmark_budget_paired_effects.schema.json": {
+      "sha256": "8e6a8338fcbdd887b9935ce4ceb282c05a29dd50eeb21803e8ae2c576d74c715",
+      "size_bytes": 2467
+    },
+    "release/v1.3.0/schemas/benchmark_v1_tables.schema.json": {
+      "sha256": "900ce37be4ff8df523ffa4a97888a5accd7098a297492dbb8b09e1ad360c08f3",
+      "size_bytes": 11785
+    },
+    "release/v1.3.0/schemas/eng_compute_v1.schema.json": {
+      "sha256": "5e2603047b488be03c800de0c897ce0ac0134c44d8e546d684e42b2639f498a1",
+      "size_bytes": 888
     },
     "release/v1.3.0/statistics_core.py": {
       "sha256": "48a62474afc81d7872d6a078bd3778501a9b39c9c77db44b78cfa9ced40ba617",
@@ -647,18 +602,11 @@
     "license": "CC-BY-4.0 for contributor-owned rights only",
     "publication_authorized": true,
     "scope": [
-      "release/v1.2.0/analysis/compute_analysis.json",
-      "release/v1.2.0/analysis/compute_claim_audit.json",
-      "release/v1.2.0/results/attacker_restart_rows.csv",
-      "release/v1.2.0/results/attacker_restart_summaries.csv",
-      "release/v1.2.0/results/benchmark_budget_attacker_rows.csv",
-      "release/v1.2.0/results/benchmark_budget_conditions.csv",
-      "release/v1.2.0/results/benchmark_budget_paired_effects.csv",
-      "release/v1.2.0/results/compute_group_summary.csv",
-      "release/v1.2.0/results/compute_interface_effects.csv",
-      "release/v1.2.0/results/compute_paired_effects.csv",
+      "release/v1.3.0/analysis/compute_analysis.json",
+      "release/v1.3.0/analysis/compute_claim_audit.json",
       "release/v1.3.0/diagnostics/known-offset-diagnostic.csv",
       "release/v1.3.0/diagnostics/known-offset-diagnostic.json",
+      "release/v1.3.0/evidence/benchmark_budget_attacker_rows.csv",
       "release/v1.3.0/expected/attacker_restart_summaries.csv",
       "release/v1.3.0/expected/benchmark_budget_paired_effects.csv",
       "release/v1.3.0/expected/budget_method_summaries.csv",
@@ -691,14 +639,14 @@
   "repository_name": "adaptive-reconstruction-split-computing",
   "result_row_count": 2308,
   "result_table_counts": {
-    "release/v1.2.0/results/attacker_restart_rows.csv": 96,
-    "release/v1.2.0/results/attacker_restart_summaries.csv": 32,
-    "release/v1.2.0/results/benchmark_budget_attacker_rows.csv": 240,
-    "release/v1.2.0/results/benchmark_budget_conditions.csv": 120,
-    "release/v1.2.0/results/benchmark_budget_paired_effects.csv": 12,
-    "release/v1.2.0/results/compute_group_summary.csv": 32,
-    "release/v1.2.0/results/compute_interface_effects.csv": 16,
-    "release/v1.2.0/results/compute_paired_effects.csv": 8,
+    "release/v1.3.0/evidence/benchmark_budget_attacker_rows.csv": 240,
+    "release/v1.3.0/expected/attacker_restart_summaries.csv": 32,
+    "release/v1.3.0/expected/benchmark_budget_paired_effects.csv": 12,
+    "release/v1.3.0/expected/compute_group_summary.csv": 32,
+    "release/v1.3.0/expected/compute_interface_effects.csv": 16,
+    "release/v1.3.0/expected/compute_paired_effects.csv": 8,
+    "release/v1.3.0/inputs/attacker_restart_rows.csv": 96,
+    "release/v1.3.0/inputs/benchmark_budget_conditions.csv": 120,
     "results/raw/budget_attacker_results.csv": 48,
     "results/raw/budget_cell_results.csv": 24,
     "results/raw/primary_seed_results.csv": 80,

@@ -106,36 +106,9 @@
 !/results/protocol/frozen_selection_lock.json
 !/results/protocol/disclosure_manifest.json
 
-# Exact staged v1.2.0 aggregate release; no other release directory is public.
+# Release directories remain private unless explicitly listed below.
 !/release/
 /release/*
-!/release/v1.2.0/
-/release/v1.2.0/*
-!/release/v1.2.0/RELEASE_NOTES.md
-!/release/v1.2.0/SHA256SUMS
-!/release/v1.2.0/analysis/
-/release/v1.2.0/analysis/*
-!/release/v1.2.0/analysis/compute_analysis.json
-!/release/v1.2.0/analysis/compute_claim_audit.json
-!/release/v1.2.0/results/
-/release/v1.2.0/results/*
-!/release/v1.2.0/results/attacker_restart_rows.csv
-!/release/v1.2.0/results/attacker_restart_summaries.csv
-!/release/v1.2.0/results/benchmark_budget_attacker_rows.csv
-!/release/v1.2.0/results/benchmark_budget_conditions.csv
-!/release/v1.2.0/results/benchmark_budget_paired_effects.csv
-!/release/v1.2.0/results/compute_group_summary.csv
-!/release/v1.2.0/results/compute_interface_effects.csv
-!/release/v1.2.0/results/compute_paired_effects.csv
-!/release/v1.2.0/schemas/
-/release/v1.2.0/schemas/*
-!/release/v1.2.0/schemas/attacker_restart_rows.schema.json
-!/release/v1.2.0/schemas/attacker_restart_summaries.schema.json
-!/release/v1.2.0/schemas/benchmark_budget_attacker_rows.schema.json
-!/release/v1.2.0/schemas/benchmark_budget_conditions.schema.json
-!/release/v1.2.0/schemas/benchmark_budget_paired_effects.schema.json
-!/release/v1.2.0/schemas/benchmark_v1_tables.schema.json
-!/release/v1.2.0/schemas/eng_compute_v1.schema.json
 
 # Explicit private categories: manuscripts/submission, datasets, private evidence,
 # generated binaries/images, caches, internal state, and the relocation archive.
@@ -148,7 +121,6 @@
 /audit/
 /analysis-output/
 /release/*/
-!/release/v1.2.0/
 /revisions/
 /deprecated/
 /.agents/
@@ -212,3 +184,21 @@
 !/release/v1.3.0/requirements.txt
 !/release/v1.3.0/statistics_core.py
 !/tests/test_aggregate_reproduction.py
+
+# Consolidated evidence, analyses and historical schemas.
+!/release/v1.3.0/analysis/
+/release/v1.3.0/analysis/*
+!/release/v1.3.0/analysis/compute_analysis.json
+!/release/v1.3.0/analysis/compute_claim_audit.json
+!/release/v1.3.0/evidence/
+/release/v1.3.0/evidence/*
+!/release/v1.3.0/evidence/benchmark_budget_attacker_rows.csv
+!/release/v1.3.0/schemas/
+/release/v1.3.0/schemas/*
+!/release/v1.3.0/schemas/attacker_restart_rows.schema.json
+!/release/v1.3.0/schemas/attacker_restart_summaries.schema.json
+!/release/v1.3.0/schemas/benchmark_budget_attacker_rows.schema.json
+!/release/v1.3.0/schemas/benchmark_budget_conditions.schema.json
+!/release/v1.3.0/schemas/benchmark_budget_paired_effects.schema.json
+!/release/v1.3.0/schemas/benchmark_v1_tables.schema.json
+!/release/v1.3.0/schemas/eng_compute_v1.schema.json

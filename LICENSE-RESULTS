@@ -1,4 +1,4 @@
-Adaptive Reconstruction Split Computing aggregate results and analyses (version 1.2.0), with v1.3.0 aggregate reproduction and diagnostic results.
+Adaptive Reconstruction Split Computing aggregate results and analyses (version 1.3.0), including aggregate reproduction and diagnostic results.
 
 Contributor-owned rights in the numeric tables listed below are licensed under Creative Commons Attribution 4.0 International (CC BY 4.0): https://creativecommons.org/licenses/by/4.0/
 Attribution: Sooyoung Jang, Adaptive Reconstruction Split Computing.
@@ -6,18 +6,11 @@ The listed results are distributed as repository files. No GitHub Release, tag o
 No third-party permission or waiver is claimed. This grant does not supersede dataset terms or license underlying datasets, images, or other third-party assets. Code, schemas and authored documentation retain the repository MIT license.
 
 Scope (exact paths):
-release/v1.2.0/analysis/compute_analysis.json
-release/v1.2.0/analysis/compute_claim_audit.json
-release/v1.2.0/results/attacker_restart_rows.csv
-release/v1.2.0/results/attacker_restart_summaries.csv
-release/v1.2.0/results/benchmark_budget_attacker_rows.csv
-release/v1.2.0/results/benchmark_budget_conditions.csv
-release/v1.2.0/results/benchmark_budget_paired_effects.csv
-release/v1.2.0/results/compute_group_summary.csv
-release/v1.2.0/results/compute_interface_effects.csv
-release/v1.2.0/results/compute_paired_effects.csv
+release/v1.3.0/analysis/compute_analysis.json
+release/v1.3.0/analysis/compute_claim_audit.json
 release/v1.3.0/diagnostics/known-offset-diagnostic.csv
 release/v1.3.0/diagnostics/known-offset-diagnostic.json
+release/v1.3.0/evidence/benchmark_budget_attacker_rows.csv
 release/v1.3.0/expected/attacker_restart_summaries.csv
 release/v1.3.0/expected/benchmark_budget_paired_effects.csv
 release/v1.3.0/expected/budget_method_summaries.csv

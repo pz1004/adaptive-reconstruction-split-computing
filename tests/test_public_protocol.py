@@ -130,7 +130,7 @@ def test_public_runner_provisions_only_the_frozen_alexnet_weight() -> None:
     assert "scripts/export_public_results.py --check --public-only" in runner
 
 
-def test_public_release_is_self_contained_and_unpublished() -> None:
+def test_public_release_is_self_contained_and_consolidated() -> None:
     completed = subprocess.run(
         [
             sys.executable,
@@ -146,11 +146,11 @@ def test_public_release_is_self_contained_and_unpublished() -> None:
     assert completed.returncode == 0, completed.stderr
     report = json.loads(completed.stdout)
     assert report["passed"] is True
-    assert report["file_count"] == 19
-    assert report["checksum_entries"] == 18
+    assert report["file_count"] == 40
+    assert report["checksum_entries"] == 39
     assert report["csv_table_count"] == 8
     assert report["aggregate_rows"] == 556
-    assert report["status"] == "staged_not_published"
+    assert report["status"] == "repository_files"
     assert report["private_source_regeneration_verified"] is False
     assert report["external_action"] is False
 

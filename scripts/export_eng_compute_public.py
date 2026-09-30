@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stage the public-safe aggregate v1.2.0 package locally without publishing."""
+"""Verify or export the consolidated public-safe v1.3.0 evidence."""
 
 from __future__ import annotations
 
@@ -7,8 +7,7 @@ import argparse
 import csv
 import hashlib
 import json
-import shutil
-import tempfile
+import sys
 from pathlib import Path
 
 
@@ -16,7 +15,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SOURCE_RELEASE = PROJECT_ROOT / "analysis-output" / "public-release-v1.1.0"
 COMPUTE_ROOT = PROJECT_ROOT / "revisions" / "2026-08-27_eng_compute_extension" / "eng_compute_v1"
 PRIVATE_CANDIDATE = PROJECT_ROOT / "analysis-output" / "public-release-v1.2.0"
-DEFAULT_OUTPUT = PROJECT_ROOT / "release" / "v1.2.0"
+DEFAULT_OUTPUT = PROJECT_ROOT / "release" / "v1.3.0"
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from scripts.audit_public_repository import V13_CHECKSUMS  # noqa: E402
 COMPUTE_FILES = {
     "analysis/compute_analysis.json": COMPUTE_ROOT / "analysis" / "compute_analysis.json",
     "analysis/compute_claim_audit.json": COMPUTE_ROOT / "analysis" / "compute_claim_audit.json",
@@ -131,22 +134,30 @@ CSV_SPECS = {
     ),
 }
 
-EXPECTED_FILES = frozenset(
-    {
-        "RELEASE_NOTES.md",
-        "SHA256SUMS",
-        "analysis/compute_analysis.json",
-        "analysis/compute_claim_audit.json",
-        "schemas/attacker_restart_rows.schema.json",
-        "schemas/attacker_restart_summaries.schema.json",
-        "schemas/benchmark_budget_attacker_rows.schema.json",
-        "schemas/benchmark_budget_conditions.schema.json",
-        "schemas/benchmark_budget_paired_effects.schema.json",
-        "schemas/benchmark_v1_tables.schema.json",
-        "schemas/eng_compute_v1.schema.json",
-    }
-    | set(CSV_SPECS)
-)
+# Historical schema file identifiers and private-candidate paths are immutable.
+LEGACY_LOCATION_MAP = {'analysis/compute_analysis.json': 'analysis/compute_analysis.json',
+ 'analysis/compute_claim_audit.json': 'analysis/compute_claim_audit.json',
+ 'results/attacker_restart_rows.csv': 'inputs/attacker_restart_rows.csv',
+ 'results/attacker_restart_summaries.csv': 'expected/attacker_restart_summaries.csv',
+ 'results/benchmark_budget_attacker_rows.csv': 'evidence/benchmark_budget_attacker_rows.csv',
+ 'results/benchmark_budget_conditions.csv': 'inputs/benchmark_budget_conditions.csv',
+ 'results/benchmark_budget_paired_effects.csv': 'expected/benchmark_budget_paired_effects.csv',
+ 'results/compute_group_summary.csv': 'expected/compute_group_summary.csv',
+ 'results/compute_interface_effects.csv': 'expected/compute_interface_effects.csv',
+ 'results/compute_paired_effects.csv': 'expected/compute_paired_effects.csv',
+ 'schemas/attacker_restart_rows.schema.json': 'schemas/attacker_restart_rows.schema.json',
+ 'schemas/attacker_restart_summaries.schema.json': 'schemas/attacker_restart_summaries.schema.json',
+ 'schemas/benchmark_budget_attacker_rows.schema.json': 'schemas/benchmark_budget_attacker_rows.schema.json',
+ 'schemas/benchmark_budget_conditions.schema.json': 'schemas/benchmark_budget_conditions.schema.json',
+ 'schemas/benchmark_budget_paired_effects.schema.json': 'schemas/benchmark_budget_paired_effects.schema.json',
+ 'schemas/benchmark_v1_tables.schema.json': 'schemas/benchmark_v1_tables.schema.json',
+ 'schemas/eng_compute_v1.schema.json': 'schemas/eng_compute_v1.schema.json'}
+CSV_SPECS = {LEGACY_LOCATION_MAP[path]: spec for path, spec in CSV_SPECS.items()}
+
+EXPECTED_CHECKSUMS = {
+    path.removeprefix("release/v1.3.0/"): digest for path, digest in V13_CHECKSUMS.items()
+}
+EXPECTED_FILES = frozenset(EXPECTED_CHECKSUMS)
 
 
 def _sha256(path: Path) -> str:
@@ -190,35 +201,6 @@ def _schema() -> bytes:
     return (json.dumps(payload, indent=2, sort_keys=True) + "\n").encode("utf-8")
 
 
-def _release_notes() -> bytes:
-    return b"""# Local public-safe aggregate release candidate v1.2.0
-
-This local candidate extends the unchanged v1.1.0 benchmark aggregates with five public-safe `eng_compute_v1` aggregate files: grouped component summaries, paired AFD-minus-standard effects, interface effects, the bounded analysis contract, and the three-claim audit.
-
-The compute extension covers 160 declared conditions on the bounded one-thread CPU and RTX 2080 Ti testbed. Technical timing blocks quantify measurement noise; model seed is the inferential unit. Intervals are descriptive Student-t 95% intervals. No p-values, multiplicity tests, equivalence claims, deployed end-to-end latency, networking, queueing, serialization, data-loading, energy, or hardware-general claims are included.
-
-This directory is a local staging artifact, not a published GitHub release or live URL. Publication remains blocked by `V1.2.0_RELEASE_URL_REQUIRED`. No tag, release, upload, DOI, or external service action has occurred.
-"""
-
-
-def _build(root: Path) -> None:
-    if not SOURCE_RELEASE.is_dir():
-        raise RuntimeError(f"Missing v1.1.0 source release: {SOURCE_RELEASE}")
-    shutil.copytree(SOURCE_RELEASE, root)
-    for relative, source in COMPUTE_FILES.items():
-        if not source.is_file():
-            raise RuntimeError(f"Missing accepted compute aggregate: {source}")
-        target = root / relative
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source, target)
-    (root / "schemas" / "eng_compute_v1.schema.json").write_bytes(_schema())
-    (root / "RELEASE_NOTES.md").write_bytes(_release_notes())
-    checksum = root / "SHA256SUMS"
-    rows = []
-    for path in sorted(path for path in root.rglob("*") if path.is_file() and path != checksum):
-        rows.append(f"{_sha256(path)}  {path.relative_to(root).as_posix()}")
-    checksum.write_text("\n".join(rows) + "\n", encoding="utf-8")
-
 
 def _payloads(root: Path) -> dict[str, bytes]:
     return {
@@ -228,18 +210,53 @@ def _payloads(root: Path) -> dict[str, bytes]:
 
 
 def build_private_payloads() -> dict[str, bytes]:
-    """Regenerate the complete package from private canonical evidence."""
-    with tempfile.TemporaryDirectory(prefix="public-release-v1.2.0-") as directory:
-        temporary = Path(directory) / "release"
-        _build(temporary)
-        validate_public_release(temporary)
-        return _payloads(temporary)
+    """Regenerate 17 scientific/schema files at their consolidated locations."""
+    payloads = {}
+    for historical, current in LEGACY_LOCATION_MAP.items():
+        if historical == "schemas/eng_compute_v1.schema.json":
+            payload = _schema()
+        else:
+            source = COMPUTE_FILES.get(historical, SOURCE_RELEASE / historical)
+            payload = source.read_bytes()
+        payloads[current] = payload
+    retained = mapped_candidate_payloads()
+    if payloads != retained:
+        raise RuntimeError("Retained private evidence differs from canonical regeneration")
+    return payloads
+
+
+def mapped_candidate_payloads(candidate: Path = PRIVATE_CANDIDATE) -> dict[str, bytes]:
+    """Read retained evidence without requiring obsolete public release paths."""
+    return {current: (candidate / historical).read_bytes()
+            for historical, current in LEGACY_LOCATION_MAP.items()}
+
+
+def verify_private_candidate(root: Path, candidate: Path = PRIVATE_CANDIDATE) -> dict[str, object]:
+    report = validate_public_release(root)
+    for current, payload in mapped_candidate_payloads(candidate).items():
+        if (root / current).read_bytes() != payload:
+            raise RuntimeError(f"Consolidated evidence differs from retained private candidate: {current}")
+    return {**report, "candidate_byte_identity": True,
+            "mapped_scientific_files_verified": len(LEGACY_LOCATION_MAP)}
+
+
+def export_payloads(root: Path, payloads: dict[str, bytes]) -> None:
+    """Preflight every conflict before creating files; preserve unrelated files."""
+    for relative, payload in payloads.items():
+        path = root / relative
+        if path.is_symlink() or (path.exists() and (not path.is_file() or path.read_bytes() != payload)):
+            raise RuntimeError(f"Refusing to overwrite byte-different public output: {path}")
+    for relative, payload in payloads.items():
+        path = root / relative
+        if not path.exists():
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(payload)
 
 
 def validate_public_release(root: Path) -> dict[str, object]:
-    """Validate the self-contained public v1.2.0 inventory without private inputs."""
+    """Validate the self-contained public v1.3.0 inventory without private inputs."""
     if not root.is_dir():
-        raise RuntimeError(f"Missing public v1.2.0 release: {root}")
+        raise RuntimeError(f"Missing public v1.3.0 release: {root}")
     actual = {
         path.relative_to(root).as_posix()
         for path in root.rglob("*")
@@ -247,7 +264,7 @@ def validate_public_release(root: Path) -> dict[str, object]:
     }
     if actual != EXPECTED_FILES:
         raise RuntimeError(
-            "v1.2.0 inventory differs: "
+            "v1.3.0 inventory differs: "
             f"missing={sorted(EXPECTED_FILES - actual)}, "
             f"unexpected={sorted(actual - EXPECTED_FILES)}"
         )
@@ -258,18 +275,22 @@ def validate_public_release(root: Path) -> dict[str, object]:
         try:
             digest, relative = line.split("  ", 1)
         except ValueError as error:
-            raise RuntimeError(f"Malformed v1.2.0 checksum row: {line!r}") from error
+            raise RuntimeError(f"Malformed v1.3.0 checksum row: {line!r}") from error
         if relative in checksum_rows or len(digest) != 64 or any(
             character not in "0123456789abcdef" for character in digest
         ):
-            raise RuntimeError(f"Invalid or duplicate v1.2.0 checksum row: {line!r}")
+            raise RuntimeError(f"Invalid or duplicate v1.3.0 checksum row: {line!r}")
         checksum_rows[relative] = digest
     expected_checksum_paths = EXPECTED_FILES - {"SHA256SUMS"}
     if set(checksum_rows) != expected_checksum_paths:
-        raise RuntimeError("v1.2.0 checksum inventory differs from the fixed 18-file policy")
+        raise RuntimeError("v1.3.0 checksum inventory differs from the fixed 39-file policy")
     for relative, digest in checksum_rows.items():
         if _sha256(root / relative) != digest:
-            raise RuntimeError(f"v1.2.0 checksum mismatch: {relative}")
+            raise RuntimeError(f"v1.3.0 checksum mismatch: {relative}")
+
+    for relative, digest in EXPECTED_CHECKSUMS.items():
+        if (root / relative).is_symlink() or _sha256(root / relative) != digest:
+            raise RuntimeError(f"v1.3.0 payload checksum differs: {relative}")
 
     result_rows = 0
     for relative, (expected_rows, expected_fields) in CSV_SPECS.items():
@@ -277,9 +298,9 @@ def validate_public_release(root: Path) -> dict[str, object]:
             reader = csv.DictReader(handle)
             rows = list(reader)
         if tuple(reader.fieldnames or ()) != expected_fields:
-            raise RuntimeError(f"Unexpected v1.2.0 CSV schema: {relative}")
+            raise RuntimeError(f"Unexpected v1.3.0 CSV schema: {relative}")
         if len(rows) != expected_rows or any(None in row.values() for row in rows):
-            raise RuntimeError(f"Unexpected v1.2.0 CSV row count/content: {relative}")
+            raise RuntimeError(f"Unexpected v1.3.0 CSV row count/content: {relative}")
         result_rows += len(rows)
 
     schema_pairs = {
@@ -289,23 +310,24 @@ def validate_public_release(root: Path) -> dict[str, object]:
         "results/benchmark_budget_conditions.csv": "schemas/benchmark_budget_conditions.schema.json",
         "results/benchmark_budget_paired_effects.csv": "schemas/benchmark_budget_paired_effects.schema.json",
     }
-    for csv_relative, schema_relative in schema_pairs.items():
+    for historical, schema_relative in schema_pairs.items():
+        csv_relative = LEGACY_LOCATION_MAP[historical]
         schema = json.loads((root / schema_relative).read_text(encoding="utf-8"))
         columns = tuple(column["name"] for column in schema.get("columns", []))
         if (
             schema.get("schema_version") != 2
-            or schema.get("file") != csv_relative
+            or schema.get("file") != historical
             or schema.get("rows") != CSV_SPECS[csv_relative][0]
             or columns != CSV_SPECS[csv_relative][1]
         ):
-            raise RuntimeError(f"v1.2.0 schema metadata differs: {schema_relative}")
+            raise RuntimeError(f"v1.3.0 schema metadata differs: {schema_relative}")
     benchmark_schema = json.loads(
         (root / "schemas/benchmark_v1_tables.schema.json").read_text(encoding="utf-8")
     )
     if benchmark_schema.get("schema_version") != 2 or set(
         benchmark_schema.get("tables", {})
     ) != {Path(path).name for path in schema_pairs}:
-        raise RuntimeError("v1.2.0 benchmark table schema differs")
+        raise RuntimeError("v1.3.0 benchmark table schema differs")
     compute_schema = json.loads(
         (root / "schemas/eng_compute_v1.schema.json").read_text(encoding="utf-8")
     )
@@ -317,7 +339,7 @@ def validate_public_release(root: Path) -> dict[str, object]:
         or compute_schema.get("p_values") is not False
         or compute_schema.get("equivalence_claims") is not False
     ):
-        raise RuntimeError("v1.2.0 compute schema boundary differs")
+        raise RuntimeError("v1.3.0 compute schema boundary differs")
 
     analysis = json.loads((root / "analysis/compute_analysis.json").read_text(encoding="utf-8"))
     claims = json.loads((root / "analysis/compute_claim_audit.json").read_text(encoding="utf-8"))
@@ -328,27 +350,18 @@ def validate_public_release(root: Path) -> dict[str, object]:
         or analysis.get("inferential_unit") != "model_seed"
         or analysis.get("technical_blocks_are_inferential_units") is not False
     ):
-        raise RuntimeError("v1.2.0 compute analysis boundary differs")
+        raise RuntimeError("v1.3.0 compute analysis boundary differs")
     if claims.get("claim_count") != 3 or [
         (claim.get("claim_id"), claim.get("status")) for claim in claims.get("claims", [])
     ] != [("E01", "supported"), ("E02", "supported"), ("E03", "supported")]:
-        raise RuntimeError("v1.2.0 compute claim audit differs")
-    notes = (root / "RELEASE_NOTES.md").read_text(encoding="utf-8")
-    for fragment in (
-        "local staging artifact",
-        "not a published GitHub release or live URL",
-        "V1.2.0_RELEASE_URL_REQUIRED",
-        "No tag, release, upload, DOI, or external service action has occurred.",
-    ):
-        if fragment not in notes:
-            raise RuntimeError(f"v1.2.0 release notes missing boundary: {fragment}")
+        raise RuntimeError("v1.3.0 compute claim audit differs")
     return {
         "passed": True,
         "file_count": len(actual),
         "checksum_entries": len(checksum_rows),
         "csv_table_count": len(CSV_SPECS),
         "aggregate_rows": result_rows,
-        "status": "staged_not_published",
+        "status": "repository_files",
     }
 
 
@@ -356,56 +369,30 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--check", action="store_true")
-    parser.add_argument(
-        "--public-only",
-        action="store_true",
-        help="Validate the staged release without private canonical evidence",
-    )
+    parser.add_argument("--public-only", action="store_true",
+                        help="Validate the consolidated release without private evidence")
     args = parser.parse_args()
     if args.public_only and not args.check:
         parser.error("--public-only requires --check")
-    if args.check and args.public_only:
-        release_report = validate_public_release(args.output)
-        private_regeneration = False
-        private_candidate_match = False
+    if args.public_only:
+        report = validate_public_release(args.output)
         state = "verified_existing_public_only"
     else:
         expected = build_private_payloads()
-        if args.check:
-            if _payloads(PRIVATE_CANDIDATE) != expected:
-                raise RuntimeError(
-                    f"Retained private v1.2.0 candidate differs: {PRIVATE_CANDIDATE}"
-                )
-            if not args.output.is_dir() or _payloads(args.output) != expected:
-                raise RuntimeError(f"Existing v1.2.0 package differs: {args.output}")
-            state = "verified_existing_private_regeneration"
-        else:
-            if args.output.exists():
-                raise RuntimeError(f"Refusing to overwrite local release: {args.output}")
-            args.output.parent.mkdir(parents=True, exist_ok=True)
-            with tempfile.TemporaryDirectory(prefix="public-release-v1.2.0-write-") as directory:
-                temporary = Path(directory) / "release"
-                _build(temporary)
-                shutil.copytree(temporary, args.output)
-            state = "written"
-        release_report = validate_public_release(args.output)
-        private_regeneration = True
-        private_candidate_match = True
-    print(
-        json.dumps(
-            {
-                **release_report,
-                "state": state,
-                "output": str(args.output),
-                "private_source_regeneration_verified": private_regeneration,
-                "retained_private_candidate_match": private_candidate_match,
-                "release_url_blocker": "V1.2.0_RELEASE_URL_REQUIRED",
-                "external_action": False,
-            },
-            indent=2,
-            sort_keys=True,
-        )
-    )
+        if not args.check:
+            # Reproduction files are preserved; only private evidence is regenerated.
+            validate_public_release(DEFAULT_OUTPUT)
+            complete = _payloads(DEFAULT_OUTPUT)
+            for relative, payload in expected.items():
+                if complete[relative] != payload:
+                    raise RuntimeError(f"Scientific bytes differ: {relative}")
+            export_payloads(args.output, complete)
+        report = verify_private_candidate(args.output)
+        state = "verified_existing_private_regeneration" if args.check else "written"
+    print(json.dumps({**report, "state": state, "output": str(args.output),
+                      "private_source_regeneration_verified": not args.public_only,
+                      "retained_private_candidate_verified": not args.public_only,
+                      "external_action": False}, indent=2, sort_keys=True))
     return 0
 
 
