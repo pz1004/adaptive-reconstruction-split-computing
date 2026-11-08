@@ -1,0 +1,23 @@
+{
+  "recorded_in_focused_metric_receipts": {
+    "torch": "2.9.0+cu128",
+    "scikit-image": "0.25.0",
+    "lpips": "0.1.4",
+    "lpips_backbone": "alex"
+  },
+  "execution_settings": {
+    "torch_cpu_threads": 2,
+    "data_loader_workers": 2,
+    "OMP_NUM_THREADS": 2,
+    "MKL_NUM_THREADS": 2,
+    "OPENBLAS_NUM_THREADS": 2
+  },
+  "not_captured_per_focused_job": [
+    "full Python version",
+    "TorchVision version",
+    "NumPy version",
+    "Pillow version",
+    "JPEG codec/library version"
+  ],
+  "limits": "Historical environment records and requirements pins do not prove focused-job versions. JPEG encoded streams were not retained. Exact codec-byte replay is unestablished."
+}

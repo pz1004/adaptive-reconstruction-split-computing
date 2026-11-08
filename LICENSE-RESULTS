@@ -1,11 +1,12 @@
-Adaptive Reconstruction Split Computing aggregate results and analyses (version 1.3.0), including aggregate reproduction and diagnostic results.
+Aggregate results for Reconstruction Exposure and Task Utility in Split Computing: Sensitivity to Attacker Configuration.
 
-Contributor-owned rights in the numeric tables listed below are licensed under Creative Commons Attribution 4.0 International (CC BY 4.0): https://creativecommons.org/licenses/by/4.0/
-Attribution: Sooyoung Jang, Adaptive Reconstruction Split Computing.
-The listed results are distributed as repository files. No GitHub Release, tag or DOI is created.
-No third-party permission or waiver is claimed. This grant does not supersede dataset terms or license underlying datasets, images, or other third-party assets. Code, schemas and authored documentation retain the repository MIT license.
+Contributor-owned rights in the numeric tables and analyses listed below are licensed under Creative Commons Attribution 4.0 International (CC BY 4.0): https://creativecommons.org/licenses/by/4.0/
+Attribution for the paper tables: Sooyoung Jang, Sungpil Woo and Ahyun Lee, Reconstruction Exposure and Task Utility in Split Computing: Sensitivity to Attacker Configuration.
+Supporting analysis attribution: Sooyoung Jang, Adaptive Reconstruction Split Computing (version 1.3.0).
+The listed results are distributed as repository files.
+No third-party permission or waiver is claimed. This grant does not supersede dataset terms or license underlying datasets, images, or other third-party assets. Authored code, schemas and documentation retain the repository MIT license; third-party code retains its own license.
 
-Scope (exact paths):
+Scope (exact repository-relative paths):
 release/v1.3.0/analysis/compute_analysis.json
 release/v1.3.0/analysis/compute_claim_audit.json
 release/v1.3.0/diagnostics/known-offset-diagnostic.csv
@@ -28,6 +29,22 @@ release/v1.3.0/inputs/laplace_draw_metrics.csv
 release/v1.3.0/inputs/laplace_run_metrics.csv
 release/v1.3.0/inputs/primary_seed_results.csv
 release/v1.3.0/inputs/semantic_seed_results.csv
+reproduction/aggregate-data/focused-all-decoder-metrics.csv
+reproduction/aggregate-data/focused-all-primary-individual.csv
+reproduction/aggregate-data/focused-cohort-descriptive.csv
+reproduction/aggregate-data/focused-jpeg-full-curves.csv
+reproduction/aggregate-data/focused-jpeg-selected-points.csv
+reproduction/aggregate-data/focused-matched-paired-descriptive.csv
+reproduction/aggregate-data/focused-matched-paired-individual.csv
+reproduction/aggregate-data/followup-decoder-contrast.csv
+reproduction/aggregate-data/followup-disco-candidates.csv
+reproduction/aggregate-data/followup-test-utility.csv
+reproduction/aggregate-data/followup-training-history.csv
+reproduction/aggregate-data/historical-secondary-directions.csv
+reproduction/aggregate-data/historical-secondary-group.csv
+reproduction/aggregate-data/historical-secondary-individual.csv
+reproduction/aggregate-data/historical-secondary-paired-individual.csv
+reproduction/aggregate-data/historical-secondary-paired.csv
 results/raw/budget_attacker_results.csv
 results/raw/budget_cell_results.csv
 results/raw/primary_seed_results.csv

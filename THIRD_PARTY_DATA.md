@@ -31,3 +31,7 @@ files is not a representation that MMLAB, image owners, or another
 rights holder authorized commercial use. No third-party permission or waiver is
 claimed, no third-party terms are superseded, and recipients remain responsible
 for rights outside the contributors' license grant.
+
+## Third-party software
+
+The pinned DISCO source in `reproduction/upstream/` is distributed under its accompanying Apache License 2.0. Source attribution and the six-channel adaptation are described in [the reproduction notice](reproduction/THIRD_PARTY_DATA.md). The repository MIT grant does not replace that license.

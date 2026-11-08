@@ -1,0 +1,68 @@
+{
+  "cpu_model": "Intel(R) Xeon(R) w5-2465X",
+  "cpu_threads_required": 1,
+  "cuda_runtime_version": "12.8",
+  "cudnn_version": 91002,
+  "dtype": "float32",
+  "gpu": {
+    "driver_version": "580.159.03",
+    "memory_total_mib": 11264,
+    "name": "NVIDIA GeForce RTX 2080 Ti",
+    "uuid": "<machine-identifier-redacted>"
+  },
+  "machine": "x86_64",
+  "measurement_exclusions": [
+    "dataset_loading",
+    "serialization",
+    "host_to_device_transfer",
+    "networking",
+    "queueing",
+    "energy"
+  ],
+  "platform": "Linux-6.8.0-117-generic-x86_64-with-glibc2.35",
+  "protocol_id": "eng_compute_v1",
+  "python_executable": "<machine-specific-path-redacted>",
+  "python_version": "3.11.5",
+  "schema_version": 1,
+  "source_bindings": [
+    {
+      "path": "src/eng_compute.py",
+      "sha256": "cfe630d050055766b997c6f73e4bbf45f696ee85672d06957dce7bda405eace0"
+    },
+    {
+      "path": "src/models.py",
+      "sha256": "2e4e4897dcb5fcc847d78dc0cabe695bf87617d8e502cb4b3618f95c82373a4f"
+    },
+    {
+      "path": "src/defenses.py",
+      "sha256": "a1ef0ad294375ba54c72c873336ba9919b9f922d166cdccef6433bf59b0c2b6d"
+    },
+    {
+      "path": "src/checkpointing.py",
+      "sha256": "98559812bb3be3c84a494837a47301c4c5f07b5555aeb642cafebfcfc06ff289"
+    },
+    {
+      "path": "scripts/seal_eng_compute_protocol.py",
+      "sha256": "304ea0c48e77c20a63a3f409a3b8ad499c6ac15a7e5867154755f47f985ae6e8"
+    },
+    {
+      "path": "scripts/profile_eng_compute.py",
+      "sha256": "336ce706ae371d93d7171f209e63aa6505d2f9215db163b7752788c032844306"
+    },
+    {
+      "path": "scripts/audit_eng_compute.py",
+      "sha256": "d33405ce8447df6bef7a0fee5f9125d9874b10fedbafab24e557c75532a1dc3f"
+    },
+    {
+      "path": "scripts/analyze_eng_compute.py",
+      "sha256": "7258cb1f798fed9292850b5f303d8fe30828ad037dfed0f576c1a1006e4c8f94"
+    }
+  ],
+  "thread_environment": {
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "torch_version": "2.9.0+cu128"
+}

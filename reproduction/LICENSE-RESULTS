@@ -1,0 +1,23 @@
+Aggregate tables for Reconstruction Exposure and Task Utility in Split Computing: Sensitivity to Attacker Configuration.
+
+Contributor-owned rights in the exact files below are licensed under Creative Commons Attribution 4.0 International (CC BY 4.0): https://creativecommons.org/licenses/by/4.0/
+Attribution: Sooyoung Jang, Sungpil Woo and Ahyun Lee, Reconstruction Exposure and Task Utility in Split Computing: Sensitivity to Attacker Configuration.
+No third-party permission or waiver is claimed. This grant does not supersede dataset terms or license underlying datasets or images. Authored code and documentation use MIT; upstream DISCO code retains Apache-2.0. The root LICENSE-RESULTS gives the complete repository scope.
+
+Scope (relative to this directory):
+aggregate-data/focused-all-decoder-metrics.csv
+aggregate-data/focused-all-primary-individual.csv
+aggregate-data/focused-cohort-descriptive.csv
+aggregate-data/focused-jpeg-full-curves.csv
+aggregate-data/focused-jpeg-selected-points.csv
+aggregate-data/focused-matched-paired-descriptive.csv
+aggregate-data/focused-matched-paired-individual.csv
+aggregate-data/followup-decoder-contrast.csv
+aggregate-data/followup-disco-candidates.csv
+aggregate-data/followup-test-utility.csv
+aggregate-data/followup-training-history.csv
+aggregate-data/historical-secondary-directions.csv
+aggregate-data/historical-secondary-group.csv
+aggregate-data/historical-secondary-individual.csv
+aggregate-data/historical-secondary-paired-individual.csv
+aggregate-data/historical-secondary-paired.csv

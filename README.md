@@ -1,133 +1,80 @@
-# Adaptive Reconstruction Split Computing
+# Reconstruction Exposure and Task Utility in Split Computing: Sensitivity to Attacker Configuration
 
-This is the official repository for the manuscript on reconstruction risk, task utility, and bounded component compute in split computing. It contains the implementation, frozen protocol records, public verification tools, and aggregate numeric evidence.
+Official code and aggregate results for the paper by **Sooyoung Jang, Sungpil Woo, and Ahyun Lee**. The manuscript is **under review**.
 
-The public boundary is exactly 114 files. It discloses 13 aggregate CSV tables with 2,308 rows: 1,752 rows from the validation-frozen reconstruction, semantic, and auxiliary-budget study, plus 556 benchmark and component-compute rows.
+The study examines how measured image reconstruction exposure changes with attacker configuration, and how task utility relates to the bytes sent across a split-computing interface. Experiments use CIFAR-10 and CelebA, two encoder–interface configurations, two reconstruction decoders, an architecture-adapted DISCO comparator, and a fixed-victim JPEG comparison.
+
+## Reproduce the paper's aggregate results
+
+Run from the repository root with **Python 3.10 or later**. This command uses only the Python standard library and the included CSVs; it runs offline without images, model weights, or a GPU.
+
+```bash
+python reproduction/replay_aggregates.py \
+  --data reproduction/aggregate-data \
+  --output replay-output
+```
+
+Use an output directory that does not already exist. A successful run writes `replay-output/verification.json` with status `PASS_CPU_AGGREGATE_REPLAY`. It reconstructs **1,140 descriptive rows**, four decoder contrasts, 90 utility comparisons, DISCO selections and training-history summaries, and JPEG selections. Numerical checks use absolute tolerance `1e-12`.
+
+See the [reproduction guide](reproduction/README.md) for outputs and scope, the [data guide](reproduction/aggregate-data/README.md) for table contents, and [reproducibility details](docs/REPRODUCIBILITY.md) for the experimental environment and source layout.
 
 ## Study scope
 
-The empirical study evaluates reconstruction exposure and task utility for four fixed methods across two split interfaces and two datasets. A separate prospectively specified extension reports bounded central- and graphics-processor component measurements. The disclosed evidence supports setting-specific comparisons only.
+- At the higher-resolution interface, ten paired runs per dataset give an AFD-minus-standard SSIM contrast of approximately −0.14 for the deconvolutional/MSE decoder and −0.01 for the residual/perceptual decoder. Architecture and objective vary together.
+- The two interface settings also differ in encoder configuration. Their comparison does not isolate a causal resolution effect.
+- DISCO is adapted to six-channel features and evaluated with a ten-epoch recipe. Training adequacy is unestablished; infeasible validation settings and test utility failures remain in the tables.
+- Validation-qualified JPEG points use fewer bytes than corresponding uncompressed float32 feature tensors under the fixed-victim protocol. JPEG changes server exposure and computation placement; compressed-feature codecs and deployed network performance were not evaluated.
+- Five/four-run and ten/nine-run cohorts remain separate. Model runs, attacker restarts, attributes and timing blocks are not interchangeable independent replicates. Between-run spread describes the evaluated pipelines.
 
-- Primary reconstruction and utility comparisons use five predeclared model seeds.
-- CelebA semantic probes use model seed as the inferential unit; attribute rows and stochastic draws are not independent replicates.
-- The auxiliary-budget grid is descriptive because its original base table uses one predeclared seed.
-- The benchmark extension uses paired model-attacker run seed as its analysis unit. Attacker restarts measure optimizer sensitivity and are not independent scientific replicates.
-- The compute extension uses model seed as the inferential unit. Technical timing blocks quantify measurement noise; they are not inferential units.
-- Reported intervals are descriptive two-sided Student-t intervals. The evidence does not establish formal privacy, universal method superiority, architecture-only attacker effects, equivalence, causal hardware effects, deployed end-to-end latency, or hardware-general conclusions.
+These results characterize achieved reconstruction and task utility under the stated protocols. They do not establish practical privacy protection, general defense superiority, or measured deployment savings.
 
-## Public files
+## Repository layout
 
-- `src/`: split models, defenses, data interfaces, experiment logic, metrics, audit helpers, and protocol utilities.
-- `scripts/`: public pipeline, analysis, export, and verification entry points.
-- `config/`: the frozen study contract and the executable implementation supplement.
-- `results/raw/`: five public-safe aggregate base tables. The directory name refers to the disclosure layer; these are not private per-example records.
-- `results/protocol/`: the sanitized environment, frozen-selection commitment, and schema-version-3 disclosure manifest.
-- `release/v1.3.0/`: consolidated aggregate reproduction code and inputs, expected outputs, the additional benchmark-attacker evidence table, two compute-analysis JSON files, seven historical schemas, diagnostics and checksums.
-- `tests/`, `.github/workflows/public-checks.yml`, and `run_public_checks.sh`: the public regression and boundary checks.
+| Path | Contents |
+| --- | --- |
+| [`reproduction/`](reproduction/README.md) | Paper aggregate tables, portable replay, scientific source snapshots, recorded environments and provenance. |
+| [`src/`](src/) | Base split-computing models, data interfaces, training, evaluation and protocol utilities. |
+| [`config/`](config/) | Study contract and implementation protocol. |
+| [`results/raw/`](results/raw/) | Model-, attribute- and decoder-level aggregate tables; these are not per-image records. |
+| [`release/v1.3.0/`](release/v1.3.0/README.md) | Versioned supporting analyses for reconstruction, semantics, attacker budgets and component compute. |
+| [`scripts/`](scripts/) | Base experiment, analysis and repository-verification entry points. |
+| [`tests/`](tests/) | Reproduction, scientific-protocol and public-file-boundary checks. |
 
-`results/protocol/disclosure_manifest.json` fixes the exact 114-path allowlist, all 13 CSV schemas and row counts, 49 verified public outputs, the exact Creative Commons license scope, and the authorized v1.3.0 repository-commit state.
+Scientific snapshots retain their recorded filenames and provenance identifiers. The source paths in provenance records identify the captured inputs; they are not dependencies of aggregate replay.
 
-## Aggregate reproduction (v1.3.0)
+## Supporting analyses
 
-[`release/v1.3.0`](release/v1.3.0) contains seven input tables, full-precision Tables S1–S3, expected budget/retraining/compute outputs, diagnostic aggregates, pinned dependencies and offline reproduction code for Figures 2, 3 and 5. Its 556 input rows overlap earlier tables and do not represent new experimental runs. The 2,308-row count above describes the original 13-table disclosure; it excludes these reproduction copies and derived tables.
+The versioned analysis package reproduces calculations and figure data from aggregate measurements with Python 3.11:
 
 ```bash
 python -m pip install -r release/v1.3.0/requirements.txt
-python release/v1.3.0/reproduce.py --output-dir /tmp/eng-reproduction --check
+python release/v1.3.0/reproduce.py --output-dir supporting-output --check
 (cd release/v1.3.0 && sha256sum --check SHA256SUMS)
 ```
 
-Use Python 3.11. After dependency installation this command runs offline on CPU. It reproduces calculations from aggregate metrics; it does not regenerate predictions, authenticate experiment execution or repeat timing measurements. The journal supplement is one PDF containing Tables S1–S3. See the directory README for its exact coverage and file index. The consolidated directory has 40 files and 39 checksum entries. Its additional `evidence/benchmark_budget_attacker_rows.csv` contains 240 previously disclosed rows and is separate from the unchanged seven reproduction inputs containing 556 rows. Historical packages remain in Git history and the authors’ private records.
+Its inputs and outputs overlap other tables in this repository; row counts must not be added as independent experimental runs. See its [coverage and file index](release/v1.3.0/README.md).
 
-Historical schema `file` identifiers are preserved. `results/attacker_restart_rows.csv` and `results/benchmark_budget_conditions.csv` map to `inputs/`; `results/benchmark_budget_attacker_rows.csv` maps to `evidence/`; the other five historical result tables map to `expected/`, retaining filenames. Schemas live under `schemas/`, and compute analyses under `analysis/`. See the [complete schema-location mapping](release/v1.3.0/README.md#schema-location-mapping).
+## Experimental source and data
 
-## Environment
+Aggregate replay is self-contained. Training and raw-image evaluation require separately acquired datasets, pretrained weights, suitable compute and the execution context described in the [reproducibility guide](docs/REPRODUCIBILITY.md). The scientific orchestration snapshots retain their recorded layout and receipt requirements; they are not a turnkey raw-image training command.
 
-The recorded execution used Python 3.11.5. Package pins are listed in `requirements.txt`; figure-only dependencies are in `requirements-figures.txt`.
+Dataset images, annotations, model checkpoints, per-image predictions and editorial correspondence are not distributed. Dataset acquisition and reuse are governed by the [third-party data notice](THIRD_PARTY_DATA.md).
 
-```bash
-python3.11 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-# Optional figure dependencies:
-python -m pip install -r requirements-figures.txt
-```
+**Never load an untrusted `.pt` file** with the scientific code. Its compatibility loaders use `torch.load(..., weights_only=False)` for internally generated artifacts; that mode can execute code from a malicious checkpoint. This repository contains no checkpoint binaries.
 
-These pins are not a hash-locked cross-platform environment. PyTorch wheel selection depends on the target central processor, graphics processor, and CUDA platform. If a recorded wheel is unavailable, record any substitution and do not describe the new environment as byte-identical.
+## Verification
 
-## Dataset acquisition
-
-Datasets and labels are not redistributed.
-
-- CIFAR-10: obtain the standard `torchvision` distribution and place it under the directory passed through `--data-dir`. The locked protocol uses a class-stratified 10% validation subset with split seed 314159.
-- CelebA: accept the official terms, obtain the aligned images and annotations, and place `list_attr_celeba.txt` and preferably `list_eval_partition.txt` under `<data-root>/celeba/`.
-
-Synthetic samples are available only through explicit test flags and are never a silent substitute for study data. See `THIRD_PARTY_DATA.md` for the third-party rights boundary.
-
-## Public verification
-
-From a checkout containing only the 114 allowed files:
+Verify the current reproduction files with:
 
 ```bash
-./run_public_checks.sh
-```
-
-The runner verifies both public exporters in public-only mode, the fixed inventory, SHA-256 values, schemas, row counts, licensing, citation policy, file-size ceiling, common secret patterns, source compilation, and public tests. It establishes integrity of the disclosed bytes. It does not authenticate unpublished private inputs or reproduce the experiments.
-
-Verify the 39 consolidated checksum entries from the repository root with:
-
-```bash
-(cd release/v1.3.0 && sha256sum --check SHA256SUMS)
-```
-
-Individual public-only checks are:
-
-```bash
-python scripts/export_eng_compute_public.py --check --public-only
-python scripts/export_public_results.py --check --public-only
+(cd reproduction && sha256sum --check SHA256SUMS)
 python scripts/audit_public_repository.py
 ```
 
-In the full private workspace, stronger regeneration checks rebuild the public tables from canonical private evidence and compare the 17 mapped scientific/schema files with the retained private candidate byte-for-byte. The independent auditor can also check the Git index in a Git checkout:
+With the pinned test dependencies installed, `./run_public_checks.sh` checks the exact public-file inventory, both aggregate-analysis packages and scientific-protocol tests. The complete test suite uses Python 3.11 and downloads a hash-verified AlexNet weight for metric tests; the aggregate replay above does not. GitHub Actions runs the same checks.
 
-```bash
-python scripts/export_eng_compute_public.py --check
-python scripts/export_public_results.py --check
-python scripts/audit_public_repository.py --require-staged
-```
+## Citation and licenses
 
-`--require-staged` checks Git-index bytes; it does not denote publication status. The private commands require canonical manifests, audit records, checkpoints, timing records, or other evidence that is intentionally absent from a public-only checkout.
+[CITATION.cff](CITATION.cff) contains the paper title, author order and under-review status, together with the software citation. No publication DOI is assigned here.
 
-## Running the disclosed implementation
-
-The CLI defaults to `config/study_contract.json` and accepts explicit `--contract`, `--revision-root`, `--data-dir`, `--device`, and `--num-workers` arguments.
-
-```bash
-python scripts/run_revision_pipeline.py --help
-python scripts/run_revision_pipeline.py init \
-  --revision-root work/adaptive-reconstruction
-```
-
-Experiment execution requires separately acquired datasets, suitable compute, and locally generated private artifacts. The aggregate tables are sufficient to inspect the disclosed results but not to regenerate private raw-evidence audits; v1.3.0 reproduces Figures 2, 3 and 5 from aggregate metrics.
-
-## Excluded material
-
-The deny-by-default `.gitignore` excludes manuscript and submission sources, bibliography files, datasets and third-party labels, checkpoints and learned perturbations, raw technical-block timings, images and sample tensors, per-example metrics and identifiers, semantic prediction arrays, the 240 MB frozen-selection artifact, private audit trees, local analysis candidates, caches, and the archived former Git state.
-
-Every public file must be UTF-8 text and smaller than 1 MiB. The repository does not use Git Large File Storage.
-
-## Checkpoint security
-
-Never load an untrusted `.pt` file with this code. The manuscript-bound compatibility loaders in `src/checkpointing.py` and `src/defenses.py` retain `torch.load(..., weights_only=False)` for internally generated, schema-checked artifacts. That mode can execute code embedded in a malicious file. No checkpoint or perturbation binary is included here.
-
-## Licensing
-
-- Authored scripts, source modules, schemas, tests, and documentation are licensed under the MIT License in `LICENSE`.
-- The aggregate tables, diagnostics and numeric analysis files named in `LICENSE-RESULTS` are licensed under CC BY 4.0 only to the extent the contributors own the applicable rights.
-- Third-party datasets, labels, images, model weights, logos, templates, and assets are not covered by either grant and are not redistributed.
-
-The Creative Commons grant does not claim third-party permission, supersede dataset terms, or license an underlying dataset. The licensed results are distributed as repository files.
-
-## Citation and release status
-
-`CITATION.cff` records software version `1.3.0` and intentionally omits a repository URL, release date, and DOI. The disclosure state `authorized_for_repository_commit` records the authorization for a normal commit and push of the exact file inventory. This version is distributed through the existing repository. No GitHub Release, tag, DOI or journal submission is created by this update.
+Authored code and documentation use the [MIT License](LICENSE). Contributor-owned aggregate results use CC BY 4.0 for the exact files listed in [LICENSE-RESULTS](LICENSE-RESULTS). The licensed results are distributed as repository files. This grant does not claim third-party permission or override dataset terms. The pinned DISCO source retains its [Apache-2.0 license](reproduction/upstream/LICENSE) and [attribution](reproduction/THIRD_PARTY_DATA.md).

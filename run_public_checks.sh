@@ -72,13 +72,16 @@ cd "${REPOSITORY_ROOT}"
 "${PYTHON_BIN}" scripts/export_eng_compute_public.py --check --public-only
 "${PYTHON_BIN}" scripts/export_public_results.py --check --public-only
 "${PYTHON_BIN}" scripts/audit_public_repository.py
-"${PYTHON_BIN}" -m compileall -q src scripts tests
+"${PYTHON_BIN}" -m compileall -q src scripts tests reproduction
+"${PYTHON_BIN}" reproduction/replay_aggregates.py \
+  --data reproduction/aggregate-data --output "${PUBLIC_CACHE_ROOT}/paper-replay"
 "${PYTHON_BIN}" -m pytest -q -p no:cacheprovider \
   tests/test_aggregate_reproduction.py \
   tests/test_budget_result_audit.py \
   tests/test_code_scripts.py \
   tests/test_dataset_remedy.py \
   tests/test_public_repository.py \
+  tests/test_paper_reproduction.py \
   tests/test_public_protocol.py \
   tests/test_result_audit.py \
   tests/test_revision_protocol.py \

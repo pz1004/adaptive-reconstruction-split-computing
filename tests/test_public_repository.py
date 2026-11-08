@@ -28,19 +28,10 @@ from scripts.export_public_results import (
     public_allowlist,
     verify_public_outputs,
 )
+from scripts.paper_repository_policy import EXPECTED_CITATION_CFF, PAPER_METADATA
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_CITATION_CFF = """cff-version: 1.2.0
-message: "If you use this software, please cite it using the metadata below."
-type: software
-title: "Adaptive Reconstruction Split Computing"
-authors:
-  - family-names: "Jang"
-    given-names: "Sooyoung"
-version: 1.3.0
-license: MIT
-"""
 
 
 def test_public_outputs_have_exact_counts_schemas_and_hashes() -> None:
@@ -48,7 +39,8 @@ def test_public_outputs_have_exact_counts_schemas_and_hashes() -> None:
     assert result["passed"] is True
     assert result["result_rows_verified"] == 2308
     assert result["public_outputs_verified"] == 49
-    assert result["allowlist_files"] == 114
+    assert result["allowlist_files"] == 185
+    assert result["paper_reproduction"]["files_verified"] == 67
 
 
 def test_disclosure_manifest_has_exact_allowlist_and_licenses() -> None:
@@ -71,7 +63,8 @@ def test_disclosure_manifest_has_exact_allowlist_and_licenses() -> None:
         "contributor_owned_numeric_results_and_compute_analysis": "CC-BY-4.0",
         "third_party_data_and_assets": "not licensed or redistributed",
     }
-    assert manifest["schema_version"] == 3
+    assert manifest["schema_version"] == 4
+    assert manifest["paper_reproduction"] == PAPER_METADATA
     assert manifest["repository_name"] == "adaptive-reconstruction-split-computing"
     assert "historical_protected_updates" not in manifest
     assert manifest["disclosure_date"] == "2026-09-30"
@@ -110,15 +103,15 @@ def test_citation_metadata_is_exact_and_tampering_is_rejected() -> None:
     citation = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
     assert citation == EXPECTED_CITATION_CFF
     assert not re.search(
-        r"(?m)^\s*(?:email|affiliation|orcid|doi|preferred-citation|repository-code|date-released):",
+        r"(?m)^\s*(?:email|doi|date-released):",
         citation,
         flags=re.IGNORECASE,
     )
 
     payloads = {path: (ROOT / path).read_bytes() for path in EXPECTED_ALLOWLIST}
     payloads["CITATION.cff"] = payloads["CITATION.cff"].replace(
-        b"\nversion: 1.3.0\n",
-        b"\nversion: 1.2.1\n",
+        b"Manuscript under review.",
+        b"Published article.",
     )
     with pytest.raises(RuntimeError, match="citation metadata"):
         _verify_disclosure(payloads.__getitem__)
@@ -127,13 +120,12 @@ def test_citation_metadata_is_exact_and_tampering_is_rejected() -> None:
 def test_public_title_checksum_command_and_result_attribution_are_canonical() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     result_license = (ROOT / "LICENSE-RESULTS").read_text(encoding="utf-8")
-    assert readme.startswith("# Adaptive Reconstruction Split Computing\n")
+    assert readme.startswith("# " + PAPER_METADATA["title"] + "\n")
     assert "(cd release/v1.3.0 && sha256sum --check SHA256SUMS)" in readme
     assert (
-        "Adaptive Reconstruction Split Computing aggregate results and analyses "
-        "(version 1.3.0)" in result_license
+        "Aggregate results for " + PAPER_METADATA["title"] in result_license
     )
-    assert "repository-code:" not in (ROOT / "CITATION.cff").read_text(encoding="utf-8")
+    assert "repository-code:" in (ROOT / "CITATION.cff").read_text(encoding="utf-8")
 
 
 def test_public_checks_workflow_is_pinned_and_least_privilege() -> None:
@@ -229,8 +221,8 @@ def test_public_auditor_accepts_git_checkout_without_private_paths(tmp_path: Pat
     assert completed.returncode == 0, completed.stderr
     report = json.loads(completed.stdout)
     assert report["passed"] is True
-    assert report["candidate_files"] == 114
-    assert report["ignored_boundary_paths_verified"] == 12
+    assert report["candidate_files"] == 185
+    assert report["ignored_boundary_paths_verified"] == 13
 
 
 def test_independent_auditor_rejects_overstated_release_permission() -> None:
@@ -362,7 +354,11 @@ def test_unsafe_pytorch_loading_is_bounded_and_prominently_disclosed() -> None:
         path = ROOT / relative
         if path.suffix == ".py" and unsafe_opt_out in path.read_text(encoding="utf-8"):
             offenders.append(relative)
-    assert offenders == ["src/checkpointing.py", "src/defenses.py"]
+    assert offenders == [
+        "reproduction/scientific/src/checkpointing.py",
+        "reproduction/scientific/src/defenses.py",
+        "src/checkpointing.py", "src/defenses.py",
+    ]
     assert "Never load an untrusted `.pt` file" in (ROOT / "README.md").read_text(encoding="utf-8")
 
 

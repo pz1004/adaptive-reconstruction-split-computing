@@ -7,3 +7,9 @@
 
 # Preserve the retained diagnostic export byte for byte.
 release/v1.3.0/diagnostics/known-offset-diagnostic.csv -text whitespace=cr-at-eol
+
+# Preserve recorded paper-table bytes and provenance hashes across Git checkouts.
+reproduction/aggregate-data/*.csv -text whitespace=cr-at-eol
+
+# Keep the pinned third-party source byte-identical, including its blank line.
+reproduction/upstream/disco.py whitespace=-blank-at-eol

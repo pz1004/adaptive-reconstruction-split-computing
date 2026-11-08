@@ -11,12 +11,19 @@ import json
 import math
 import re
 import subprocess
+import sys
 from itertools import product
 from pathlib import Path
 from typing import Any, Callable
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from scripts.paper_repository_policy import (
+    EXPECTED_CITATION_CFF, PAPER_METADATA, PUBLIC_ADDITIONS, verify_paper_reproduction,
+)
 
 EXPECTED_ALLOWLIST = frozenset(
     {
@@ -174,6 +181,7 @@ V13_LICENSE_SCOPE = ('release/v1.3.0/diagnostics/known-offset-diagnostic.csv',
  'release/v1.3.0/inputs/primary_seed_results.csv',
  'release/v1.3.0/inputs/semantic_seed_results.csv')
 EXPECTED_ALLOWLIST |= V13_FILES | {"tests/test_aggregate_reproduction.py"}
+EXPECTED_ALLOWLIST |= PUBLIC_ADDITIONS
 
 RESULT_SPECS: dict[str, tuple[int, tuple[str, ...]]] = {
     "results/raw/primary_seed_results.csv": (
@@ -272,7 +280,7 @@ EXPECTED_MANIFEST_KEYS = frozenset(
         "disclosure_date", "result_row_count", "base_result_row_count",
         "supplemental_result_row_count", "result_table_counts", "release",
         "semantic_attribute_boundary", "source_inputs", "public_outputs",
-        "public_allowlist", "excluded", "licenses", "release_decision",
+        "public_allowlist", "excluded", "licenses", "release_decision", "paper_reproduction",
     }
 )
 EXPECTED_RELEASE_DECISION = {
@@ -300,17 +308,6 @@ EXPECTED_RELEASE_STATE = {
     "release_date": None,
     "doi": None,
 }
-EXPECTED_CITATION_CFF = """cff-version: 1.2.0
-message: "If you use this software, please cite it using the metadata below."
-type: software
-title: "Adaptive Reconstruction Split Computing"
-authors:
-  - family-names: "Jang"
-    given-names: "Sooyoung"
-version: 1.3.0
-license: MIT
-"""
-
 BANNED_SUFFIXES = {
     ".7z", ".aux", ".bib", ".bz2", ".eps", ".gif", ".gz", ".jpeg", ".jpg",
     ".log", ".npz", ".pdf", ".png", ".pt", ".tar", ".tex", ".tgz", ".tif",
@@ -319,7 +316,7 @@ BANNED_SUFFIXES = {
 BANNED_BASENAMES = {".env", "credentials.json", "id_ed25519", "id_rsa"}
 IGNORED_BOUNDARY = (
     "main.tex", "main.pdf", "references.bib", "figures", "submission", "audit",
-    "analysis-output", "revisions", "data", "task_plan.md", "notes.md", "deprecated",
+    "analysis-output", "revisions", "research-records", "data", "task_plan.md", "notes.md", "deprecated",
 )
 CONTENT_PATTERNS = {
     "local_home_path": re.compile(r"/(?:home|Users)/[A-Za-z0-9._-]+/"),
@@ -626,8 +623,11 @@ def _verify_disclosure(read_bytes: Callable[[str], bytes]) -> dict[str, Any]:
     manifest = json.loads(read_bytes("results/protocol/disclosure_manifest.json"))
     if set(manifest) != EXPECTED_MANIFEST_KEYS:
         raise RuntimeError(f"Unexpected disclosure manifest keys: {sorted(set(manifest) ^ EXPECTED_MANIFEST_KEYS)}")
-    if manifest["schema_version"] != 3:
+    if manifest["schema_version"] != 4:
         raise RuntimeError("Unsupported disclosure manifest schema")
+    if manifest["paper_reproduction"] != PAPER_METADATA:
+        raise RuntimeError("Paper reproduction metadata differs from fixed policy")
+    paper_report = verify_paper_reproduction(read_bytes)
     if manifest["repository_name"] != "adaptive-reconstruction-split-computing":
         raise RuntimeError("Unexpected repository name")
     if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", manifest["disclosure_date"]):
@@ -668,7 +668,7 @@ def _verify_disclosure(read_bytes: Callable[[str], bytes]) -> dict[str, Any]:
     except UnicodeDecodeError as error:
         raise RuntimeError("Root citation metadata is not UTF-8") from error
     if citation != EXPECTED_CITATION_CFF:
-        raise RuntimeError("Root citation metadata differs from the v1.3.0 repository-commit policy")
+        raise RuntimeError("Root citation metadata differs from the paper/software policy")
     if manifest["disclosure_date"] != "2026-09-30":
         raise RuntimeError("Manifest disclosure date differs from the recorded disclosure date")
     workflow = read_bytes(".github/workflows/public-checks.yml").decode("utf-8")
@@ -701,20 +701,17 @@ def _verify_disclosure(read_bytes: Callable[[str], bytes]) -> dict[str, Any]:
     third_party_notice = read_bytes("THIRD_PARTY_DATA.md").decode("utf-8")
     readme = read_bytes("README.md").decode("utf-8")
     citation_readme_fragments = (
-        "# Adaptive Reconstruction Split Computing",
-        "exactly 114 files",
-        "2,308 rows",
-        "49 verified public outputs",
-        "authorized_for_repository_commit",
+        "# " + PAPER_METADATA["title"],
+        "Official code and aggregate results",
+        "under review",
+        "python reproduction/replay_aggregates.py",
         "CITATION.cff",
-        "intentionally omits a repository URL, release date, and DOI",
         "(cd release/v1.3.0 && sha256sum --check SHA256SUMS)",
     )
     if any(fragment not in readme for fragment in citation_readme_fragments):
-        raise RuntimeError("README does not match the v1.3.0 citation policy")
+        raise RuntimeError("README does not match the paper repository policy")
     if (
-        "Adaptive Reconstruction Split Computing aggregate results and analyses "
-        "(version 1.3.0)" not in result_license
+        "Aggregate results for " + PAPER_METADATA["title"] not in result_license
     ):
         raise RuntimeError("Result-license attribution differs from the public identity")
     for relative in EXPECTED_RELEASE_DECISION["scope"]:
@@ -832,6 +829,7 @@ def _verify_disclosure(read_bytes: Callable[[str], bytes]) -> dict[str, Any]:
         "release_files_verified": len(RELEASE_FILES),
         "release_checksum_entries": len(EXPECTED_RELEASE_CHECKSUMS),
         "manifest_sha256": _sha256(read_bytes("results/protocol/disclosure_manifest.json")),
+        "paper_reproduction": paper_report,
     }
 
 
@@ -912,7 +910,10 @@ def audit(*, require_staged: bool) -> dict[str, Any]:
                 ignored_verified += 1
 
     largest = max(sizes, default=(0, ""))
-    expected_trusted_loaders = {"src/checkpointing.py", "src/defenses.py"}
+    expected_trusted_loaders = {
+        "src/checkpointing.py", "src/defenses.py",
+        "reproduction/scientific/src/checkpointing.py", "reproduction/scientific/src/defenses.py",
+    }
     if set(trusted_artifact_loaders) != expected_trusted_loaders:
         errors.append(
             "trusted-artifact loader set differs from the reviewed compatibility boundary: "

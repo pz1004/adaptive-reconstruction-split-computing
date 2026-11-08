@@ -27,6 +27,7 @@ from scripts.export_eng_compute_public import (
     preflight_payloads,
     validate_public_release,
 )
+from scripts.paper_repository_policy import PAPER_METADATA, PUBLIC_ADDITIONS, verify_paper_reproduction
 
 
 PRIVATE_ROOT = PROJECT_ROOT / "revisions" / "2026-07-22_adaptive_reconstruction_study"
@@ -306,6 +307,7 @@ def public_allowlist() -> list[str]:
         | set(PROTOCOL_OUTPUTS)
         | set(PUBLIC_RELEASE_FILES)
         | set(V13_FILES)
+        | set(PUBLIC_ADDITIONS)
     )
 
 
@@ -604,9 +606,9 @@ def render_from_private_sources() -> dict[str, bytes]:
             row.update({"row_count": RESULT_SPECS[path][0], "fields": list(RESULT_SPECS[path][1])})
         public_outputs[path] = row
     manifest = {
-        "schema_version": 3,
+        "schema_version": 4,
         "repository_name": "adaptive-reconstruction-split-computing",
-        "repository_description": "Companion code and aggregate evidence for the Eng reconstruction-utility-compute study in split computing.",
+        "repository_description": "Official code and aggregate results for the paper under review: " + PAPER_METADATA["title"] + ".",
         "disclosure_date": "2026-09-30",
         "result_row_count": sum(spec[0] for spec in RESULT_SPECS.values()),
         "base_result_row_count": sum(spec[0] for spec in BASE_RESULT_SPECS.values()),
@@ -639,6 +641,7 @@ def render_from_private_sources() -> dict[str, bytes]:
             "third_party_data_and_assets": "not licensed or redistributed",
         },
         "release_decision": RELEASE_DECISION,
+        "paper_reproduction": PAPER_METADATA,
     }
     outputs["results/protocol/disclosure_manifest.json"] = _json_bytes(manifest)
     return outputs
@@ -654,8 +657,11 @@ def verify_public_outputs() -> dict[str, Any]:
     if not MANIFEST_PATH.is_file():
         raise RuntimeError(f"Missing disclosure manifest: {MANIFEST_PATH}")
     manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
-    if manifest.get("schema_version") != 3:
-        raise RuntimeError("Public disclosure manifest is not schema version 3")
+    if manifest.get("schema_version") != 4:
+        raise RuntimeError("Public disclosure manifest is not schema version 4")
+    if manifest.get("paper_reproduction") != PAPER_METADATA:
+        raise RuntimeError("Paper reproduction metadata differs from fixed policy")
+    paper_report = verify_paper_reproduction(lambda name: (PROJECT_ROOT / name).read_bytes())
     if manifest.get("result_row_count") != 2308:
         raise RuntimeError("Public disclosure manifest does not declare exactly 2,308 result rows")
     if manifest.get("base_result_row_count") != 1752:
@@ -710,6 +716,7 @@ def verify_public_outputs() -> dict[str, Any]:
         "public_outputs_verified": len(manifest["public_outputs"]),
         "allowlist_files": len(manifest["public_allowlist"]),
         "manifest_sha256": sha256_file(MANIFEST_PATH),
+        "paper_reproduction": paper_report,
     }
 
 

@@ -1,0 +1,901 @@
+{
+  "added_seeds": [
+    1001,
+    1002,
+    1003,
+    1004,
+    1005
+  ],
+  "counts": {
+    "additional_seed_models": 20,
+    "disco_models_evaluation": 20,
+    "disco_models_selection": 12,
+    "expected_scientific_jobs": 168,
+    "jpeg_curves": 4,
+    "jpeg_quality_conditions": 24,
+    "ordinary_decoder_fits": 104,
+    "selection_freezes": 4,
+    "selection_reference_models": 4
+  },
+  "datasets": [
+    "cifar10",
+    "celeba"
+  ],
+  "disco": {
+    "adaptations": [
+      "six-channel scorer input",
+      "common historical model and training protocol",
+      "32x32 RGB input",
+      "no spatial decoupling"
+    ],
+    "alpha": 0.5,
+    "author_commit": "f4326568eddbcca8c1c7e0b68e05ab8a70adcc6a",
+    "batch_size": 128,
+    "epochs": 10,
+    "learning_rate": 0.001,
+    "pruning_counts": [
+      1,
+      2,
+      3
+    ],
+    "scorer": "ResNet18 layer3 onward; layer3 first convolution and skip input changed128to6; output6",
+    "selection": "minimum maximum-decoder validation SSIM among accuracy>=standard validation accuracy-0.01; fallback highest validation accuracy marked infeasible; stable input-order tie break",
+    "selection_seed": 424242,
+    "spatial_decoupling": false,
+    "temperature": 0.03333333333333333
+  },
+  "historical_operating_points": {
+    "celeba": {
+      "current": {
+        "afd": 0.5,
+        "laplace": 0.2,
+        "learned": 2.0
+      },
+      "early": {
+        "afd": 0.5,
+        "laplace": 0.2,
+        "learned": 1.0
+      }
+    },
+    "cifar10": {
+      "current": {
+        "afd": 1.0,
+        "laplace": 0.1,
+        "learned": 4.0
+      },
+      "early": {
+        "afd": 0.5,
+        "laplace": 0.05,
+        "learned": 4.0
+      }
+    }
+  },
+  "interfaces": {
+    "early": [
+      6,
+      16,
+      16
+    ],
+    "current": [
+      6,
+      8,
+      8
+    ]
+  },
+  "jpeg": {
+    "byte_accounting": "complete JPEG stream including headers",
+    "cloud_classifier": "entire frozen encoder+classifier on decoded normalized image",
+    "metrics": [
+      "bytes",
+      "MSE",
+      "PSNR",
+      "SSIM",
+      "LPIPS",
+      "task accuracy"
+    ],
+    "not_a_privacy_defense": true,
+    "optimize": false,
+    "progressive": false,
+    "qualities": [
+      10,
+      30,
+      50,
+      70,
+      90,
+      95
+    ],
+    "quantization": "round clamp(raw,0,1)*255 to uint8",
+    "selection": "minimum validation mean bytes subject to accuracy>=uncompressed complete standard model accuracy-0.01; no qualifying quality declared infeasible",
+    "subsampling": 2,
+    "victim_seed": 7
+  },
+  "matrix": [
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 424242,
+      "pruning_count": 1,
+      "split": "early",
+      "stage": "disco_selection"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 424242,
+      "pruning_count": 2,
+      "split": "early",
+      "stage": "disco_selection"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 424242,
+      "pruning_count": 3,
+      "split": "early",
+      "stage": "disco_selection"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [],
+      "encoder_epochs": 10,
+      "kind": "standard",
+      "model_seed": 424242,
+      "split": "early",
+      "stage": "selection_reference"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 7,
+      "pruning_count": "validation_selected",
+      "split": "early",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 42,
+      "pruning_count": "validation_selected",
+      "split": "early",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 123,
+      "pruning_count": "validation_selected",
+      "split": "early",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 2024,
+      "pruning_count": "validation_selected",
+      "split": "early",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 2025,
+      "pruning_count": "validation_selected",
+      "split": "early",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "standard",
+      "model_seed": 1001,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "afd",
+      "model_seed": 1001,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "standard",
+      "model_seed": 1002,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "afd",
+      "model_seed": 1002,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "standard",
+      "model_seed": 1003,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "afd",
+      "model_seed": 1003,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "standard",
+      "model_seed": 1004,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "afd",
+      "model_seed": 1004,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "standard",
+      "model_seed": 1005,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "afd",
+      "model_seed": 1005,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [],
+      "encoder_epochs": 0,
+      "kind": "standard",
+      "model_seed": 7,
+      "qualities": [
+        10,
+        30,
+        50,
+        70,
+        90,
+        95
+      ],
+      "split": "early",
+      "stage": "jpeg"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 424242,
+      "pruning_count": 1,
+      "split": "current",
+      "stage": "disco_selection"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 424242,
+      "pruning_count": 2,
+      "split": "current",
+      "stage": "disco_selection"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 424242,
+      "pruning_count": 3,
+      "split": "current",
+      "stage": "disco_selection"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [],
+      "encoder_epochs": 10,
+      "kind": "standard",
+      "model_seed": 424242,
+      "split": "current",
+      "stage": "selection_reference"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 7,
+      "pruning_count": "validation_selected",
+      "split": "current",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 42,
+      "pruning_count": "validation_selected",
+      "split": "current",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 123,
+      "pruning_count": "validation_selected",
+      "split": "current",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 2024,
+      "pruning_count": "validation_selected",
+      "split": "current",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 2025,
+      "pruning_count": "validation_selected",
+      "split": "current",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "cifar10",
+      "decoders": [],
+      "encoder_epochs": 0,
+      "kind": "standard",
+      "model_seed": 7,
+      "qualities": [
+        10,
+        30,
+        50,
+        70,
+        90,
+        95
+      ],
+      "split": "current",
+      "stage": "jpeg"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 424242,
+      "pruning_count": 1,
+      "split": "early",
+      "stage": "disco_selection"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 424242,
+      "pruning_count": 2,
+      "split": "early",
+      "stage": "disco_selection"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 424242,
+      "pruning_count": 3,
+      "split": "early",
+      "stage": "disco_selection"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [],
+      "encoder_epochs": 10,
+      "kind": "standard",
+      "model_seed": 424242,
+      "split": "early",
+      "stage": "selection_reference"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 7,
+      "pruning_count": "validation_selected",
+      "split": "early",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 42,
+      "pruning_count": "validation_selected",
+      "split": "early",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 123,
+      "pruning_count": "validation_selected",
+      "split": "early",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 2024,
+      "pruning_count": "validation_selected",
+      "split": "early",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 2025,
+      "pruning_count": "validation_selected",
+      "split": "early",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "standard",
+      "model_seed": 1001,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "afd",
+      "model_seed": 1001,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "standard",
+      "model_seed": 1002,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "afd",
+      "model_seed": 1002,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "standard",
+      "model_seed": 1003,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "afd",
+      "model_seed": 1003,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "standard",
+      "model_seed": 1004,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "afd",
+      "model_seed": 1004,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "standard",
+      "model_seed": 1005,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "afd",
+      "model_seed": 1005,
+      "split": "early",
+      "stage": "seed_extension"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [],
+      "encoder_epochs": 0,
+      "kind": "standard",
+      "model_seed": 7,
+      "qualities": [
+        10,
+        30,
+        50,
+        70,
+        90,
+        95
+      ],
+      "split": "early",
+      "stage": "jpeg"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 424242,
+      "pruning_count": 1,
+      "split": "current",
+      "stage": "disco_selection"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 424242,
+      "pruning_count": 2,
+      "split": "current",
+      "stage": "disco_selection"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 424242,
+      "pruning_count": 3,
+      "split": "current",
+      "stage": "disco_selection"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [],
+      "encoder_epochs": 10,
+      "kind": "standard",
+      "model_seed": 424242,
+      "split": "current",
+      "stage": "selection_reference"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 7,
+      "pruning_count": "validation_selected",
+      "split": "current",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 42,
+      "pruning_count": "validation_selected",
+      "split": "current",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 123,
+      "pruning_count": "validation_selected",
+      "split": "current",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 2024,
+      "pruning_count": "validation_selected",
+      "split": "current",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [
+        "deconv_mse",
+        "residual_lpips"
+      ],
+      "encoder_epochs": 10,
+      "kind": "disco",
+      "model_seed": 2025,
+      "pruning_count": "validation_selected",
+      "split": "current",
+      "stage": "disco_evaluation"
+    },
+    {
+      "dataset": "celeba",
+      "decoders": [],
+      "encoder_epochs": 0,
+      "kind": "standard",
+      "model_seed": 7,
+      "qualities": [
+        10,
+        30,
+        50,
+        70,
+        90,
+        95
+      ],
+      "split": "current",
+      "stage": "jpeg"
+    }
+  ],
+  "original_seeds": [
+    7,
+    42,
+    123,
+    2024,
+    2025
+  ],
+  "shared": {
+    "augmentation": "unchanged historical per-epoch live image transforms; no feature cache",
+    "batch_size": 128,
+    "checkpoint_policy": "validation only",
+    "descriptive_analysis": true,
+    "full_auxiliary_data": true,
+    "max_epochs": 50,
+    "new_primary_attacker_seed": "model_seed",
+    "num_workers": 2,
+    "patience": 5,
+    "release_seed": "attacker_seed*100000000+epoch*100000+batch; fixed validation epochcode90000000; K nested prefix",
+    "selection_partition": "validation",
+    "test_selection": false
+  },
+  "user_paths": {
+    "dataset_root": "<separately-obtained-dataset-root>",
+    "historical_checkpoint_root": "<separately-obtained-checkpoint-root>",
+    "output_root": "<new-output-directory>"
+  },
+  "scope": "Scientific configuration only. Admission, authorizations, operational paths and accounting omitted; no new experiments authorized by this archive."
+}

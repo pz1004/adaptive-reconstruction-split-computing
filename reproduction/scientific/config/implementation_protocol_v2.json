@@ -1,0 +1,54 @@
+{
+  "budget": {
+    "artifact_schema_version": 2,
+    "ordinary_validation_access": false,
+    "protocol_version": "auxiliary_budget_total_cap_v2",
+    "split_policy": "seeded_permutation_prefix_every_tenth_validation_one_based_v2",
+    "split_seed": 2718,
+    "stage": "auxiliary_budget_v2",
+    "total_cap_interpretation": "Each auxiliary_data_budgets fraction caps all image-feature pairs used for fitting and early-stop validation combined.",
+    "validation_position_rule": "One-based positions divisible by 10 are validation; all other capped-prefix positions are fitting."
+  },
+  "dependencies": {
+    "Pillow": {
+      "capture_status": "post_hoc_forward_reproduction_pin",
+      "version": "11.1.0"
+    },
+    "scikit-learn": {
+      "capture_status": "historical_preflight_record",
+      "version": "1.6.1"
+    }
+  },
+  "lpips": {
+    "backbone": "alex",
+    "input_range": "[-1,1]",
+    "package_weight": {
+      "relative_path": "weights/v0.1/alex.pth",
+      "sha256": "df73285e35b22355a2df87cdb6b70b343713b667eddbda73e1977e0c860835c0"
+    },
+    "torchvision_backbone_weight": {
+      "cache_filename": "alexnet-owt-7be5be79.pth",
+      "sha256": "7be5be791159472b1fbf3c69796f7cb30dca7ad8466c2df70058c37116cdee02"
+    }
+  },
+  "metrics": {
+    "lpips": "lpips-0.1.4-alex on images mapped from [0,1] to [-1,1]",
+    "mse": "per-image mean squared error over CxHxW",
+    "psnr": "10*log10(1/per-image-mse), data_range=1",
+    "ssim": "scikit-image structural_similarity, data_range=1, channel_axis=2"
+  },
+  "protocol_id": "paper_code_consistency_remediation_2026-08-16",
+  "schema_version": 2,
+  "semantic_probe": {
+    "architecture": "flatten-linear256-relu-dropout0.2-linear39",
+    "balanced_accuracy_threshold": 0.5,
+    "excluded_celeba_attribute_index": 31,
+    "learning_rate": 0.001,
+    "loss": "binary_cross_entropy_with_logits",
+    "output_count": 39
+  },
+  "study_contract": {
+    "path": "config/study_contract.json",
+    "sha256": "e43780aa31661ba797d1832151cc5363a3933f90edc8f7e3375ac39e11bb9ef0"
+  }
+}

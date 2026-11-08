@@ -1,9 +1,21 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it using the metadata below."
+message: "If you use this work, please cite the paper under review and the software."
 type: software
-title: "Adaptive Reconstruction Split Computing"
+title: "Reconstruction Exposure and Task Utility in Split Computing: Sensitivity to Attacker Configuration"
 authors:
   - family-names: "Jang"
     given-names: "Sooyoung"
-version: 1.3.0
+repository-code: "https://github.com/pz1004/adaptive-reconstruction-split-computing"
 license: MIT
+preferred-citation:
+  type: unpublished
+  title: "Reconstruction Exposure and Task Utility in Split Computing: Sensitivity to Attacker Configuration"
+  authors:
+    - family-names: "Jang"
+      given-names: "Sooyoung"
+    - family-names: "Woo"
+      given-names: "Sungpil"
+    - family-names: "Lee"
+      given-names: "Ahyun"
+  year: 2026
+  notes: "Manuscript under review."
