@@ -1,6 +1,4 @@
--r requirements.txt
-pandas==2.2.3
-matplotlib==3.10.0
-pubfig==0.3.0
-pubtab==1.0.2
+# Optional full scientific environment; no version upgrades.
+-r ../requirements.txt
+-r ../requirements-figures.txt
 openpyxl>=3.1

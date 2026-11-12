@@ -1,53 +1,47 @@
 # Paper reproduction
 
-Aggregate data and experimental source for **Reconstruction Exposure and Task Utility in Split Computing: Sensitivity to Attacker Configuration**, by Sooyoung Jang, Sungpil Woo and Ahyun Lee. The manuscript is under review.
-
-## Run the aggregate replay
+Aggregate data for **Reconstruction Exposure and Task Utility in Split Computing: Sensitivity to Attacker Configuration**, by Sooyoung Jang, Sungpil Woo and Ahyun Lee; manuscript under review.
 
 From the repository root:
 
 ```bash
-python reproduction/replay_aggregates.py \
-  --data reproduction/aggregate-data \
-  --output replay-output
+python scripts/reproduce.py --suite paper --output ../paper-replay-output
+python -m pip install -r reproduction/requirements-supporting.txt
+python scripts/reproduce.py --suite supporting --output ../supporting-output
+python scripts/reproduce.py --suite all --output ../all-output
 ```
 
-Python 3.10+ is sufficient. The script uses only the standard library and included CSVs. It runs offline without datasets, checkpoints, GPU libraries or access to private workspaces. The output directory must not exist.
+`paper` is the default and uses only Python 3.10+ standard-library modules. Supporting analyses use the existing NumPy, SciPy and Matplotlib pins on Python 3.11. Both suites work offline after dependencies are installed. Output directories must be new, inside or outside the repository, and must not overlap source, input or local research trees. Results are published only after every requested check succeeds. For `all`, output contains `paper/`, `supporting/` and `verification.json` with both outcomes.
 
-## Outputs and checks
+The external output paths above keep a source archive without `.git` ready for `python scripts/audit_public_repository.py` after replay. That audit requires exactly the public files and rejects generated outputs inside an extracted archive. For a Git checkout, the default audit includes cached Git paths even if absent from the worktree. Run `python scripts/audit_public_repository.py --require-staged` after staging the intended changes and before committing or publishing. `--worktree-only` is a local migration check and does not certify the index.
 
-| Output | Coverage |
+| Paper output | Coverage |
 | --- | --- |
 | `focused-cohort-descriptive.csv` | 520 cohort summaries. |
 | `focused-matched-paired-descriptive.csv` | 620 paired summaries. |
-| `decoder-contrast.csv` | Four ten-run contrasts between the evaluated decoder configurations. |
-| `test-utility.csv` | All 90 nonstandard model comparisons, including utility failures. |
-| `disco-selection-replay.csv` | Four operating-point decisions from all 12 candidates. |
-| `training-history-summary.csv` | 36 model histories, each with ten recorded epochs. |
-| `jpeg-selection-replay.csv` | Four decisions from all 48 validation/test grid records. |
-| `verification.json` | Pass status, cohort sizes, numerical tolerance, comparison counts and failure counts. |
+| `decoder-contrast.csv` | Four ten-run contrasts by joint decoder configuration. |
+| `test-utility.csv` | All 90 nonstandard comparisons, including utility failures. |
+| `disco-selection-replay.csv` | Four frozen decisions from all 12 candidates. |
+| `training-history-summary.csv` | 36 ten-epoch histories: 20 evaluation models, 12 candidates and four standard references. |
+| `jpeg-selection-replay.csv` | Four decisions from all 48 validation/test quality-grid records. |
+| `verification.json` | `PASS_CPU_AGGREGATE_REPLAY`, 8,227 comparisons, tolerance `1e-12`, cohort and failure counts. |
 
-Saved numerical summaries are checked at absolute tolerance `1e-12`. A consistent run performs 8,227 comparisons and reports `PASS_CPU_AGGREGATE_REPLAY`. Missing required files or inconsistent inputs produce a nonzero exit before output creation. An existing output directory is never overwritten.
+The original five-run block, added five-run block, combined ten/nine-run cohorts and original five/four-run cohorts remain distinct. Their 1,140 descriptive rows overlap and do not constitute independent observations. Training losses were not recorded.
 
-The five-run seed block, additional five-run block, ten/nine-run higher-resolution cohorts and five/four-run sensitivity cohorts remain separate. Attacker and victim seeds are coupled in the additional block. Candidate models, evaluation models and standard selection references have distinct roles. Training losses were not recorded.
+The compatibility command remains available in a complete public checkout:
 
-This command replays aggregate calculations. It does not rerun semantic probes, sign-flip tests, hardware measurements or image inference. The supporting secondary tables are provided for inspection; their analysis context is described in the [repository reproducibility guide](../docs/REPRODUCIBILITY.md).
+```bash
+python reproduction/replay_aggregates.py --data reproduction/aggregate-data --output ../compatibility-output
+```
 
-## Files
+Its `--data` directory must contain the published aggregate bytes. Copying this wrapper alone is insufficient; its canonical implementation is in `src/reproduction/`.
 
-- [`aggregate-data/`](aggregate-data/README.md): model-, decoder-, candidate- and epoch-level tables with a data guide.
-- [`scientific/`](scientific/): exact implementation and base-module snapshots, plus sanitized scientific recipes.
-- [`environment/`](environment/): recorded versions and explicit gaps in the execution record.
-- [`upstream/`](upstream/): pinned DISCO author source, configuration and license.
-- [`provenance.json`](provenance.json): scientific input hashes, source identifiers, upstream attribution and documentation transformations.
-- [`SHA256SUMS`](SHA256SUMS): checksums for every other file in this directory tree.
+[Supporting analyses](supporting/README.md) retain eight numerical comparisons and three figure signatures. [PAPER_MAP.md](../docs/PAPER_MAP.md) distinguishes recalculated values, supplied tables, and unavailable renderings for every current manuscript item. Secondary tables supplied for inspection are hash-verified but not recalculated by the paper suite.
 
-Scientific orchestration scripts retain their recorded path, receipt and checkpoint requirements. They are supplied for inspection; a public clone cannot execute the full raw-image study without reconstructing that context. The portable command above needs none of those private inputs.
-
-## Verify and cite
+[provenance.json](provenance.json) retains upstream source commitments; [migration-map.json](migration-map.json) records original hashes and canonical destinations. Source implementations are under `../src/`, recipes under `../config/`, recorded environments under `environment/`, and DISCO author source/license under `upstream/`. The duplicate scientific snapshot is preserved at the original commit rather than maintained here.
 
 ```bash
 (cd reproduction && sha256sum --check SHA256SUMS)
 ```
 
-Use the root [CITATION.cff](../CITATION.cff) for the paper and software. Authored code and documentation use [MIT](LICENSE), contributor-owned numeric tables use the exact [CC BY 4.0 scope](LICENSE-RESULTS), and the pinned DISCO source retains [Apache-2.0](upstream/LICENSE). See the [third-party notice](THIRD_PARTY_DATA.md) before reusing data or upstream code.
+This manifest covers every other public file in this reproduction tree, including the supporting manifest. Independent fixed scientific hashes are checked separately. Root [LICENSE-RESULTS](../LICENSE-RESULTS) gives the complete numeric license scope, including supporting files; the [local scope](LICENSE-RESULTS) lists the paper aggregate tables. Authored code/documentation use MIT and pinned DISCO source retains [Apache-2.0](upstream/LICENSE). See [THIRD_PARTY_DATA.md](THIRD_PARTY_DATA.md).

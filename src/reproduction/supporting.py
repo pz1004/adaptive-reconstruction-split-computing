@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Reproduce reported analyses from aggregate metrics, offline and on CPU."""
 from __future__ import annotations
-import argparse
 import csv
 import hashlib
+import io
 import itertools
 import json
 import math
@@ -17,23 +17,36 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.text import Text
-from statistics_core import paired_analysis, holm_adjust, estimate
-import compute_core as compute
-import primary_figure
-import budget_figure
-ROOT = Path(__file__).resolve().parent
+from src.analysis import paired_analysis, holm_adjust, estimate
+from . import compute_core as compute
+from . import primary_figure
+from . import budget_figure
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+ROOT = PROJECT_ROOT / "reproduction/supporting"
 SEEDS = (7, 42, 123, 2024, 2025)
 INTERFACES = ('early', 'current')
 DATASETS = ('celeba', 'cifar10')
 METHODS = ('standard', 'afd', 'laplace', 'learned')
 METRICS = ('macro_auroc', 'macro_balanced_accuracy')
+INPUT_PATHS = {
+    'primary_seed_results.csv': 'results/raw/primary_seed_results.csv',
+    'semantic_seed_results.csv': 'results/raw/semantic_seed_results.csv',
+    'attacker_restart_rows.csv': 'reproduction/supporting/inputs/attacker_restart_rows.csv',
+    'benchmark_budget_conditions.csv': 'reproduction/supporting/inputs/benchmark_budget_conditions.csv',
+    'compute_condition_metrics.csv': 'reproduction/supporting/inputs/compute_condition_metrics.csv',
+    'laplace_draw_metrics.csv': 'reproduction/supporting/inputs/laplace_draw_metrics.csv',
+    'laplace_run_metrics.csv': 'reproduction/supporting/inputs/laplace_run_metrics.csv',
+}
+
+def _parse_csv(payload: bytes, name: str) -> list[dict]:
+    reader = csv.DictReader(io.StringIO(payload.decode('utf-8'), newline=''))
+    rows = list(reader)
+    if not rows or any(set(r) != set(reader.fieldnames) or None in r.values() for r in rows):
+        raise ValueError(f'Malformed CSV: {name}')
+    return rows
 
 def read_csv(path: Path) -> list[dict]:
-    with path.open(newline='') as f:
-        reader = csv.DictReader(f); rows = list(reader)
-        if not rows or any(set(r) != set(reader.fieldnames) or None in r.values() for r in rows):
-            raise ValueError(f'Malformed CSV: {path.name}')
-    return rows
+    return _parse_csv(path.read_bytes(), path.name)
 
 def write_csv(path: Path, rows: list[dict]) -> None:
     fields = list(dict.fromkeys(k for r in rows for k in r))
@@ -49,24 +62,44 @@ def matrix(rows: list[dict], keys: tuple[str, ...], expected: set[tuple]) -> dic
     return indexed
 
 def verify_inputs() -> dict[str, list[dict]]:
+    from .integrity import SCIENTIFIC_HASHES
+    verified_payloads = {}
+    for name, digest in SCIENTIFIC_HASHES.items():
+        if name.startswith('reproduction/supporting/') or name in INPUT_PATHS.values():
+            path = (ROOT / name.removeprefix('reproduction/supporting/')
+                    if name.startswith('reproduction/supporting/') else PROJECT_ROOT / name)
+            if not path.is_file() or path.is_symlink():
+                raise ValueError('Scientific checksum mismatch: ' + name)
+            payload = path.read_bytes()
+            if hashlib.sha256(payload).hexdigest() != digest:
+                raise ValueError('Scientific checksum mismatch: ' + name)
+            verified_payloads[name] = payload
     declared = {}
     for line in (ROOT/'SHA256SUMS').read_text().splitlines():
         digest, name = line.split('  ', 1)
         path = ROOT/name
         if Path(name).is_absolute() or '..' in Path(name).parts or name in declared or path.is_symlink():
             raise ValueError('Invalid checksum membership')
-        if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != digest:
+        payload = verified_payloads.get('reproduction/supporting/' + name)
+        if not path.is_file():
+            raise ValueError('Bundle checksum mismatch: ' + name)
+        if payload is None:
+            payload = path.read_bytes()
+        if hashlib.sha256(payload).hexdigest() != digest:
             raise ValueError('Bundle checksum mismatch: ' + name)
         declared[name] = digest
     actual = {str(p.relative_to(ROOT)) for p in ROOT.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.name != 'SHA256SUMS'}
     if actual != set(declared): raise ValueError('Undeclared or missing bundle file')
     manifest = json.loads((ROOT/'provenance.json').read_text())['inputs']
+    if set(manifest) != set(INPUT_PATHS):
+        raise ValueError('Input membership mismatch')
     data = {}
-    for name, item in manifest.items():
-        path = ROOT/'inputs'/name
-        if hashlib.sha256(path.read_bytes()).hexdigest() != item['sha256']:
-            raise ValueError(f'Input checksum mismatch: {name}')
-        rows = read_csv(path)
+    for name, canonical_path in INPUT_PATHS.items():
+        item = manifest[name]
+        if item['path'] != canonical_path or item['sha256'] != SCIENTIFIC_HASHES[canonical_path]:
+            raise ValueError(f'Input provenance mismatch: {name}')
+        # Parse the independently checked bytes, never a path supplied by metadata.
+        rows = _parse_csv(verified_payloads[canonical_path], name)
         if len(rows) != item['rows'] or list(rows[0]) != item['fields']:
             raise ValueError(f'Input schema/count mismatch: {name}')
         data[name] = rows
@@ -223,21 +256,19 @@ def figures(out: Path, primary: list[dict], budget: list[dict], summaries: list[
     with patch.object(Figure,'savefig',save):
         consolidated={'records':[{'result':dict(dataset=r['dataset'],split_point=r['split_point'],method=r['method'],seed=int(r['seed']),worst_case_test_ssim=float(r['worst_case_ssim']),utility={'accuracy':float(r['accuracy_percentage_points'])/100.})} for r in primary]}
         payload=primary_figure.render(consolidated)
-        (out/'figure-02-accuracy-vs-adaptive-ssim.pdf').write_bytes(payload['figure-02-accuracy-vs-adaptive-ssim.pdf'])
+        (out/'four-condition-accuracy-vs-ssim.pdf').write_bytes(payload['figure-02-accuracy-vs-adaptive-ssim.pdf'])
         number='3'
         data={'panels':[dict(dataset=ds,interface=it,conditions=[r for r in budget if r['dataset']==ds and r['interface']==it],summaries=[r for r in summaries if r['dataset']==ds and r['interface']==it]) for ds,it in itertools.product(DATASETS,INTERFACES)]}
         with tempfile.TemporaryDirectory() as d: payload=budget_figure.render(data,Path(d))
-        (out/'figure-03-attacker-budget-sensitivity.pdf').write_bytes(payload['figure-03-attacker-budget-sensitivity.pdf'])
+        (out/'attacker-budget-sensitivity.pdf').write_bytes(payload['figure-03-attacker-budget-sensitivity.pdf'])
         number='5';plt.rcdefaults();matplotlib.rcParams['pdf.fonttype']=42
         with compute._legend_band_adapter(),tempfile.TemporaryDirectory() as d:
-            compute._figure(out/'figure-05-compute-tradeoffs.pdf',Path(d)/'compute.svg',lookup)
-    return dict(passed=True,figures=[2,3,5],coordinates_uncertainty_scales_series_styles_checked=True,signatures=signatures)
+            compute._figure(out/'component-compute-tradeoffs.pdf',Path(d)/'compute.svg',lookup)
+    return dict(passed=True,figures=["four-condition-accuracy-vs-ssim.pdf", "attacker-budget-sensitivity.pdf", "component-compute-tradeoffs.pdf"],retained_signature_keys=["2","3","5"],coordinates_uncertainty_scales_series_styles_checked=True,signatures=signatures)
 
-def main() -> None:
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--output-dir',type=Path,required=True);parser.add_argument('--check',action='store_true');args=parser.parse_args()
-    out=args.output_dir.resolve()
-    if out==ROOT.parents[1] or ROOT.parents[1] in out.parents: raise ValueError('Generated output must be outside the text-only reproduction bundle')
-    data=verify_inputs(); out.mkdir(parents=True,exist_ok=True)
+def replay(out: Path) -> dict:
+    """Verify every retained reference; write only to the caller's staging area."""
+    data=verify_inputs(); out.mkdir(parents=True,exist_ok=False)
     primary=data['primary_seed_results.csv'];semantic=data['semantic_seed_results.csv']
     original,counts=original_contrasts(primary,semantic)
     new=sensitivity(data['laplace_draw_metrics.csv'],data['laplace_run_metrics.csv'],semantic)
@@ -255,11 +286,10 @@ def main() -> None:
       'compute_interface_effects.csv':(interface,('dataset','method','batch_size'))}
     checks={}
     for name,(rows,keys) in outputs.items():
-        if args.check: checks[name]=compare_csv(rows,ROOT/'expected'/name,keys)
+        checks[name]=compare_csv(rows,ROOT/'expected'/name,keys)
         write_csv(out/name,rows)
-    if args.check and counts != dict(afd_negative_ssim_differences=18,afd_pairs=20,afd_test_utility_violations=3): raise ValueError('Primary counts differ')
+    if counts != dict(afd_negative_ssim_differences=18,afd_pairs=20,afd_test_utility_violations=3): raise ValueError('Primary counts differ')
     figure_report=figures(out,primary,data['benchmark_budget_conditions.csv'],budget,lookup)
     (out/'figure-verification.json').write_text(json.dumps(figure_report,indent=2,default=lambda x: x.item())+'\n')
-    report=dict(passed=True,coverage='reproduction from aggregate metrics',independent_prediction_regeneration=False,experiment_authentication=False,inputs={n:len(r) for n,r in data.items()},original_contrasts=36,exploratory_contrasts=8,holm_family_sizes=[24,12,8],counts=counts,checks=checks,figures=[2,3,5])
-    (out/'reproduction-report.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2))
-if __name__=='__main__': main()
+    report=dict(passed=True,coverage='reproduction from aggregate metrics',independent_prediction_regeneration=False,experiment_authentication=False,inputs={n:len(r) for n,r in data.items()},original_contrasts=36,exploratory_contrasts=8,holm_family_sizes=[24,12,8],counts=counts,checks=checks,figures=["four-condition-accuracy-vs-ssim.pdf", "attacker-budget-sensitivity.pdf", "component-compute-tradeoffs.pdf"],retained_signature_keys=["2","3","5"])
+    (out/'reproduction-report.json').write_text(json.dumps(report,indent=2)+'\n');return report

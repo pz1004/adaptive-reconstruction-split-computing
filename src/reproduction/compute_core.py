@@ -6,29 +6,12 @@ from contextlib import contextmanager
 import csv, io, json, math
 import numpy as np
 import matplotlib.pyplot as plt
-class ComputeContractError(RuntimeError): pass
+from src.eng_compute import ComputeContractError, student_t_interval
 DATASETS=('celeba','cifar10')
 INTERFACES=('early','current')
 METHODS=('standard','afd','laplace','learned')
 MODEL_SEEDS=(7,42,123,2024,2025)
 BATCH_SIZES=(1,32)
-def student_t_interval(values: Sequence[float]) -> dict[str, float | int]:
-    array = np.asarray(values, dtype=np.float64)
-    if array.ndim != 1 or array.size < 2 or not np.isfinite(array).all():
-        raise ComputeContractError("Student-t interval requires at least two finite one-dimensional values")
-    mean = float(array.mean())
-    std = float(array.std(ddof=1))
-    from scipy.stats import t
-
-    critical = float(t.ppf(0.975, df=array.size - 1))
-    half = critical * std / math.sqrt(array.size)
-    return {
-        "n": int(array.size),
-        "mean": mean,
-        "std": std,
-        "ci95_low": mean - half,
-        "ci95_high": mean + half,
-    }
 METRIC_FIELDS = (
     "cpu_encoder_plus_defense_latency_seconds",
     "cpu_encoder_plus_defense_throughput_per_second",

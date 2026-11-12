@@ -19,17 +19,20 @@ ROOT = Path(__file__).resolve().parents[1]
 
 @pytest.fixture
 def isolated_replay(tmp_path: Path) -> Path:
+    from scripts.audit_public_repository import EXPECTED_ALLOWLIST
     package = tmp_path / "paper"
-    package.mkdir()
-    shutil.copy2(ROOT / "reproduction/replay_aggregates.py", package)
-    shutil.copytree(ROOT / "reproduction/aggregate-data", package / "aggregate-data")
+    for relative in EXPECTED_ALLOWLIST:
+        target = package / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(ROOT / relative, target)
     return package
+
 
 
 def run_replay(package: Path) -> subprocess.CompletedProcess[str]:
     # -I ignores user paths; -S disables site packages to prove stdlib portability.
     return subprocess.run(
-        [sys.executable, "-I", "-S", "-B", "replay_aggregates.py", "--data", "aggregate-data",
+        [sys.executable, "-I", "-S", "-B", "reproduction/replay_aggregates.py", "--data", "reproduction/aggregate-data",
          "--output", "replay-output"], cwd=package, text=True, capture_output=True, timeout=30,
     )
 
@@ -50,7 +53,7 @@ def test_paper_replay_runs_without_installed_packages_or_research_workspace(isol
 
 
 def test_paper_replay_missing_input_does_not_publish_partial_outputs(isolated_replay: Path) -> None:
-    (isolated_replay / "aggregate-data/followup-training-history.csv").unlink()
+    (isolated_replay / "reproduction/aggregate-data/followup-training-history.csv").unlink()
     completed = run_replay(isolated_replay)
     assert completed.returncode != 0
     assert "Required aggregate input missing" in completed.stderr
@@ -58,7 +61,7 @@ def test_paper_replay_missing_input_does_not_publish_partial_outputs(isolated_re
 
 
 def test_paper_replay_rejects_inconsistent_values_before_output(isolated_replay: Path) -> None:
-    path = isolated_replay / "aggregate-data/focused-all-primary-individual.csv"
+    path = isolated_replay / "reproduction/aggregate-data/focused-all-primary-individual.csv"
     with path.open(newline="") as stream:
         reader = csv.DictReader(stream)
         fields = reader.fieldnames
@@ -70,7 +73,7 @@ def test_paper_replay_rejects_inconsistent_values_before_output(isolated_replay:
         writer.writerows(rows)
     completed = run_replay(isolated_replay)
     assert completed.returncode != 0
-    assert "Numerical mismatch" in completed.stderr
+    assert "Scientific checksum mismatch" in completed.stderr
     assert not (isolated_replay / "replay-output").exists()
 
 
@@ -86,7 +89,8 @@ def test_paper_replay_preserves_existing_output(isolated_replay: Path) -> None:
 
 
 def test_paper_hashes_cannot_be_self_authorized_by_checksum_changes() -> None:
-    payloads = {path: (ROOT / path).read_bytes() for path in PAPER_HASHES}
+    from scripts.audit_public_repository import EXPECTED_ALLOWLIST
+    payloads = {path: (ROOT / path).read_bytes() for path in EXPECTED_ALLOWLIST}
     name = "reproduction/aggregate-data/focused-all-primary-individual.csv"
     original = hashlib.sha256(payloads[name]).hexdigest()
     payloads[name] += b"\n"

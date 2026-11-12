@@ -146,8 +146,8 @@ def test_public_release_is_self_contained_and_consolidated() -> None:
     assert completed.returncode == 0, completed.stderr
     report = json.loads(completed.stdout)
     assert report["passed"] is True
-    assert report["file_count"] == 40
-    assert report["checksum_entries"] == 39
+    assert report["file_count"] == 32
+    assert report["checksum_entries"] == 31
     assert report["csv_table_count"] == 8
     assert report["aggregate_rows"] == 556
     assert report["status"] == "repository_files"

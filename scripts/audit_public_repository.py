@@ -25,163 +25,219 @@ from scripts.paper_repository_policy import (
     EXPECTED_CITATION_CFF, PAPER_METADATA, PUBLIC_ADDITIONS, verify_paper_reproduction,
 )
 
-EXPECTED_ALLOWLIST = frozenset(
-    {
-        ".github/workflows/public-checks.yml",
-        ".gitattributes",
-        ".gitignore",
-        "CITATION.cff",
-        "LICENSE",
-        "LICENSE-RESULTS",
-        "README.md",
-        "THIRD_PARTY_DATA.md",
-        "config/study_contract.json",
-        "config/implementation_protocol_v2.json",
-        "pytest.ini",
-        "requirements-figures.txt",
-        "requirements.txt",
-        "results/protocol/disclosure_manifest.json",
-        "results/protocol/environment.json",
-        "results/protocol/frozen_selection_lock.json",
-        "results/raw/budget_attacker_results.csv",
-        "results/raw/budget_cell_results.csv",
-        "results/raw/primary_seed_results.csv",
-        "results/raw/semantic_attribute_results.csv",
-        "results/raw/semantic_seed_results.csv",
-        "release/v1.3.0/analysis/compute_analysis.json",
-        "release/v1.3.0/analysis/compute_claim_audit.json",
-        "release/v1.3.0/inputs/attacker_restart_rows.csv",
-        "release/v1.3.0/expected/attacker_restart_summaries.csv",
-        "release/v1.3.0/evidence/benchmark_budget_attacker_rows.csv",
-        "release/v1.3.0/inputs/benchmark_budget_conditions.csv",
-        "release/v1.3.0/expected/benchmark_budget_paired_effects.csv",
-        "release/v1.3.0/expected/compute_group_summary.csv",
-        "release/v1.3.0/expected/compute_interface_effects.csv",
-        "release/v1.3.0/expected/compute_paired_effects.csv",
-        "release/v1.3.0/schemas/attacker_restart_rows.schema.json",
-        "release/v1.3.0/schemas/attacker_restart_summaries.schema.json",
-        "release/v1.3.0/schemas/benchmark_budget_attacker_rows.schema.json",
-        "release/v1.3.0/schemas/benchmark_budget_conditions.schema.json",
-        "release/v1.3.0/schemas/benchmark_budget_paired_effects.schema.json",
-        "release/v1.3.0/schemas/benchmark_v1_tables.schema.json",
-        "release/v1.3.0/schemas/eng_compute_v1.schema.json",
-        "run_public_checks.sh",
-        "scripts/analyze_budget_results.py",
-        "scripts/analyze_revision.py",
-        "scripts/analyze_semantic_results.py",
-        "scripts/audit_budget_results.py",
-        "scripts/audit_primary_results.py",
-        "scripts/audit_public_repository.py",
-        "scripts/audit_semantic_results.py",
-        "scripts/export_eng_compute_public.py",
-        "scripts/export_public_results.py",
-        "scripts/generate_images.py",
-        "scripts/generate_protocol_figures.py",
-        "scripts/generate_result_figures.py",
-        "scripts/plot_results.py",
-        "scripts/run_ablation.sh",
-        "scripts/run_eval.sh",
-        "scripts/run_revision_pipeline.py",
-        "scripts/run_seed_robustness.sh",
-        "scripts/run_train.sh",
-        "scripts/summarize_seed_robustness.py",
-        "scripts/train_shredder.py",
-        "scripts/verify_budget_figure.py",
-        "src/analysis.py",
-        "src/budget_result_audit.py",
-        "src/checkpointing.py",
-        "src/dataset.py",
-        "src/defenses.py",
-        "src/eval.py",
-        "src/experiment.py",
-        "src/implementation_provenance.py",
-        "src/manifest.py",
-        "src/metrics.py",
-        "src/models.py",
-        "src/pipeline.py",
-        "src/posthoc_attacker_eval.py",
-        "src/protocol.py",
-        "src/result_audit.py",
-        "src/selection_provenance.py",
-        "src/semantic_analysis.py",
-        "src/semantic_result_audit.py",
-        "src/train.py",
-        "src/watcher_state.py",
-        "tests/__init__.py",
-        "tests/test_budget_result_audit.py",
-        "tests/test_code_scripts.py",
-        "tests/test_dataset_remedy.py",
-        "tests/test_public_repository.py",
-        "tests/test_public_protocol.py",
-        "tests/test_result_audit.py",
-        "tests/test_revision_protocol.py",
-        "tests/test_selection_provenance.py",
-        "tests/test_semantic_result_audit.py",
-    }
-)
+EXPECTED_ALLOWLIST = frozenset({'.gitattributes',
+           '.github/workflows/public-checks.yml',
+           '.gitignore',
+           'CITATION.cff',
+           'LICENSE',
+           'LICENSE-RESULTS',
+           'README.md',
+           'THIRD_PARTY_DATA.md',
+           'config/benchmark_extension_v1.json',
+           'config/focused-recipe.json',
+           'config/implementation_protocol_v2.json',
+           'config/study_contract.json',
+           'docs/MIGRATION.md',
+           'docs/PAPER_MAP.md',
+           'docs/REPRODUCIBILITY.md',
+           'pytest.ini',
+           'reproduction/LICENSE',
+           'reproduction/LICENSE-RESULTS',
+           'reproduction/README.md',
+           'reproduction/SHA256SUMS',
+           'reproduction/THIRD_PARTY_DATA.md',
+           'reproduction/aggregate-data/README.md',
+           'reproduction/aggregate-data/focused-all-decoder-metrics.csv',
+           'reproduction/aggregate-data/focused-all-primary-individual.csv',
+           'reproduction/aggregate-data/focused-cohort-descriptive.csv',
+           'reproduction/aggregate-data/focused-jpeg-full-curves.csv',
+           'reproduction/aggregate-data/focused-jpeg-selected-points.csv',
+           'reproduction/aggregate-data/focused-matched-paired-descriptive.csv',
+           'reproduction/aggregate-data/focused-matched-paired-individual.csv',
+           'reproduction/aggregate-data/followup-decoder-contrast.csv',
+           'reproduction/aggregate-data/followup-disco-candidates.csv',
+           'reproduction/aggregate-data/followup-test-utility.csv',
+           'reproduction/aggregate-data/followup-training-history.csv',
+           'reproduction/aggregate-data/historical-secondary-directions.csv',
+           'reproduction/aggregate-data/historical-secondary-group.csv',
+           'reproduction/aggregate-data/historical-secondary-individual.csv',
+           'reproduction/aggregate-data/historical-secondary-paired-individual.csv',
+           'reproduction/aggregate-data/historical-secondary-paired.csv',
+           'reproduction/environment/focused-recorded.json',
+           'reproduction/environment/historical-reconstruction.json',
+           'reproduction/environment/historical-workstation.json',
+           'reproduction/migration-map.json',
+           'reproduction/provenance.json',
+           'reproduction/replay_aggregates.py',
+           'reproduction/requirements-scientific.txt',
+           'reproduction/requirements-supporting.txt',
+           'reproduction/supporting/DATA_DICTIONARY.md',
+           'reproduction/supporting/README.md',
+           'reproduction/supporting/SHA256SUMS',
+           'reproduction/supporting/analysis/compute_analysis.json',
+           'reproduction/supporting/analysis/compute_claim_audit.json',
+           'reproduction/supporting/analysis_contract.json',
+           'reproduction/supporting/diagnostics/known-offset-diagnostic.csv',
+           'reproduction/supporting/diagnostics/known-offset-diagnostic.json',
+           'reproduction/supporting/evidence/benchmark_budget_attacker_rows.csv',
+           'reproduction/supporting/expected/attacker_restart_summaries.csv',
+           'reproduction/supporting/expected/benchmark_budget_paired_effects.csv',
+           'reproduction/supporting/expected/budget_method_summaries.csv',
+           'reproduction/supporting/expected/compute_group_summary.csv',
+           'reproduction/supporting/expected/compute_interface_effects.csv',
+           'reproduction/supporting/expected/compute_paired_effects.csv',
+           'reproduction/supporting/expected/figure_signatures.json',
+           'reproduction/supporting/expected/figure_sources.json',
+           'reproduction/supporting/expected/laplace-single-release-statistics.csv',
+           'reproduction/supporting/expected/supplementary-statistics.csv',
+           'reproduction/supporting/inputs/attacker_restart_rows.csv',
+           'reproduction/supporting/inputs/benchmark_budget_conditions.csv',
+           'reproduction/supporting/inputs/compute_condition_metrics.csv',
+           'reproduction/supporting/inputs/laplace_draw_metrics.csv',
+           'reproduction/supporting/inputs/laplace_run_metrics.csv',
+           'reproduction/supporting/provenance.json',
+           'reproduction/supporting/schemas/attacker_restart_rows.schema.json',
+           'reproduction/supporting/schemas/attacker_restart_summaries.schema.json',
+           'reproduction/supporting/schemas/benchmark_budget_attacker_rows.schema.json',
+           'reproduction/supporting/schemas/benchmark_budget_conditions.schema.json',
+           'reproduction/supporting/schemas/benchmark_budget_paired_effects.schema.json',
+           'reproduction/supporting/schemas/benchmark_v1_tables.schema.json',
+           'reproduction/supporting/schemas/eng_compute_v1.schema.json',
+           'reproduction/upstream/LICENSE',
+           'reproduction/upstream/disco.json',
+           'reproduction/upstream/disco.py',
+           'requirements-figures.txt',
+           'requirements.txt',
+           'results/protocol/disclosure_manifest.json',
+           'results/protocol/environment.json',
+           'results/protocol/frozen_selection_lock.json',
+           'results/raw/budget_attacker_results.csv',
+           'results/raw/budget_cell_results.csv',
+           'results/raw/primary_seed_results.csv',
+           'results/raw/semantic_attribute_results.csv',
+           'results/raw/semantic_seed_results.csv',
+           'run_public_checks.sh',
+           'scripts/analyze_budget_results.py',
+           'scripts/analyze_revision.py',
+           'scripts/analyze_semantic_results.py',
+           'scripts/audit_budget_results.py',
+           'scripts/audit_primary_results.py',
+           'scripts/audit_public_repository.py',
+           'scripts/audit_semantic_results.py',
+           'scripts/export_eng_compute_public.py',
+           'scripts/export_public_results.py',
+           'scripts/generate_images.py',
+           'scripts/generate_protocol_figures.py',
+           'scripts/generate_result_figures.py',
+           'scripts/paper_repository_policy.py',
+           'scripts/plot_results.py',
+           'scripts/reproduce.py',
+           'scripts/run_ablation.sh',
+           'scripts/run_eval.sh',
+           'scripts/run_revision_pipeline.py',
+           'scripts/run_seed_robustness.sh',
+           'scripts/run_study.py',
+           'scripts/run_train.sh',
+           'scripts/summarize_seed_robustness.py',
+           'scripts/train_shredder.py',
+           'scripts/verify_budget_figure.py',
+           'src/analysis.py',
+           'src/benchmark_v1.py',
+           'src/budget_result_audit.py',
+           'src/checkpointing.py',
+           'src/dataset.py',
+           'src/defenses.py',
+           'src/eng_compute.py',
+           'src/eval.py',
+           'src/experiment.py',
+           'src/focused/__init__.py',
+           'src/focused/components.py',
+           'src/focused/training.py',
+           'src/implementation_provenance.py',
+           'src/manifest.py',
+           'src/metrics.py',
+           'src/models.py',
+           'src/pipeline.py',
+           'src/posthoc_attacker_eval.py',
+           'src/protocol.py',
+           'src/reproduction/__init__.py',
+           'src/reproduction/budget_figure.py',
+           'src/reproduction/cli.py',
+           'src/reproduction/compute_core.py',
+           'src/reproduction/integrity.py',
+           'src/reproduction/paper.py',
+           'src/reproduction/primary_figure.py',
+           'src/reproduction/supporting.py',
+           'src/result_audit.py',
+           'src/selection_provenance.py',
+           'src/semantic_analysis.py',
+           'src/semantic_result_audit.py',
+           'src/train.py',
+           'src/watcher_state.py',
+           'tests/__init__.py',
+           'tests/test_aggregate_reproduction.py',
+           'tests/test_budget_result_audit.py',
+           'tests/test_code_scripts.py',
+           'tests/test_dataset_remedy.py',
+           'tests/test_paper_reproduction.py',
+           'tests/test_public_protocol.py',
+           'tests/test_public_repository.py',
+           'tests/test_reproduction_cli.py',
+           'tests/test_result_audit.py',
+           'tests/test_revision_protocol.py',
+           'tests/test_selection_provenance.py',
+           'tests/test_semantic_result_audit.py'})
 
-V13_CHECKSUMS = {'release/v1.3.0/DATA_DICTIONARY.md': 'c6ab93a52c632fcfbc8d6183f9ce87c9c63fc344d2ca9960d79d3adef8b25cc3',
- 'release/v1.3.0/README.md': '9594886e7161a255b3ea9df5eb8f5a250ee75432d4b2089c3fe89514ceee8abd',
- 'release/v1.3.0/SHA256SUMS': 'fdf5ac093f7bea5b6a255b27e1ddf7669da8d966db633aab1b1606abc833ec4d',
- 'release/v1.3.0/analysis/compute_analysis.json': '262741aee3a21052f7c3d7e901f4c5943e0ac26b09ad41d39679bb9e9a4a67f1',
- 'release/v1.3.0/analysis/compute_claim_audit.json': '001a6e433d6d3a1749224bfe8533ee1313690e2e78c31f0f2a7c62f36fcd3bd6',
- 'release/v1.3.0/analysis_contract.json': '45124d8e98488df044c8eb672dd9e19a42e04a7320106b4319de9ec47ad1d277',
- 'release/v1.3.0/budget_figure.py': '49bb7845009a0828fb3ef8667dee1f5584fa6d7d130156ef007ed68fd76f09ae',
- 'release/v1.3.0/compute_core.py': 'e1a753a324ccfb00335b4cd9b5a1c323f159a2e7468100695a3802a9eb88de3d',
- 'release/v1.3.0/diagnostics/known-offset-diagnostic.csv': '70862589f7e788891ad8d810cbef8d54757108b6ac9169eb0aee447f997a937b',
- 'release/v1.3.0/diagnostics/known-offset-diagnostic.json': '3679eb943b4fb948eb64f0941b1125c2609e4ffd2db9f70958ec1a95b3096089',
- 'release/v1.3.0/evidence/benchmark_budget_attacker_rows.csv': '0523fb0265b21f7850742645d728441c21c63f847c941f63cfb41a469b79e49a',
- 'release/v1.3.0/expected/attacker_restart_summaries.csv': '89cd56dbb25d57afac00e44012e1c87ecfd32e3c065313a24355c0379e890618',
- 'release/v1.3.0/expected/benchmark_budget_paired_effects.csv': '8312b09c91612e77b1c35fd713e47ffecf85dfc5a122461ff0aa4ac26c7ce0dc',
- 'release/v1.3.0/expected/budget_method_summaries.csv': 'd2c3fbb4ea925d063e04c5131aa571d8f603298af298e06d0bfe7b3788a37d34',
- 'release/v1.3.0/expected/compute_group_summary.csv': '402f17a7ff585944f39f13011e0fecb9b79853cd45af0b04208edbbcf2c90681',
- 'release/v1.3.0/expected/compute_interface_effects.csv': '3f77831cb296e218030e4c46bbc02cbd7ac4249e2b834e4e43b7773ab5b79164',
- 'release/v1.3.0/expected/compute_paired_effects.csv': '1ab4edfab53bfefc40beb0022b25a31249a164cc4ca2f62e2950be3240b8c525',
- 'release/v1.3.0/expected/figure_signatures.json': '9a85f375f44a2490ffe1bdc2fde892d476d15c12e723e926097682a1fd700ed9',
- 'release/v1.3.0/expected/figure_sources.json': '06fb5ca3aff79413898d3a3daf9540e38ef8a0dbaa250a9add682c572eadd356',
- 'release/v1.3.0/expected/laplace-single-release-statistics.csv': '33cc3084a7467577e9c541eb72d3107210fefb7afa44fde628a7316b4e28349c',
- 'release/v1.3.0/expected/supplementary-statistics.csv': 'a387a651be20f087faf91f2f7b6d5a89552e211604b8741559243229e18908b7',
- 'release/v1.3.0/inputs/attacker_restart_rows.csv': 'b1da933c28665b186b27f081401c9a5445489acb4f6224d8c620c16b07670465',
- 'release/v1.3.0/inputs/benchmark_budget_conditions.csv': '6d5961a3bae709f1d98e1630bd1e1f90736ae9c06f93199c58685c35f6a8e9c7',
- 'release/v1.3.0/inputs/compute_condition_metrics.csv': 'beab01892dd8505e889b4f387ebd395efb6495345b15c171fbb6da9184c74f25',
- 'release/v1.3.0/inputs/laplace_draw_metrics.csv': 'b60fc38b2cf5566c3f78975e1c81d85100ce8e054b3fbf60b3390b48e246b023',
- 'release/v1.3.0/inputs/laplace_run_metrics.csv': 'df9c810a8c476f5920c6615ccdc4a92e0706b28c933db98f4be417a1f103b395',
- 'release/v1.3.0/inputs/primary_seed_results.csv': '4a1cec03db1db89a9e2b010ebeeff530a6f88fe3d23e3601db19553ce96b266d',
- 'release/v1.3.0/inputs/semantic_seed_results.csv': 'd2c3bd11ebbc9277ee8fac7b66ce2b5e3edd3959be3aa0b6a1fc3ef2971eca90',
- 'release/v1.3.0/primary_figure.py': '6e804e59c2488edab83d9cdae7a10f8e865450a87ad13c6d439d76439408b361',
- 'release/v1.3.0/provenance.json': '5488e382fef513fe093d83dc258be7c2081e2d0d29f8ca13216ff6d9d18e5e19',
- 'release/v1.3.0/reproduce.py': '8dac6400dda09011bbb29da676d9970bac78f0cab455cb000d2179003bc4925c',
- 'release/v1.3.0/requirements.txt': '8ced0882fae5b9298075703d6456f46d729d3ad239034badf90f6bf6bf95aaf9',
- 'release/v1.3.0/schemas/attacker_restart_rows.schema.json': '9a36bdd36307a32610a4980dfba9213d0e75ded5338771c1dda2fa6e12ee6dce',
- 'release/v1.3.0/schemas/attacker_restart_summaries.schema.json': 'ce6985e37b110c0b9265bc34ce815bad8f4edd71b85d61a543455248dd7d81bf',
- 'release/v1.3.0/schemas/benchmark_budget_attacker_rows.schema.json': '32b7203b5f3d606095c0a0f689ad971c86533aefcf835900c4a4bd06583babc6',
- 'release/v1.3.0/schemas/benchmark_budget_conditions.schema.json': '2ab0feb1e3d5c3a6dc02fd2f8146671ba51b5ef655d365edb52eb703e0bb1471',
- 'release/v1.3.0/schemas/benchmark_budget_paired_effects.schema.json': '8e6a8338fcbdd887b9935ce4ceb282c05a29dd50eeb21803e8ae2c576d74c715',
- 'release/v1.3.0/schemas/benchmark_v1_tables.schema.json': '900ce37be4ff8df523ffa4a97888a5accd7098a297492dbb8b09e1ad360c08f3',
- 'release/v1.3.0/schemas/eng_compute_v1.schema.json': '5e2603047b488be03c800de0c897ce0ac0134c44d8e546d684e42b2639f498a1',
- 'release/v1.3.0/statistics_core.py': '48a62474afc81d7872d6a078bd3778501a9b39c9c77db44b78cfa9ced40ba617'}
+V13_CHECKSUMS = {'reproduction/supporting/DATA_DICTIONARY.md': 'c6ab93a52c632fcfbc8d6183f9ce87c9c63fc344d2ca9960d79d3adef8b25cc3',
+ 'reproduction/supporting/README.md': 'a5dec0fcf137edcdf965bdefd4a5e4f6df772e5ec4056b427d7e90a52b35fe27',
+ 'reproduction/supporting/SHA256SUMS': '157f5e5c54e392cc9099dadafc8bf02ccd26f7c4fc7d59cac58596de2e3d971b',
+ 'reproduction/supporting/analysis/compute_analysis.json': '262741aee3a21052f7c3d7e901f4c5943e0ac26b09ad41d39679bb9e9a4a67f1',
+ 'reproduction/supporting/analysis/compute_claim_audit.json': '001a6e433d6d3a1749224bfe8533ee1313690e2e78c31f0f2a7c62f36fcd3bd6',
+ 'reproduction/supporting/analysis_contract.json': '45124d8e98488df044c8eb672dd9e19a42e04a7320106b4319de9ec47ad1d277',
+ 'reproduction/supporting/diagnostics/known-offset-diagnostic.csv': '70862589f7e788891ad8d810cbef8d54757108b6ac9169eb0aee447f997a937b',
+ 'reproduction/supporting/diagnostics/known-offset-diagnostic.json': '3679eb943b4fb948eb64f0941b1125c2609e4ffd2db9f70958ec1a95b3096089',
+ 'reproduction/supporting/evidence/benchmark_budget_attacker_rows.csv': '0523fb0265b21f7850742645d728441c21c63f847c941f63cfb41a469b79e49a',
+ 'reproduction/supporting/expected/attacker_restart_summaries.csv': '89cd56dbb25d57afac00e44012e1c87ecfd32e3c065313a24355c0379e890618',
+ 'reproduction/supporting/expected/benchmark_budget_paired_effects.csv': '8312b09c91612e77b1c35fd713e47ffecf85dfc5a122461ff0aa4ac26c7ce0dc',
+ 'reproduction/supporting/expected/budget_method_summaries.csv': 'd2c3fbb4ea925d063e04c5131aa571d8f603298af298e06d0bfe7b3788a37d34',
+ 'reproduction/supporting/expected/compute_group_summary.csv': '402f17a7ff585944f39f13011e0fecb9b79853cd45af0b04208edbbcf2c90681',
+ 'reproduction/supporting/expected/compute_interface_effects.csv': '3f77831cb296e218030e4c46bbc02cbd7ac4249e2b834e4e43b7773ab5b79164',
+ 'reproduction/supporting/expected/compute_paired_effects.csv': '1ab4edfab53bfefc40beb0022b25a31249a164cc4ca2f62e2950be3240b8c525',
+ 'reproduction/supporting/expected/figure_signatures.json': '9a85f375f44a2490ffe1bdc2fde892d476d15c12e723e926097682a1fd700ed9',
+ 'reproduction/supporting/expected/figure_sources.json': '06fb5ca3aff79413898d3a3daf9540e38ef8a0dbaa250a9add682c572eadd356',
+ 'reproduction/supporting/expected/laplace-single-release-statistics.csv': '33cc3084a7467577e9c541eb72d3107210fefb7afa44fde628a7316b4e28349c',
+ 'reproduction/supporting/expected/supplementary-statistics.csv': 'a387a651be20f087faf91f2f7b6d5a89552e211604b8741559243229e18908b7',
+ 'reproduction/supporting/inputs/attacker_restart_rows.csv': 'b1da933c28665b186b27f081401c9a5445489acb4f6224d8c620c16b07670465',
+ 'reproduction/supporting/inputs/benchmark_budget_conditions.csv': '6d5961a3bae709f1d98e1630bd1e1f90736ae9c06f93199c58685c35f6a8e9c7',
+ 'reproduction/supporting/inputs/compute_condition_metrics.csv': 'beab01892dd8505e889b4f387ebd395efb6495345b15c171fbb6da9184c74f25',
+ 'reproduction/supporting/inputs/laplace_draw_metrics.csv': 'b60fc38b2cf5566c3f78975e1c81d85100ce8e054b3fbf60b3390b48e246b023',
+ 'reproduction/supporting/inputs/laplace_run_metrics.csv': 'df9c810a8c476f5920c6615ccdc4a92e0706b28c933db98f4be417a1f103b395',
+ 'reproduction/supporting/provenance.json': 'cc457078303264c5f2ec8934b32dd5624281d19a5adecc4a7f628e94382f2e75',
+ 'reproduction/supporting/schemas/attacker_restart_rows.schema.json': '9a36bdd36307a32610a4980dfba9213d0e75ded5338771c1dda2fa6e12ee6dce',
+ 'reproduction/supporting/schemas/attacker_restart_summaries.schema.json': 'ce6985e37b110c0b9265bc34ce815bad8f4edd71b85d61a543455248dd7d81bf',
+ 'reproduction/supporting/schemas/benchmark_budget_attacker_rows.schema.json': '32b7203b5f3d606095c0a0f689ad971c86533aefcf835900c4a4bd06583babc6',
+ 'reproduction/supporting/schemas/benchmark_budget_conditions.schema.json': '2ab0feb1e3d5c3a6dc02fd2f8146671ba51b5ef655d365edb52eb703e0bb1471',
+ 'reproduction/supporting/schemas/benchmark_budget_paired_effects.schema.json': '8e6a8338fcbdd887b9935ce4ceb282c05a29dd50eeb21803e8ae2c576d74c715',
+ 'reproduction/supporting/schemas/benchmark_v1_tables.schema.json': '900ce37be4ff8df523ffa4a97888a5accd7098a297492dbb8b09e1ad360c08f3',
+ 'reproduction/supporting/schemas/eng_compute_v1.schema.json': '5e2603047b488be03c800de0c897ce0ac0134c44d8e546d684e42b2639f498a1'}
 V13_FILES = frozenset(V13_CHECKSUMS)
-V13_LICENSE_SCOPE = ('release/v1.3.0/diagnostics/known-offset-diagnostic.csv',
- 'release/v1.3.0/diagnostics/known-offset-diagnostic.json',
- 'release/v1.3.0/expected/attacker_restart_summaries.csv',
- 'release/v1.3.0/expected/benchmark_budget_paired_effects.csv',
- 'release/v1.3.0/expected/budget_method_summaries.csv',
- 'release/v1.3.0/expected/compute_group_summary.csv',
- 'release/v1.3.0/expected/compute_interface_effects.csv',
- 'release/v1.3.0/expected/compute_paired_effects.csv',
- 'release/v1.3.0/expected/figure_signatures.json',
- 'release/v1.3.0/expected/figure_sources.json',
- 'release/v1.3.0/expected/laplace-single-release-statistics.csv',
- 'release/v1.3.0/expected/supplementary-statistics.csv',
- 'release/v1.3.0/inputs/attacker_restart_rows.csv',
- 'release/v1.3.0/inputs/benchmark_budget_conditions.csv',
- 'release/v1.3.0/inputs/compute_condition_metrics.csv',
- 'release/v1.3.0/inputs/laplace_draw_metrics.csv',
- 'release/v1.3.0/inputs/laplace_run_metrics.csv',
- 'release/v1.3.0/inputs/primary_seed_results.csv',
- 'release/v1.3.0/inputs/semantic_seed_results.csv')
-EXPECTED_ALLOWLIST |= V13_FILES | {"tests/test_aggregate_reproduction.py"}
-EXPECTED_ALLOWLIST |= PUBLIC_ADDITIONS
+V13_LICENSE_SCOPE = ('reproduction/supporting/diagnostics/known-offset-diagnostic.csv',
+ 'reproduction/supporting/diagnostics/known-offset-diagnostic.json',
+ 'reproduction/supporting/expected/attacker_restart_summaries.csv',
+ 'reproduction/supporting/expected/benchmark_budget_paired_effects.csv',
+ 'reproduction/supporting/expected/budget_method_summaries.csv',
+ 'reproduction/supporting/expected/compute_group_summary.csv',
+ 'reproduction/supporting/expected/compute_interface_effects.csv',
+ 'reproduction/supporting/expected/compute_paired_effects.csv',
+ 'reproduction/supporting/expected/figure_signatures.json',
+ 'reproduction/supporting/expected/figure_sources.json',
+ 'reproduction/supporting/expected/laplace-single-release-statistics.csv',
+ 'reproduction/supporting/expected/supplementary-statistics.csv',
+ 'reproduction/supporting/inputs/attacker_restart_rows.csv',
+ 'reproduction/supporting/inputs/benchmark_budget_conditions.csv',
+ 'reproduction/supporting/inputs/compute_condition_metrics.csv',
+ 'reproduction/supporting/inputs/laplace_draw_metrics.csv',
+ 'reproduction/supporting/inputs/laplace_run_metrics.csv')
 
 RESULT_SPECS: dict[str, tuple[int, tuple[str, ...]]] = {
     "results/raw/primary_seed_results.csv": (
@@ -233,17 +289,17 @@ RESULT_SPECS: dict[str, tuple[int, tuple[str, ...]]] = {
 }
 
 RELEASE_RESULT_COUNTS = {
-    "release/v1.3.0/inputs/attacker_restart_rows.csv": 96,
-    "release/v1.3.0/expected/attacker_restart_summaries.csv": 32,
-    "release/v1.3.0/evidence/benchmark_budget_attacker_rows.csv": 240,
-    "release/v1.3.0/inputs/benchmark_budget_conditions.csv": 120,
-    "release/v1.3.0/expected/benchmark_budget_paired_effects.csv": 12,
-    "release/v1.3.0/expected/compute_group_summary.csv": 32,
-    "release/v1.3.0/expected/compute_interface_effects.csv": 16,
-    "release/v1.3.0/expected/compute_paired_effects.csv": 8,
+    "reproduction/supporting/inputs/attacker_restart_rows.csv": 96,
+    "reproduction/supporting/expected/attacker_restart_summaries.csv": 32,
+    "reproduction/supporting/evidence/benchmark_budget_attacker_rows.csv": 240,
+    "reproduction/supporting/inputs/benchmark_budget_conditions.csv": 120,
+    "reproduction/supporting/expected/benchmark_budget_paired_effects.csv": 12,
+    "reproduction/supporting/expected/compute_group_summary.csv": 32,
+    "reproduction/supporting/expected/compute_interface_effects.csv": 16,
+    "reproduction/supporting/expected/compute_paired_effects.csv": 8,
 }
 EXPECTED_RELEASE_CHECKSUMS = {
-    path.removeprefix("release/v1.3.0/"): digest
+    path.removeprefix("reproduction/supporting/"): digest
     for path, digest in V13_CHECKSUMS.items() if not path.endswith("/SHA256SUMS")
 }
 SCHEMA_LOCATIONS = {'results/attacker_restart_rows.csv': 'inputs/attacker_restart_rows.csv',
@@ -291,8 +347,8 @@ EXPECTED_RELEASE_DECISION = {
         | set(V13_LICENSE_SCOPE)
         | set(RELEASE_RESULT_COUNTS)
         | {
-            "release/v1.3.0/analysis/compute_analysis.json",
-            "release/v1.3.0/analysis/compute_claim_audit.json",
+            "reproduction/supporting/analysis/compute_analysis.json",
+            "reproduction/supporting/analysis/compute_claim_audit.json",
         }
     ),
     "license": "CC-BY-4.0 for contributor-owned rights only",
@@ -302,7 +358,7 @@ EXPECTED_RELEASE_DECISION = {
 }
 EXPECTED_RELEASE_STATE = {
     "version": "1.3.0",
-    "path": "release/v1.3.0",
+    "path": "reproduction/supporting",
     "status": "authorized_for_repository_commit",
     "release_url": None,
     "release_date": None,
@@ -349,11 +405,15 @@ def _inside_git() -> bool:
     return result.returncode == 0 and result.stdout.strip() == b"true"
 
 
-def _git_candidates() -> set[str]:
+def _git_candidates(*, worktree_only: bool = False) -> set[str]:
     result = _run_git(["ls-files", "--cached", "--others", "--exclude-standard", "-z"])
     if result.returncode != 0:
         raise RuntimeError(result.stderr.decode("utf-8", errors="replace"))
-    return {item.decode("utf-8") for item in result.stdout.split(b"\0") if item}
+    candidates = {item.decode("utf-8") for item in result.stdout.split(b"\0") if item}
+    if worktree_only:
+        return {name for name in candidates
+                if (PROJECT_ROOT / name).exists() or (PROJECT_ROOT / name).is_symlink()}
+    return candidates
 
 
 def _staged_index() -> dict[str, str]:
@@ -530,7 +590,7 @@ def _parse_requirements(payload: bytes) -> dict[str, str]:
 def _verify_release(
     read_bytes: Callable[[str], bytes],
 ) -> tuple[int, dict[str, tuple[int, tuple[str, ...]]]]:
-    checksum_payload = read_bytes("release/v1.3.0/SHA256SUMS").decode("utf-8")
+    checksum_payload = read_bytes("reproduction/supporting/SHA256SUMS").decode("utf-8")
     checksum_rows: dict[str, str] = {}
     for line in checksum_payload.splitlines():
         try:
@@ -543,7 +603,7 @@ def _verify_release(
     if checksum_rows != EXPECTED_RELEASE_CHECKSUMS:
         raise RuntimeError("v1.3.0 checksums differ from the independent fixed policy")
     for relative, digest in EXPECTED_RELEASE_CHECKSUMS.items():
-        if _sha256(read_bytes(f"release/v1.3.0/{relative}")) != digest:
+        if _sha256(read_bytes(f"reproduction/supporting/{relative}")) != digest:
             raise RuntimeError(f"v1.3.0 payload checksum differs: {relative}")
 
     result_specs: dict[str, tuple[int, tuple[str, ...]]] = {}
@@ -561,15 +621,15 @@ def _verify_release(
         result_rows += len(rows)
 
     schema_pairs = {
-        "release/v1.3.0/inputs/attacker_restart_rows.csv": "release/v1.3.0/schemas/attacker_restart_rows.schema.json",
-        "release/v1.3.0/expected/attacker_restart_summaries.csv": "release/v1.3.0/schemas/attacker_restart_summaries.schema.json",
-        "release/v1.3.0/evidence/benchmark_budget_attacker_rows.csv": "release/v1.3.0/schemas/benchmark_budget_attacker_rows.schema.json",
-        "release/v1.3.0/inputs/benchmark_budget_conditions.csv": "release/v1.3.0/schemas/benchmark_budget_conditions.schema.json",
-        "release/v1.3.0/expected/benchmark_budget_paired_effects.csv": "release/v1.3.0/schemas/benchmark_budget_paired_effects.schema.json",
+        "reproduction/supporting/inputs/attacker_restart_rows.csv": "reproduction/supporting/schemas/attacker_restart_rows.schema.json",
+        "reproduction/supporting/expected/attacker_restart_summaries.csv": "reproduction/supporting/schemas/attacker_restart_summaries.schema.json",
+        "reproduction/supporting/evidence/benchmark_budget_attacker_rows.csv": "reproduction/supporting/schemas/benchmark_budget_attacker_rows.schema.json",
+        "reproduction/supporting/inputs/benchmark_budget_conditions.csv": "reproduction/supporting/schemas/benchmark_budget_conditions.schema.json",
+        "reproduction/supporting/expected/benchmark_budget_paired_effects.csv": "reproduction/supporting/schemas/benchmark_budget_paired_effects.schema.json",
     }
     for csv_relative, schema_relative in schema_pairs.items():
         historical = next(old for old, current in SCHEMA_LOCATIONS.items()
-                          if "release/v1.3.0/" + current == csv_relative)
+                          if "reproduction/supporting/" + current == csv_relative)
         schema = json.loads(read_bytes(schema_relative))
         schema_fields = tuple(column["name"] for column in schema.get("columns", []))
         expected_count, expected_fields = result_specs[csv_relative]
@@ -581,14 +641,14 @@ def _verify_release(
         ):
             raise RuntimeError(f"v1.3.0 schema metadata differs: {schema_relative}")
     benchmark_schema = json.loads(
-        read_bytes("release/v1.3.0/schemas/benchmark_v1_tables.schema.json")
+        read_bytes("reproduction/supporting/schemas/benchmark_v1_tables.schema.json")
     )
     if benchmark_schema.get("schema_version") != 2 or set(
         benchmark_schema.get("tables", {})
     ) != {Path(relative).name for relative in schema_pairs}:
         raise RuntimeError("v1.3.0 benchmark schema differs from the fixed table set")
     compute_schema = json.loads(
-        read_bytes("release/v1.3.0/schemas/eng_compute_v1.schema.json")
+        read_bytes("reproduction/supporting/schemas/eng_compute_v1.schema.json")
     )
     if (
         compute_schema.get("schema_version") != 1
@@ -600,8 +660,8 @@ def _verify_release(
         or compute_schema.get("equivalence_claims") is not False
     ):
         raise RuntimeError("v1.3.0 compute schema boundary differs")
-    analysis = json.loads(read_bytes("release/v1.3.0/analysis/compute_analysis.json"))
-    claims = json.loads(read_bytes("release/v1.3.0/analysis/compute_claim_audit.json"))
+    analysis = json.loads(read_bytes("reproduction/supporting/analysis/compute_analysis.json"))
+    claims = json.loads(read_bytes("reproduction/supporting/analysis/compute_claim_audit.json"))
     if (
         analysis.get("protocol_id") != "eng_compute_v1"
         or analysis.get("condition_count") != 160
@@ -628,6 +688,10 @@ def _verify_disclosure(read_bytes: Callable[[str], bytes]) -> dict[str, Any]:
     if manifest["paper_reproduction"] != PAPER_METADATA:
         raise RuntimeError("Paper reproduction metadata differs from fixed policy")
     paper_report = verify_paper_reproduction(read_bytes)
+    from src.reproduction.integrity import SCIENTIFIC_HASHES
+    for relative, expected in SCIENTIFIC_HASHES.items():
+        if _sha256(read_bytes(relative)) != expected:
+            raise RuntimeError(f"Independent scientific checksum differs: {relative}")
     if manifest["repository_name"] != "adaptive-reconstruction-split-computing":
         raise RuntimeError("Unexpected repository name")
     if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", manifest["disclosure_date"]):
@@ -706,7 +770,7 @@ def _verify_disclosure(read_bytes: Callable[[str], bytes]) -> dict[str, Any]:
         "under review",
         "python reproduction/replay_aggregates.py",
         "CITATION.cff",
-        "(cd release/v1.3.0 && sha256sum --check SHA256SUMS)",
+        "(cd reproduction && sha256sum --check SHA256SUMS)",
     )
     if any(fragment not in readme for fragment in citation_readme_fragments):
         raise RuntimeError("README does not match the paper repository policy")
@@ -833,7 +897,9 @@ def _verify_disclosure(read_bytes: Callable[[str], bytes]) -> dict[str, Any]:
     }
 
 
-def audit(*, require_staged: bool) -> dict[str, Any]:
+def audit(*, require_staged: bool, worktree_only: bool = False) -> dict[str, Any]:
+    if require_staged and worktree_only:
+        raise ValueError('Staged and worktree-only audit scopes are mutually exclusive')
     errors: list[str] = []
     in_git = _inside_git()
     try:
@@ -843,7 +909,7 @@ def audit(*, require_staged: bool) -> dict[str, Any]:
         errors.append(str(error))
 
     staged_index = _staged_index() if in_git else {}
-    candidates = _git_candidates() if in_git else _filesystem_candidates()
+    candidates = _git_candidates(worktree_only=worktree_only) if in_git else _filesystem_candidates()
     if candidates != EXPECTED_ALLOWLIST:
         errors.append(
             "Git/filesystem candidate set differs from allowlist: "
@@ -912,7 +978,6 @@ def audit(*, require_staged: bool) -> dict[str, Any]:
     largest = max(sizes, default=(0, ""))
     expected_trusted_loaders = {
         "src/checkpointing.py", "src/defenses.py",
-        "reproduction/scientific/src/checkpointing.py", "reproduction/scientific/src/defenses.py",
     }
     if set(trusted_artifact_loaders) != expected_trusted_loaders:
         errors.append(
@@ -931,6 +996,11 @@ def audit(*, require_staged: bool) -> dict[str, Any]:
         "allowlist_files": len(EXPECTED_ALLOWLIST),
         "candidate_files": len(candidates),
         "staged_files": len(staged_index),
+        "candidate_scope": ("worktree_only" if worktree_only else
+                            "git_index_and_untracked" if in_git else "filesystem"),
+        "index_membership_verified": (in_git and not worktree_only and not errors
+                                      and set(staged_index) == EXPECTED_ALLOWLIST),
+        "index_bytes_verified": require_staged and in_git and not errors,
         "audited_byte_source": "git_index" if require_staged and in_git else "worktree",
         "ignored_boundary_paths_verified": ignored_verified,
         "largest_public_file": {"path": largest[1], "size_bytes": largest[0]},
@@ -945,9 +1015,14 @@ def audit(*, require_staged: bool) -> dict[str, Any]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--require-staged", action="store_true")
+    scope = parser.add_mutually_exclusive_group()
+    scope.add_argument("--require-staged", action="store_true",
+                       help="Verify exact Git index membership and bytes before committing or publishing")
+    scope.add_argument("--worktree-only", action="store_true",
+                       help="Check local migration files only; does not certify the Git index")
     args = parser.parse_args()
-    print(json.dumps(audit(require_staged=args.require_staged), indent=2, sort_keys=True))
+    print(json.dumps(audit(require_staged=args.require_staged, worktree_only=args.worktree_only),
+                     indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":

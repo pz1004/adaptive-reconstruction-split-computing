@@ -15,7 +15,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SOURCE_RELEASE = PROJECT_ROOT / "analysis-output" / "public-release-v1.1.0"
 COMPUTE_ROOT = PROJECT_ROOT / "revisions" / "2026-08-27_eng_compute_extension" / "eng_compute_v1"
 PRIVATE_CANDIDATE = PROJECT_ROOT / "analysis-output" / "public-release-v1.2.0"
-DEFAULT_OUTPUT = PROJECT_ROOT / "release" / "v1.3.0"
+DEFAULT_OUTPUT = PROJECT_ROOT / "reproduction" / "supporting"
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -155,7 +155,7 @@ LEGACY_LOCATION_MAP = {'analysis/compute_analysis.json': 'analysis/compute_analy
 CSV_SPECS = {LEGACY_LOCATION_MAP[path]: spec for path, spec in CSV_SPECS.items()}
 
 EXPECTED_CHECKSUMS = {
-    path.removeprefix("release/v1.3.0/"): digest for path, digest in V13_CHECKSUMS.items()
+    path.removeprefix("reproduction/supporting/"): digest for path, digest in V13_CHECKSUMS.items()
 }
 EXPECTED_FILES = frozenset(EXPECTED_CHECKSUMS)
 
@@ -331,7 +331,7 @@ def validate_public_release(root: Path) -> dict[str, object]:
         checksum_rows[relative] = digest
     expected_checksum_paths = EXPECTED_FILES - {"SHA256SUMS"}
     if set(checksum_rows) != expected_checksum_paths:
-        raise RuntimeError("v1.3.0 checksum inventory differs from the fixed 39-file policy")
+        raise RuntimeError("v1.3.0 checksum inventory differs from the fixed supporting-file policy")
     for relative, digest in checksum_rows.items():
         if _sha256(root / relative) != digest:
             raise RuntimeError(f"v1.3.0 checksum mismatch: {relative}")

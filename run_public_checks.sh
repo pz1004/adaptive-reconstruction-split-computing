@@ -16,6 +16,7 @@ export PYTHONPYCACHEPREFIX="${PUBLIC_CACHE_ROOT}/pycache"
 "${PYTHON_BIN}" - <<'PY'
 import hashlib
 import os
+import shutil
 import tempfile
 import urllib.request
 from pathlib import Path
@@ -39,6 +40,14 @@ def sha256_file(path: Path) -> str:
             digest.update(chunk)
     return digest.hexdigest()
 
+
+local_weight = os.environ.get("PUBLIC_ALEXNET_WEIGHTS")
+if local_weight:
+    source = Path(local_weight)
+    if not source.is_file() or sha256_file(source) != expected_sha256:
+        raise RuntimeError("Supplied AlexNet weight does not match the required hash")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(source, target)
 
 if not target.is_file() or sha256_file(target) != expected_sha256:
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -71,10 +80,16 @@ PY
 cd "${REPOSITORY_ROOT}"
 "${PYTHON_BIN}" scripts/export_eng_compute_public.py --check --public-only
 "${PYTHON_BIN}" scripts/export_public_results.py --check --public-only
-"${PYTHON_BIN}" scripts/audit_public_repository.py
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  "${PYTHON_BIN}" scripts/audit_public_repository.py --require-staged
+else
+  "${PYTHON_BIN}" scripts/audit_public_repository.py
+fi
 "${PYTHON_BIN}" -m compileall -q src scripts tests reproduction
-"${PYTHON_BIN}" reproduction/replay_aggregates.py \
-  --data reproduction/aggregate-data --output "${PUBLIC_CACHE_ROOT}/paper-replay"
+"${PYTHON_BIN}" -I -S -B scripts/reproduce.py \
+  --suite paper --output "${PUBLIC_CACHE_ROOT}/paper-replay"
+"${PYTHON_BIN}" scripts/reproduce.py \
+  --suite supporting --output "${PUBLIC_CACHE_ROOT}/supporting-replay"
 "${PYTHON_BIN}" -m pytest -q -p no:cacheprovider \
   tests/test_aggregate_reproduction.py \
   tests/test_budget_result_audit.py \
@@ -82,6 +97,7 @@ cd "${REPOSITORY_ROOT}"
   tests/test_dataset_remedy.py \
   tests/test_public_repository.py \
   tests/test_paper_reproduction.py \
+  tests/test_reproduction_cli.py \
   tests/test_public_protocol.py \
   tests/test_result_audit.py \
   tests/test_revision_protocol.py \

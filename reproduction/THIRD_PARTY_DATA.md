@@ -1,6 +1,6 @@
 # Third-party source and data
 
-The files `upstream/disco.py`, `upstream/disco.json` and `upstream/LICENSE` come from [aidecentralized/InferenceBenchmark](https://github.com/aidecentralized/InferenceBenchmark) at commit `f4326568eddbcca8c1c7e0b68e05ab8a70adcc6a`. They retain the accompanying Apache License 2.0 and their original bytes. The paper's six-channel DISCO adaptation is in `scientific/implementation/components.py`; it disables spatial decoupling. Its scientific provenance and source attribution are recorded in `provenance.json`.
+The files `upstream/disco.py`, `upstream/disco.json` and `upstream/LICENSE` come from [aidecentralized/InferenceBenchmark](https://github.com/aidecentralized/InferenceBenchmark) at commit `f4326568eddbcca8c1c7e0b68e05ab8a70adcc6a`. They retain the accompanying Apache License 2.0 and their original bytes. The paper's six-channel DISCO adaptation is in [`src/focused/components.py`](../src/focused/components.py); it disables spatial decoupling. Its scientific provenance and source attribution are recorded in `provenance.json`.
 
 Authored code and documentation use the included MIT license. Contributor-owned aggregate tables use the exact scope in LICENSE-RESULTS. Third-party code is not relicensed by the repository MIT grant.
 

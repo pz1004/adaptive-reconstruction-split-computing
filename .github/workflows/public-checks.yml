@@ -32,7 +32,8 @@ jobs:
           cache: pip
           cache-dependency-path: |
             requirements.txt
-            release/v1.3.0/requirements.txt
+            requirements-figures.txt
+            reproduction/requirements-supporting.txt
 
       - name: Install pinned dependencies
         env:
@@ -43,7 +44,7 @@ jobs:
           --index-url https://download.pytorch.org/whl/cpu
           --extra-index-url https://pypi.org/simple
           -r requirements.txt
-          -r release/v1.3.0/requirements.txt
+          -r reproduction/requirements-supporting.txt
 
       - name: Run the public disclosure and test gate
         run: ./run_public_checks.sh

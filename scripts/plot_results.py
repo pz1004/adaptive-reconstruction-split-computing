@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import os
+import sys
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -16,6 +17,11 @@ import numpy as np
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from src.reproduction.primary_figure import _figure_bytes
+
 DEFAULT_ROOT = PROJECT_ROOT / "revisions" / "2026-07-22_adaptive_reconstruction_study"
 DEFAULT_AUDIT = PROJECT_ROOT / "audit" / "primary_result_audit_20260808" / "primary_result_audit.json"
 CHECKPOINT_ROOT = PROJECT_ROOT / "audit" / "figure_revision_20260822" / "pre_change"
@@ -53,37 +59,6 @@ def _require_passing_audit(path: Path) -> None:
     report = json.loads(path.read_text(encoding="utf-8"))
     if report.get("passed") is not True or report.get("issues") or report.get("quarantined_run_ids"):
         raise RuntimeError("Figure 2 is blocked: primary raw audit did not pass cleanly")
-
-
-def _figure_bytes(figure: Any) -> dict[str, bytes]:
-    stem = "figure-02-accuracy-vs-adaptive-ssim"
-    title = "Accuracy versus maximum observed reconstruction similarity"
-    subject = "All five model seeds per group with sample-SD error bars on both axes."
-    with tempfile.TemporaryDirectory(prefix="ml2-figure-02-") as temporary:
-        root = Path(temporary)
-        pdf = root / f"{stem}.pdf"
-        svg = root / f"{stem}.svg"
-        figure.savefig(
-            pdf,
-            dpi=600,
-            bbox_inches="tight",
-            metadata={
-                "Title": title,
-                "Author": "",
-                "Subject": subject,
-                "Creator": "ml2 reviewed figure generator",
-                "Producer": "matplotlib",
-                "CreationDate": None,
-                "ModDate": None,
-            },
-        )
-        figure.savefig(
-            svg,
-            dpi=600,
-            bbox_inches="tight",
-            metadata={"Title": title, "Description": subject, "Date": None},
-        )
-        return {pdf.name: pdf.read_bytes(), svg.name: svg.read_bytes()}
 
 
 def _publish(

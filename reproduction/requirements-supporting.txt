@@ -1,0 +1,6 @@
+# Reuse the existing pins; install only these three packages for supporting replay.
+-c ../requirements.txt
+-c ../requirements-figures.txt
+numpy
+scipy
+matplotlib

@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Iterable
 import torch
 from torch import nn
-from components import DiscoModel,VictimInterface,SFDAttacker,disco_step,disco_optimizers,sfd_step,freeze
+from .components import DiscoModel,VictimInterface,SFDAttacker,disco_step,disco_optimizers,sfd_step,freeze
 from src.models import AFDSplitModel,ModelConfig,build_attacker
 from src.metrics import LPIPSMetric,reconstruction_metric_batch
 from src.experiment import set_seed

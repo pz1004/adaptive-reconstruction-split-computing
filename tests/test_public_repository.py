@@ -38,9 +38,9 @@ def test_public_outputs_have_exact_counts_schemas_and_hashes() -> None:
     result = verify_public_outputs()
     assert result["passed"] is True
     assert result["result_rows_verified"] == 2308
-    assert result["public_outputs_verified"] == 49
-    assert result["allowlist_files"] == 185
-    assert result["paper_reproduction"]["files_verified"] == 67
+    assert result["public_outputs_verified"] == 41
+    assert result["allowlist_files"] == 162
+    assert result["paper_reproduction"]["files_verified"] == 65
 
 
 def test_disclosure_manifest_has_exact_allowlist_and_licenses() -> None:
@@ -52,7 +52,7 @@ def test_disclosure_manifest_has_exact_allowlist_and_licenses() -> None:
     assert manifest["base_result_row_count"] == 1752
     assert manifest["supplemental_result_row_count"] == 556
     assert len(manifest["result_table_counts"]) == 13
-    assert len(manifest["public_outputs"]) == 49
+    assert len(manifest["public_outputs"]) == 41
     assert manifest["semantic_attribute_boundary"] == {
         "published_indices": [index for index in range(40) if index != 31],
         "excluded_index": 31,
@@ -70,13 +70,13 @@ def test_disclosure_manifest_has_exact_allowlist_and_licenses() -> None:
     assert manifest["disclosure_date"] == "2026-09-30"
     assert manifest["release"] == {
         "version": "1.3.0",
-        "path": "release/v1.3.0",
+        "path": "reproduction/supporting",
         "status": "authorized_for_repository_commit",
         "release_url": None,
         "release_date": None,
         "doi": None,
     }
-    assert len(manifest["release_decision"]["scope"]) == 27
+    assert len(manifest["release_decision"]["scope"]) == 25
     assert manifest["release_decision"]["publication_authorized"] is True
     assert manifest["release_decision"] == EXPECTED_RELEASE_DECISION
 
@@ -121,7 +121,7 @@ def test_public_title_checksum_command_and_result_attribution_are_canonical() ->
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     result_license = (ROOT / "LICENSE-RESULTS").read_text(encoding="utf-8")
     assert readme.startswith("# " + PAPER_METADATA["title"] + "\n")
-    assert "(cd release/v1.3.0 && sha256sum --check SHA256SUMS)" in readme
+    assert "(cd reproduction && sha256sum --check SHA256SUMS)" in readme
     assert (
         "Aggregate results for " + PAPER_METADATA["title"] in result_license
     )
@@ -156,6 +156,7 @@ def test_public_runner_uses_temporary_torch_hub_cache(tmp_path: Path) -> None:
     assert "trap 'rm -rf -- \"${PUBLIC_CACHE_ROOT}\"' EXIT" in runner
     assert "target = lpips_backbone_weight_path()" in runner
     assert 'Path.home() / ".cache" / "torch"' not in runner
+    assert 'scripts/audit_public_repository.py --require-staged' in runner
 
     temporary_torch_home = tmp_path / "temporary-torch"
     isolated_home = tmp_path / "home"
@@ -201,7 +202,8 @@ def test_independent_auditor_rejects_mutable_ci_action_reference() -> None:
         _verify_disclosure(payloads.__getitem__)
 
 
-def test_public_auditor_accepts_git_checkout_without_private_paths(tmp_path: Path) -> None:
+@pytest.fixture
+def public_git_copy(tmp_path: Path) -> Path:
     for relative in EXPECTED_ALLOWLIST:
         source = ROOT / relative
         target = tmp_path / relative
@@ -210,9 +212,15 @@ def test_public_auditor_accepts_git_checkout_without_private_paths(tmp_path: Pat
 
     subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
     subprocess.run(["git", "add", "--all"], cwd=tmp_path, check=True)
+    return tmp_path
+
+
+@pytest.mark.parametrize("arguments", [[], ["--require-staged"], ["--worktree-only"]])
+def test_public_auditor_accepts_git_checkout_without_private_paths(public_git_copy: Path,
+                                                                 arguments: list[str]) -> None:
     completed = subprocess.run(
-        [sys.executable, "scripts/audit_public_repository.py"],
-        cwd=tmp_path,
+        [sys.executable, "-B", "scripts/audit_public_repository.py", *arguments],
+        cwd=public_git_copy,
         check=False,
         capture_output=True,
         text=True,
@@ -221,8 +229,46 @@ def test_public_auditor_accepts_git_checkout_without_private_paths(tmp_path: Pat
     assert completed.returncode == 0, completed.stderr
     report = json.loads(completed.stdout)
     assert report["passed"] is True
-    assert report["candidate_files"] == 185
+    assert report["candidate_files"] == 162
     assert report["ignored_boundary_paths_verified"] == 13
+    assert report["index_membership_verified"] == (arguments != ["--worktree-only"])
+    assert report["index_bytes_verified"] == (arguments == ["--require-staged"])
+
+
+@pytest.mark.parametrize("arguments", [[], ["--require-staged"]])
+def test_auditor_rejects_hidden_cached_file(public_git_copy: Path, arguments: list[str]) -> None:
+    fixture = public_git_copy / "private-record.txt"
+    fixture.write_text("synthetic boundary regression fixture\n")
+    subprocess.run(["git", "add", "-f", "--", fixture.name], cwd=public_git_copy, check=True)
+    fixture.unlink()
+    completed = subprocess.run(
+        [sys.executable, "-B", "scripts/audit_public_repository.py", *arguments],
+        cwd=public_git_copy, capture_output=True, text=True, timeout=30,
+    )
+    assert completed.returncode != 0
+    assert '"candidate_files": 163' in completed.stderr
+    assert "private-record.txt" in completed.stderr
+    # Migration-only scope must be explicitly reported and cannot certify the index.
+    worktree = subprocess.run(
+        [sys.executable, "-B", "scripts/audit_public_repository.py", "--worktree-only"],
+        cwd=public_git_copy, capture_output=True, text=True, timeout=30,
+    )
+    assert worktree.returncode == 0, worktree.stderr
+    report = json.loads(worktree.stdout)
+    assert report["candidate_scope"] == "worktree_only"
+    assert report["staged_files"] == 163
+    assert not report["index_membership_verified"] and not report["index_bytes_verified"]
+
+
+def test_staged_audit_rejects_worktree_drift(public_git_copy: Path) -> None:
+    readme = public_git_copy / "README.md"
+    readme.write_bytes(readme.read_bytes() + b"\n")
+    completed = subprocess.run(
+        [sys.executable, "-B", "scripts/audit_public_repository.py", "--require-staged"],
+        cwd=public_git_copy, capture_output=True, text=True, timeout=30,
+    )
+    assert completed.returncode != 0
+    assert "worktree bytes differ from staged blob: README.md" in completed.stderr
 
 
 def test_independent_auditor_rejects_overstated_release_permission() -> None:
@@ -250,7 +296,7 @@ def test_independent_auditor_rejects_license_notice_scope_drift() -> None:
 
 def test_independent_auditor_rejects_release_payload_tampering() -> None:
     payloads = {path: (ROOT / path).read_bytes() for path in EXPECTED_ALLOWLIST}
-    relative = "release/v1.3.0/expected/compute_paired_effects.csv"
+    relative = "reproduction/supporting/expected/compute_paired_effects.csv"
     payloads[relative] += b"\n"
     manifest = json.loads(payloads["results/protocol/disclosure_manifest.json"])
     manifest["public_outputs"][relative]["sha256"] = hashlib.sha256(
@@ -261,7 +307,7 @@ def test_independent_auditor_rejects_release_payload_tampering() -> None:
         json.dumps(manifest, indent=2, sort_keys=True) + "\n"
     ).encode("utf-8")
 
-    with pytest.raises(RuntimeError, match="payload checksum differs"):
+    with pytest.raises(RuntimeError, match="Paper reproduction hash mismatch"):
         _verify_disclosure(payloads.__getitem__)
 
 
@@ -286,7 +332,7 @@ def test_exporter_and_independent_auditor_have_matching_fixed_boundaries() -> No
     }
     assert source_files == set(PUBLIC_SOURCE_MODULES)
     assert all((ROOT / relative).is_file() for relative in source_files)
-    assert "src/benchmark_v1.py" not in source_files
+    assert {"src/benchmark_v1.py", "src/eng_compute.py"} <= source_files
     assert "tests/test_public_disclosure.py" not in EXPECTED_ALLOWLIST
     assert "tests/test_public_disclosure.py" not in public_allowlist()
     assert "tests/test_public_repository.py" in EXPECTED_ALLOWLIST
@@ -307,7 +353,7 @@ def test_independent_auditor_rejects_duplicate_matrix_key_even_with_updated_hash
         json.dumps(manifest, indent=2, sort_keys=True) + "\n"
     ).encode("utf-8")
 
-    with pytest.raises(RuntimeError, match="Duplicate statistical-unit key"):
+    with pytest.raises(RuntimeError, match="Independent scientific checksum differs"):
         _verify_disclosure(payloads.__getitem__)
 
 
@@ -355,8 +401,6 @@ def test_unsafe_pytorch_loading_is_bounded_and_prominently_disclosed() -> None:
         if path.suffix == ".py" and unsafe_opt_out in path.read_text(encoding="utf-8"):
             offenders.append(relative)
     assert offenders == [
-        "reproduction/scientific/src/checkpointing.py",
-        "reproduction/scientific/src/defenses.py",
         "src/checkpointing.py", "src/defenses.py",
     ]
     assert "Never load an untrusted `.pt` file" in (ROOT / "README.md").read_text(encoding="utf-8")
@@ -366,12 +410,12 @@ def test_consolidated_release_inventory_and_historical_schema_mapping() -> None:
     from scripts.export_eng_compute_public import (
         CSV_SPECS, EXPECTED_FILES, LEGACY_LOCATION_MAP, validate_public_release,
     )
-    release = ROOT / 'release/v1.3.0'
+    release = ROOT / 'reproduction/supporting'
     assert not (ROOT / 'release/v1.2.0').exists()
-    assert len(EXPECTED_FILES) == 40
+    assert len(EXPECTED_FILES) == 32
     assert len(LEGACY_LOCATION_MAP) == 17
     assert len(set(LEGACY_LOCATION_MAP.values())) == 17
-    assert validate_public_release(release)['checksum_entries'] == 39
+    assert validate_public_release(release)['checksum_entries'] == 31
     for historical, current in LEGACY_LOCATION_MAP.items():
         schema = release / 'schemas' / (Path(historical).stem + '.schema.json')
         if historical.startswith('results/') and schema.exists():
@@ -380,7 +424,8 @@ def test_consolidated_release_inventory_and_historical_schema_mapping() -> None:
             assert record['rows'] == CSV_SPECS[current][0]
             assert tuple(column['name'] for column in record['columns']) == CSV_SPECS[current][1]
     inputs = list((release / 'inputs').glob('*.csv'))
-    assert len(inputs) == 7
+    assert len(inputs) == 5
+    inputs += [ROOT / 'results/raw/primary_seed_results.csv', ROOT / 'results/raw/semantic_seed_results.csv']
     assert sum(len(list(csv.DictReader(path.open(newline='')))) for path in inputs) == 556
     evidence = release / 'evidence/benchmark_budget_attacker_rows.csv'
     with evidence.open(newline='') as handle:
@@ -400,7 +445,7 @@ def test_consolidated_evidence_rejects_missing_or_altered_bytes(
 ) -> None:
     from scripts.export_eng_compute_public import validate_public_release
     release = tmp_path / 'release'
-    shutil.copytree(ROOT / 'release/v1.3.0', release)
+    shutil.copytree(ROOT / 'reproduction/supporting', release)
     path = release / relative
     if mutation == 'missing':
         path.unlink()
@@ -436,7 +481,7 @@ def test_consolidated_export_preserves_unrelated_files_and_preflights_conflicts(
 def test_consolidated_release_rejects_private_extras(tmp_path: Path) -> None:
     from scripts.export_eng_compute_public import validate_public_release
     release = tmp_path / 'release'
-    shutil.copytree(ROOT / 'release/v1.3.0', release)
+    shutil.copytree(ROOT / 'reproduction/supporting', release)
     (release / 'schemas/private-evidence.json').write_text('{}\n')
     with pytest.raises(RuntimeError, match='inventory differs'):
         validate_public_release(release)
@@ -444,7 +489,7 @@ def test_consolidated_release_rejects_private_extras(tmp_path: Path) -> None:
 
 def test_mapped_private_candidate_comparison(tmp_path: Path) -> None:
     from scripts.export_eng_compute_public import LEGACY_LOCATION_MAP, verify_private_candidate
-    release = ROOT / 'release/v1.3.0'
+    release = ROOT / 'reproduction/supporting'
     for historical, current in LEGACY_LOCATION_MAP.items():
         target = tmp_path / historical
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -462,11 +507,11 @@ def test_release_validation_and_export_tolerate_generated_bytecode(tmp_path: Pat
     from scripts import export_eng_compute_public as exporter
     source = tmp_path / 'source'
     target = tmp_path / 'target'
-    shutil.copytree(ROOT / 'release/v1.3.0', source, ignore=shutil.ignore_patterns('__pycache__'))
+    shutil.copytree(ROOT / 'reproduction/supporting', source, ignore=shutil.ignore_patterns('__pycache__'))
     cache = source / '__pycache__' / f'compute_core.{sys.implementation.cache_tag}.pyc'
-    py_compile.compile(str(source / 'compute_core.py'), cfile=str(cache), doraise=True)
+    py_compile.compile(str(ROOT / 'src/reproduction/compute_core.py'), cfile=str(cache), doraise=True)
     assert cache.is_file()
-    assert exporter.validate_public_release(source)['file_count'] == 40
+    assert exporter.validate_public_release(source)['file_count'] == 32
     monkeypatch.setattr(exporter, 'DEFAULT_OUTPUT', source)
     monkeypatch.setattr(exporter, 'build_private_payloads', lambda: {
         current: (source / current).read_bytes()
@@ -489,7 +534,7 @@ def test_release_validation_and_export_tolerate_generated_bytecode(tmp_path: Pat
 def test_export_restores_missing_private_derived_file(tmp_path: Path, monkeypatch, relative: str) -> None:
     from scripts import export_eng_compute_public as exporter
     source = tmp_path / 'release'
-    shutil.copytree(ROOT / 'release/v1.3.0', source)
+    shutil.copytree(ROOT / 'reproduction/supporting', source)
     expected = {current: (source / current).read_bytes()
                 for current in exporter.LEGACY_LOCATION_MAP.values()}
     before = {p.relative_to(source).as_posix(): p.read_bytes() for p in source.rglob('*') if p.is_file()}
@@ -509,9 +554,9 @@ def test_full_export_rejects_changed_reproduction_input_before_writes(tmp_path: 
         target = tmp_path / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / relative, target)
-    release = tmp_path / 'release/v1.3.0'
+    release = tmp_path / 'reproduction/supporting'
     monkeypatch.setattr(release_exporter, 'build_private_payloads', lambda: {
-        current: (ROOT / 'release/v1.3.0' / current).read_bytes()
+        current: (ROOT / 'reproduction/supporting' / current).read_bytes()
         for current in release_exporter.LEGACY_LOCATION_MAP.values()
     })
     changed = release / 'inputs/laplace_draw_metrics.csv'
@@ -575,7 +620,7 @@ def test_export_rejects_paths_outside_destination(tmp_path: Path, relative: str)
 
 def test_export_conflicting_scientific_bytes_prevent_partial_repair(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     from scripts import export_eng_compute_public as exporter
-    source = ROOT / 'release/v1.3.0'
+    source = ROOT / 'reproduction/supporting'
     target = tmp_path / 'release'
     shutil.copytree(source, target)
     missing = target / 'analysis/compute_analysis.json'
@@ -596,7 +641,7 @@ def test_export_conflicting_scientific_bytes_prevent_partial_repair(tmp_path: Pa
 def test_release_validator_rejects_symlinked_cache(tmp_path: Path) -> None:
     from scripts.export_eng_compute_public import validate_public_release
     release = tmp_path / 'release'
-    shutil.copytree(ROOT / 'release/v1.3.0', release, ignore=shutil.ignore_patterns('__pycache__'))
+    shutil.copytree(ROOT / 'reproduction/supporting', release, ignore=shutil.ignore_patterns('__pycache__'))
     (release / '__pycache__').symlink_to(tmp_path / 'outside', target_is_directory=True)
     with pytest.raises(RuntimeError, match='symlink'):
         validate_public_release(release)

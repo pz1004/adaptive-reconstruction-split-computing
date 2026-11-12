@@ -4,9 +4,8 @@ import importlib.util
 import sys
 import pytest
 ROOT=Path(__file__).resolve().parents[1]
-BUNDLE=ROOT/'release/v1.3.0'
-sys.path.insert(0,str(BUNDLE))
-import reproduce as r
+BUNDLE=ROOT/'reproduction/supporting'
+from src.reproduction import supporting as r
 
 
 def test_original_values_and_family_isolation():
@@ -53,13 +52,13 @@ def test_v13_payload_tampering_cannot_be_authorized_by_manifest():
     import hashlib, json
     from scripts.audit_public_repository import EXPECTED_ALLOWLIST, _verify_disclosure
     payloads = {name: (ROOT / name).read_bytes() for name in EXPECTED_ALLOWLIST}
-    name = 'release/v1.3.0/diagnostics/known-offset-diagnostic.csv'
+    name = 'reproduction/supporting/diagnostics/known-offset-diagnostic.csv'
     payloads[name] += b'\n'
     manifest = json.loads(payloads['results/protocol/disclosure_manifest.json'])
     manifest['public_outputs'][name].update(
         sha256=hashlib.sha256(payloads[name]).hexdigest(), size_bytes=len(payloads[name]))
     payloads['results/protocol/disclosure_manifest.json'] = json.dumps(manifest).encode()
-    with pytest.raises(RuntimeError, match='v1.3.0 payload checksum differs'):
+    with pytest.raises(RuntimeError, match='Paper reproduction hash mismatch'):
         _verify_disclosure(payloads.__getitem__)
 
 

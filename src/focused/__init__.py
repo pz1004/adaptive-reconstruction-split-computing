@@ -1,0 +1,1 @@
+"""Canonical focused study implementation."""

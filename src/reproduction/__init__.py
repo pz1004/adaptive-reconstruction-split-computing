@@ -1,0 +1,1 @@
+"""Canonical aggregate replay implementation."""

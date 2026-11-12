@@ -1,62 +1,47 @@
 # Reproducibility guide
 
-The repository supports two kinds of work: replaying saved aggregate analyses and inspecting the experimental implementation. The first runs from the public files alone. Raw-image experiments additionally require the data, weights and execution context described below.
+Use `python scripts/reproduce.py --suite paper|supporting|all --output PATH` from a complete public checkout. Choose one suite name, not the literal pipe-separated expression. `paper` is the default; `PATH` must not exist. [The reproduction guide](../reproduction/README.md) lists exact runnable commands and outputs; [PAPER_MAP.md](PAPER_MAP.md) lists each current manuscript item.
 
-## Aggregate analyses
+## Implementation and original context
 
-The [paper replay](../reproduction/README.md) runs with Python 3.10+ and no third-party packages. It checks decoder-specific and maximum-over-decoder summaries, paired contrasts, utility failures, validation-frozen DISCO choices, complete selection/evaluation histories and the six-quality JPEG grid. Its output directory must be new; missing or inconsistent required inputs fail before output creation.
+`src/` is the canonical implementation. `src/analysis.py` replaces three identical statistical copies. `src/focused/components.py` and `training.py` contain the original DISCO/JPEG components and fitting functions; only the fitting module's package import changed. `src/benchmark_v1.py` and `src/eng_compute.py` retain the published snapshot bytes. `src/reproduction/` owns aggregate replay and supporting plots. The 20 pre-existing base modules and all protocol values are unchanged.
 
-The [supporting analysis package](../release/v1.3.0/README.md) uses Python 3.11 and its own dependency list. It covers reconstruction and semantic summaries, attacker-budget comparisons, component measurements and single-release Laplace diagnostics. Its figure numbers belong to that versioned package; use the table descriptions to identify the analysis rather than assuming manuscript numbering.
+Original admission, supervision, matrix orchestration, scientific job definitions and receipt analysis remain recoverable at the [preserved commit and source links](MIGRATION.md). They require the original admission context, protocol, implementation seal, jobs, ledger, receipts and checkpoints. Those gates remain applicable. No public adapter for full raw-image execution was added.
 
-Neither replay performs image inference, fits a model, repeats hardware measurements, or authenticates unavailable raw evidence. Copies and derived summaries do not count as additional runs.
+The base CLI can be inspected with `python scripts/run_study.py --help`. It retains the base framework's contract and is not a replacement for the focused-study orchestration.
 
-## Scientific implementation
+Supporting replay binds all seven logical inputs to canonical repository paths and independent scientific digests. Provenance must agree with both; calculations parse the verified bytes without reopening metadata-directed paths. The compute interval and exception type are shared with `src/eng_compute.py`; the existing plotting command imports its figure serializer from `src/reproduction/primary_figure.py` and retains its execution gates.
 
-| Location | Role |
-| --- | --- |
-| `src/`, `config/`, `scripts/` | Base experimental framework and protocol tools. |
-| `reproduction/scientific/implementation/components.py` | DISCO adaptation, JPEG encoding and operating-point selection. |
-| `reproduction/scientific/implementation/training.py` | Encoder and reconstruction-decoder fitting. |
-| `reproduction/scientific/implementation/science.py` | Dataset interfaces and scientific job definitions. |
-| `reproduction/scientific/implementation/analyze_focused_results.py` | Saved-result analysis for the paper comparisons. |
-| `reproduction/scientific/config/` | Captured scientific recipes and protocol specifications. |
-| `reproduction/scientific/src/` | Exact base-module snapshot used with the captured implementation. |
-| `reproduction/upstream/` | Pinned DISCO author source, configuration and Apache-2.0 license. |
+## Data, weights and scientific limits
 
-The snapshots preserve source bytes and identifiers recorded in [provenance.json](../reproduction/provenance.json). Their orchestration entry points require the recorded directory structure, admission records and checkpoints. A public clone does not contain those private artifacts, so running the orchestration scripts directly is not a supported end-to-end reproduction path. The self-contained command is the aggregate replay.
+CIFAR-10 and CelebA must be acquired separately under their original terms. The base selection protocol uses a class-stratified 10% CIFAR-10 validation split with seed 314159. CelebA interfaces require annotation and partition files beneath `<data-root>/celeba/`. LPIPS/AlexNet weights and relevant victim/decoder checkpoints are also required for raw-image work; checkpoints are not distributed. Explicit synthetic test fixtures are not study observations.
 
-The base CLI can be inspected without starting an experiment:
+Recorded environments are under `reproduction/environment/`; the duplicate protocol environment was consolidated into `results/protocol/environment.json`. Focused jobs recorded Torch `2.9.0+cu128`, scikit-image `0.25.0` and LPIPS `0.1.4`. Complete Python, TorchVision, NumPy, Pillow and JPEG-library versions were not recorded per job. Other snapshots cannot fill those gaps. Encoded JPEG streams were not retained, so codec-byte replay is not established.
 
-```bash
-python scripts/run_study.py --help
-```
+Paper replay checks aggregates without third-party packages. Supporting replay recomputes retained statistics and plot signatures from aggregate metrics. Neither authenticates missing raw evidence, fits models, performs image inference or repeats hardware measurements. Retained four-condition analyses do not acquire DISCO coverage through relocation. Conditional intervals, coupled victim/attacker seeds and joint architecture/objective changes remain limitations.
 
-This entry point uses the base framework without changing its scientific contract or command semantics.
+## Environments and checks
 
-## Datasets and weights
+Supporting installation reuses the exact NumPy `1.26.4`, SciPy `1.13.1` and Matplotlib `3.10.0` constraints in the root dependency lists. `reproduction/requirements-supporting.txt` installs only those direct dependencies. Optional scientific extras reuse the same root files; the pre-existing `openpyxl>=3.1` constraint is unchanged. This migration upgrades no dependency.
 
-- Obtain CIFAR-10 through its official distribution or `torchvision`; the declared selection protocol uses a class-stratified 10% validation split with seed 314159.
-- Obtain aligned CelebA images and annotations under the official terms. The data interface expects the annotation and partition files beneath `<data-root>/celeba/`.
-- Obtain the required LPIPS/AlexNet weights separately. Checkpoint-dependent comparisons also require the applicable victim and decoder checkpoints, which are not distributed.
-- Synthetic samples are test fixtures enabled by explicit flags. They are not substitutes for study observations.
-
-See [THIRD_PARTY_DATA.md](../THIRD_PARTY_DATA.md) for the data and licensing boundaries.
-
-## Environments
-
-The base framework and full public tests use Python 3.11. Install their dependencies in an isolated environment:
+The full public gate uses Python 3.11:
 
 ```bash
-python3.11 -m venv .venv
-. .venv/bin/activate
-python -m pip install -r requirements.txt -r release/v1.3.0/requirements.txt
+python -m pip install -r requirements.txt -r reproduction/requirements-supporting.txt
 ./run_public_checks.sh
 ```
 
-Select PyTorch wheels for the target CPU/CUDA platform. The requirements are version pins, not a cross-platform hash lock. Record substitutions explicitly.
+The gate verifies the pretrained weight hash in a temporary cache, export checks, exact public inventory, paper replay with site packages disabled, supporting replay and tests. In a Git checkout it uses `--require-staged`, so stage the intended public changes before running the gate. The staged audit checks exact index membership and equality with worktree bytes. The default audit includes cached paths even if their worktree files are absent. `--worktree-only` supports checks during an unstaged migration and explicitly leaves index verification incomplete. Installation and weight download need network access; aggregate replay is offline afterward.
 
-Captured environment records are under [`reproduction/environment/`](../reproduction/environment/). The paper jobs recorded Torch `2.9.0+cu128`, scikit-image `0.25.0` and LPIPS `0.1.4`, but did not record complete Python, TorchVision, NumPy, Pillow or JPEG-library versions per job. The other environment snapshots do not establish those missing versions. Encoded JPEG streams were not retained, so exact codec-byte replay is not established.
+For a source archive without `.git`, keep the extracted copy free of generated outputs. With a new external destination, this sequence succeeds without changing its public inventory:
 
-## Integrity and provenance
+```bash
+python scripts/reproduce.py --output ../paper-replay-output
+python scripts/audit_public_repository.py
+```
 
-`reproduction/SHA256SUMS` covers the paper reproduction payload. `release/v1.3.0/SHA256SUMS` covers the versioned supporting package. The independent repository audit also fixes expected scientific-file hashes and the exact public inventory; updating a checksum list alone cannot authorize changed scientific data. Dataset files, checkpoints, private research records and submission correspondence are excluded from Git.
+The archive audit and full gate reject extra files inside that copy, including replay outputs. Use external destinations for the supporting and combined suites as well.
+
+`reproduction/SHA256SUMS` covers the reproduction tree; the nested supporting manifest covers that input/reference subtree. Fixed policy hashes and `src/reproduction/integrity.py` independently preserve original scientific bytes. Updating a manifest cannot authorize altered results. Dataset files, checkpoints, manuscripts, private records and generated outputs stay outside the public allowlist.
+
+A pre-existing weight can be reused offline by setting `PUBLIC_ALEXNET_WEIGHTS` to its path when running the gate. The gate checks the same fixed SHA-256 before copying it into its temporary cache. This option does not add weights to the public inventory.
